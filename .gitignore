@@ -1,5 +1,6 @@
 ### Opal ###
 *.log
+opal
 
 ### C ###
 # Object files
