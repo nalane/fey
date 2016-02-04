@@ -2,6 +2,24 @@
 *.log
 opal
 
+### Autotools ###
+Makefile
+Makefile.in
+/aclocal.m4
+/autom4te.cache/
+/config.*
+/configure
+/m4/
+/stamp-h?
+/compile
+/depcomp
+/install-sh
+/missing
+.deps/
+.dirstamp
+*.o
+*~
+
 ### C ###
 # Object files
 *.o
