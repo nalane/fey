@@ -6,7 +6,7 @@
 
 // Records a message to the log file
 bool vRecordLog(char* message, va_list args) {
-  static const char LOG_FILE[] = "log.txt";
+  static const char LOG_FILE[] = "opal.log";
   
   FILE* f = fopen(LOG_FILE, "w");
   if (f) {
