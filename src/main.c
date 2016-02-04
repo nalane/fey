@@ -5,7 +5,7 @@
 #include "graphicsBackend.h"
 
 void drawingTest() {
-  GLfloat color[] = {1.0, 0.0, 0.0, 1.0};
+  GLfloat color[] = {0.0, 0.0, 1.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
 }
 
