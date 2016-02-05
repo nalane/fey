@@ -17,6 +17,7 @@ install_manifest.txt
 *.ko
 *.obj
 *.elf
+*~
 
 # Precompiled Headers
 *.gch
