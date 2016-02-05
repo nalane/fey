@@ -2,23 +2,14 @@
 *.log
 opal
 
-### Autotools ###
+## CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
 Makefile
-Makefile.in
-/aclocal.m4
-/autom4te.cache/
-/config.*
-/configure
-/m4/
-/stamp-h?
-/compile
-/depcomp
-/install-sh
-/missing
-.deps/
-.dirstamp
-*.o
-*~
+cmake_install.cmake
+install_manifest.txt
+build/*/
 
 ### C ###
 # Object files
