@@ -4,7 +4,7 @@
 #include "log.h"
 
 // Starts the graphics engine
-graphicsBackend* initGraphics() {
+graphicsBackend* initGraphics(int w, int h, char* windowTitle) {
   graphicsBackend* gfx = malloc(sizeof(graphicsBackend));
   
   if (!glfwInit()) {
@@ -12,7 +12,7 @@ graphicsBackend* initGraphics() {
     return NULL;
   }
 
-  gfx->window = glfwCreateWindow(640, 480, "Hello Wolrd", NULL, NULL);
+  gfx->window = glfwCreateWindow(w, h, windowTitle, NULL, NULL);
   if (!gfx->window) {
     recordLog("FATAL ERROR: Could not create a GLFW window!");
     terminateGraphics(gfx);

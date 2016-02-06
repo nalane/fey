@@ -8,6 +8,6 @@ target_link_libraries(opal glfw GLEW)
 set(GCC_COMPILE_FLAGS "-O3")
 add_definitions(${GCC_COMPILE_FLAGS})
 
-file(COPY config DESTINATION opalData)
+file(COPY opal.cfg DESTINATION .)
 install(TARGETS opal DESTINATION bin)
-install(DIRECTORY config/ DESTINATION bin/opalData/config)
+install(FILES opal.cfg DESTINATION bin)
