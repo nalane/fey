@@ -9,5 +9,5 @@ set(GCC_COMPILE_FLAGS "-O3 -g")
 add_definitions(${GCC_COMPILE_FLAGS})
 
 file(COPY opal.cfg DESTINATION .)
-install(TARGETS opal DESTINATION bin)
-install(FILES opal.cfg DESTINATION bin)
+install(TARGETS opal DESTINATION games)
+install(FILES opal.cfg DESTINATION games)
