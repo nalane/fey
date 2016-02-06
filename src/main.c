@@ -17,18 +17,25 @@ typedef struct {
 
 // Reads the config file and returns a struct storing its contents
 configFile* readConfig(const char* filename) {
-  configFile* cfg = malloc(sizeof(cfg));
+  configFile* cfg = malloc(sizeof(configFile));
   FILE* f = fopen(filename, "r");
 
   if (f) {
-    fscanf(f, "%d\n", &cfg->w);
-    fscanf(f, "%d\n", &cfg->h);
+    if(!fscanf(f, "%d\n", &cfg->w))
+      recordLog("Could not read the window width from the config file");
+    if(!fscanf(f, "%d\n", &cfg->h))
+      recordLog("Could not read the window height from the config file");
 
     char* title = malloc(128 * sizeof(char));
-    fgets(title, 128, f);
-    cfg->windowTitle = title;
-    cfg->windowTitle[strlen(cfg->windowTitle) - 1] = '\0';
-    
+    if (fgets(title, 128, f)) {
+      cfg->windowTitle = title;
+      if (strlen(title) > 0)
+	cfg->windowTitle[strlen(cfg->windowTitle) - 1] = '\0';
+    }
+    else {
+      recordLog("Could not read the window title from the config file");
+    }
+
     fclose(f);
   }
 
@@ -60,6 +67,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
 
   graphicsBackend* gfx = initGraphics(cfg->w, cfg->h, cfg->windowTitle);
+  free(cfg->windowTitle);
   free(cfg);
   if (gfx) {
     drawToGraphics(gfx, drawingTest);
