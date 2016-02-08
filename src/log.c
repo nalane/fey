@@ -4,11 +4,18 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+const char* logFile;
+
+// Initializes the log file
+void initLogging(const char* file) {
+  logFile = file;
+  FILE* f = fopen(logFile, "w");
+  fclose(f);
+}
+
 // Records a message to the log file
 bool vRecordLog(char* message, va_list args) {
-  static const char LOG_FILE[] = "opal.log";
-  
-  FILE* f = fopen(LOG_FILE, "w");
+  FILE* f = fopen(logFile, "a");
   if (f) {
     vfprintf(f, message, args);
     fprintf(f, "\n");
@@ -17,7 +24,7 @@ bool vRecordLog(char* message, va_list args) {
   }
 
   else {
-    fprintf(stderr, "ERROR: Could not write to the log file at %s\n\n", LOG_FILE);
+    fprintf(stderr, "ERROR: Could not write to the log file at %s\n\n", logFile);
     fprintf(stderr, "Message intended to be logged:\n");
     vfprintf(stderr, message, args);
     fprintf(stderr, "\n");
@@ -25,6 +32,7 @@ bool vRecordLog(char* message, va_list args) {
   }
 }
 
+// Wrapper around vRecordLog
 bool recordLog(char* message, ...) {
   va_list args;
   va_start(args, message);
