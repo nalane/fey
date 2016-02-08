@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,10 +45,15 @@ game* readConfig(const char* filename) {
   return g;
 }
 
+// Initializes the graphics system
+bool initGame(game* g) {
+  g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle);
+  return (g->gfx != NULL);
+}
+
 // Run the game
 void runGame(game* g) {
-  g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle);
-  if (g->gfx)
+  if (initGame(g))
     drawToGraphics(g->gfx, drawingTest);
 
   else
