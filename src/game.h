@@ -4,6 +4,7 @@
  * Contains functions for initializing and running the game.
  */
 
+#include "paths.h"
 #include "graphicsBackend.h"
 
 // Struct that stores the state of the game
@@ -15,7 +16,7 @@ typedef struct {
 } game;
 
 // Generates a bare game data structure from the config file
-game* readConfig(const char* filename);
+game* readConfig(const path filename);
 
 // Run the game
 void runGame(game* g);

@@ -2,5 +2,7 @@
 
 #include <stdbool.h>
 
-void initLogging(const char* file);
+#include "paths.h"
+
+void initLogging(const path file);
 bool recordLog(char* message, ...);

@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-const char* logFile;
+path logFile;
 
 // Initializes the log file
-void initLogging(const char* file) {
+void initLogging(const path file) {
   logFile = file;
   FILE* f = fopen(logFile, "w");
   

@@ -14,7 +14,7 @@ void drawingTest() {
 }
 
 // Reads the config file and returns a struct storing its contents
-game* readConfig(const char* filename) {
+game* readConfig(const path filename) {
   game* g = malloc(sizeof(game));
   FILE* f = fopen(filename, "r");
 
