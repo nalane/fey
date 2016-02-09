@@ -27,9 +27,11 @@ void setUpProgramPath() {
     }
   }
   #elif __linux__
-  if (!readlink("/proc/self/exe", tmp, DIR_LENGTH))
-    tmp = "\0";
-  for (int i = strlen(tmp) - 1; i >= 0; i--) {
+  int numBytes = readlink("/proc/self/exe", tmp, DIR_LENGTH);
+  if (numBytes < 0)
+    numBytes = 0;
+  
+  for (int i = numBytes - 1; i >= 0; i--) {
     if (tmp[i] == '/') {
       tmp[i] = '\0';
       break;
