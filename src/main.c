@@ -13,10 +13,11 @@
 // Otherwise, uses opal.cfg as the config file.
 // Reads in the config file and initializes the graphics backend.
 int main(int argc, char** argv) {
-  const char DEFAULT_LOG_FILE[] = "opal.log";
+  printf("%s\n", argv[0]);
+  const char DEFAULT_LOG_FILE[] = "opalData/opal.log";
   initLogging(DEFAULT_LOG_FILE);
-  
-  const char DEFAULT_CONFIG_FILE[] = "opal.cfg";
+  recordLog("Test");
+  const char DEFAULT_CONFIG_FILE[] = "opalData/opal.cfg";
   game* g = NULL;
   if (argc == 2)
     g = readConfig(argv[1]);

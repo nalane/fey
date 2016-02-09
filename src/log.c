@@ -10,6 +10,11 @@ const char* logFile;
 void initLogging(const char* file) {
   logFile = file;
   FILE* f = fopen(logFile, "w");
+  
+  if (!f) {
+    fprintf(stderr, "Could not open the logging file.");
+  }
+  
   fclose(f);
 }
 

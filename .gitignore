@@ -1,7 +1,7 @@
 ### Opal ###
 *.log
 opal
-build/opal.cfg
+build/*
 
 ## CMake ###
 CMakeCache.txt

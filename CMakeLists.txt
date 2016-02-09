@@ -8,6 +8,6 @@ target_link_libraries(opal glfw GLEW)
 set(GCC_COMPILE_FLAGS "-O3 -g")
 add_definitions(${GCC_COMPILE_FLAGS})
 
-file(COPY opal.cfg DESTINATION .)
+file(COPY opalData DESTINATION .)
 install(TARGETS opal DESTINATION games)
-install(FILES opal.cfg DESTINATION games)
+install(DIRECTORY opalData DESTINATION games DIRECTORY_PERMISSIONS WORLD_READ WORLD_WRITE WORLD_EXECUTE)
