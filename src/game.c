@@ -17,7 +17,8 @@ void drawingTest() {
 		     cos(currentTime) * 0.5 + 0.5,
 		     0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
-  glDrawArrays(GL_POINTS, 0, 1);
+
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 // Reads the config file and returns a struct storing its contents
