@@ -84,6 +84,7 @@ bool initGame(game* g) {
   g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle, g->vertexShader, g->fragmentShader);
   glGenVertexArrays(1, &(g->vao));
   glBindVertexArray(g->vao);
+  
   return (g->gfx != NULL);
 }
 
