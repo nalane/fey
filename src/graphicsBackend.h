@@ -5,8 +5,9 @@
 
 typedef struct {
   GLFWwindow* window;
+  GLuint shaderProg;
 } graphicsBackend;
 
-graphicsBackend* initGraphics(int w, int h, char* windowTitle);
+graphicsBackend* initGraphics(int w, int h, char* windowTitle, char* vertexSource, char* fragmentSource);
 void drawToGraphics(graphicsBackend* gfx, void (*drawFunction)());
 void terminateGraphics(graphicsBackend* gfx);

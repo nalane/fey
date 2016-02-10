@@ -13,6 +13,9 @@ typedef struct {
   int windowHeight;
   char* windowTitle;
   graphicsBackend* gfx;
+  path vertexShader;
+  path fragmentShader;
+  GLuint vao;
 } game;
 
 // Generates a bare game data structure from the config file

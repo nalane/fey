@@ -1,10 +1,11 @@
 #include <stdlib.h>
 
 #include "graphicsBackend.h"
+#include "shaders.h"
 #include "log.h"
 
 // Starts the graphics engine
-graphicsBackend* initGraphics(int w, int h, char* windowTitle) {
+graphicsBackend* initGraphics(int w, int h, char* windowTitle, char* vertexSource, char* fragmentSource) {
   graphicsBackend* gfx = malloc(sizeof(graphicsBackend));
   
   if (!glfwInit()) {
@@ -27,12 +28,14 @@ graphicsBackend* initGraphics(int w, int h, char* windowTitle) {
     return NULL;
   }
 
+  gfx->shaderProg = compileShaders(vertexSource, fragmentSource);
   return gfx;
 }
 
 // Performs drawing functions
 void drawToGraphics(graphicsBackend* gfx, void (*drawFunction)()) {
   while (!glfwWindowShouldClose(gfx->window)) {
+    glUseProgram(gfx->shaderProg);
     drawFunction();
     glfwSwapBuffers(gfx->window);
     glfwPollEvents();
@@ -41,6 +44,7 @@ void drawToGraphics(graphicsBackend* gfx, void (*drawFunction)()) {
 
 // Quits GLFW and frees gfx
 void terminateGraphics(graphicsBackend* gfx) {
+  deleteShader(gfx->shaderProg);
   glfwTerminate();
   free(gfx);
 }

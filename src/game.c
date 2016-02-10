@@ -4,13 +4,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "log.h"
+#include "paths.h"
 
 // Primary drawing function. For now, just makes the screen blue
 void drawingTest() {
-  GLfloat color[] = {0.0, 0.0, 1.0, 1.0};
+  double currentTime = glfwGetTime();
+  
+  GLfloat color[] = {sin(currentTime) * 0.5 + 0.5,
+		     cos(currentTime) * 0.5 + 0.5,
+		     0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
+  glDrawArrays(GL_POINTS, 0, 1);
 }
 
 // Reads the config file and returns a struct storing its contents
@@ -35,6 +42,32 @@ game* readConfig(const path filename) {
       recordLog("Could not read the window title from the config file");
     }
 
+    char* vertexShader = malloc(256 * sizeof(char));
+    if (fgets(vertexShader, 256, f)) {
+      g->vertexShader = vertexShader;
+      if (strlen(vertexShader) > 0 &&
+	  g->vertexShader[strlen(g->vertexShader) - 1] == '\n')
+	g->vertexShader[strlen(g->vertexShader) - 1] = '\0';
+      g->vertexShader = getFullPath(g->vertexShader);
+      free(vertexShader);
+    }
+    else {
+      recordLog("Could not read the vertex shader from the config file");
+    }
+
+    char* fragmentShader = malloc(256 * sizeof(char));
+    if (fgets(fragmentShader, 256, f)) {
+      g->fragmentShader = fragmentShader;
+      if (strlen(fragmentShader) > 0 &&
+	  g->fragmentShader[strlen(g->fragmentShader) - 1] == '\n')
+	g->fragmentShader[strlen(g->fragmentShader) - 1] = '\0';
+      g->fragmentShader = getFullPath(g->fragmentShader);
+      free(fragmentShader);
+    }
+    else {
+      recordLog("Could not read the fragment shader from the config file");
+    }
+
     fclose(f);
   }
 
@@ -47,7 +80,9 @@ game* readConfig(const path filename) {
 
 // Initializes the graphics system
 bool initGame(game* g) {
-  g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle);
+  g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle, g->vertexShader, g->fragmentShader);
+  glGenVertexArrays(1, &(g->vao));
+  glBindVertexArray(g->vao);
   return (g->gfx != NULL);
 }
 
@@ -62,7 +97,10 @@ void runGame(game* g) {
 
 // Free the game struct
 void destroyGame(game* g) {
+  glDeleteVertexArrays(1, &g->vao);
   terminateGraphics(g->gfx);
   free(g->windowTitle);
+  freePath(g->vertexShader);
+  freePath(g->fragmentShader);
   free(g);
 }
