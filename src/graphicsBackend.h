@@ -1,6 +1,9 @@
 #pragma once
 
 #include <GL/glew.h>
+
+#define GLFW_NO_GLU 1
+#define GLFW_INCLUDE_COREARB 1
 #include <GLFW/glfw3.h>
 
 typedef struct {
