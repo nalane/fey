@@ -4,9 +4,11 @@ project(opal)
 file(GLOB SOURCES "src/*.c")
 add_executable(opal ${SOURCES})
 
-set(LINKED_LIBRARIES glfw GLEW GL)
+set(LINKED_LIBRARIES glfw GLEW)
 if(UNIX)
-  set(LINKED_LIBRARIES ${LINKED_LIBRARIES} m)
+  set(LINKED_LIBRARIES ${LINKED_LIBRARIES} GL m)
+elseif(WIN32)
+  set(LINKED_LIBRARIES ${LINKED_LIBRARIES} opengl32)
 endif()
 target_link_libraries(opal glfw ${LINKED_LIBRARIES})
 
