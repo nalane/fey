@@ -32,6 +32,10 @@ graphicsBackend* initGraphics(int w, int h, char* windowTitle, char* vertexSourc
     return NULL;
   }
 
+  glEnable(GL_CULL_FACE);
+  glFrontFace(GL_CCW);
+  glCullFace(GL_BACK);
+  
   gfx->shaderProg = compileShaders(vertexSource, fragmentSource);
   return gfx;
 }

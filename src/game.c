@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #include "log.h"
 #include "paths.h"
@@ -13,10 +14,18 @@
 void drawingTest() {
   double currentTime = glfwGetTime();
   
-  GLfloat color[] = {sin(currentTime) * 0.5 + 0.5,
-		     cos(currentTime) * 0.5 + 0.5,
-		     0.0, 1.0};
+  GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
+
+  GLfloat attrib0[] = { (float)sin(currentTime) * 0.5f,
+			(float)cos(currentTime) * 0.6f,
+			0.0f, 0.0f};
+  glVertexAttrib4fv(0, attrib0);
+
+  GLfloat attrib1[] = { (float)rand() / RAND_MAX,
+			(float)rand() / RAND_MAX,
+			(float)rand() / RAND_MAX, 0.0f};
+  glVertexAttrib4fv(1, attrib1);
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
@@ -81,6 +90,8 @@ game* readConfig(const path filename) {
 
 // Initializes the graphics system
 bool initGame(game* g) {
+  srand(time(NULL));
+  
   g->gfx = initGraphics(g->windowWidth, g->windowHeight, g->windowTitle, g->vertexShader, g->fragmentShader);
   glGenVertexArrays(1, &(g->vao));
   glBindVertexArray(g->vao);
