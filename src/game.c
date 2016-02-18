@@ -10,7 +10,7 @@
 #include "log.h"
 #include "paths.h"
 
-// Primary drawing function. For now, just makes the screen blue
+// Primary drawing function. For now, is experimental
 void drawingTest() {
   double currentTime = glfwGetTime();
   
@@ -30,6 +30,31 @@ void drawingTest() {
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
+// Gets a string from a file and places it in dest
+// In case of read error, uses varName to log error
+void readStringFromConfig(FILE* f, char** dest, char* varName) {
+  char* tmp = malloc(1024 * sizeof(char));
+    if (fgets(tmp, 1024, f)) {
+      if (strlen(tmp) > 0 && tmp[strlen(tmp) - 1] == '\n')
+	tmp[strlen(tmp) - 1] = '\0';
+
+      *dest = malloc((strlen(tmp) + 1) * sizeof(char));
+      strcpy(*dest, tmp);
+      free(tmp);
+    }
+    else {
+      recordLog("Could not read the %s from the config file", varName);
+    }
+}
+
+// Gets a path from a config file
+void readPathFromConfig(FILE* f, path* dest, char* varName) {
+  char* tmp = NULL;
+  readStringFromConfig(f, &tmp, varName);
+  *dest = getFullPath(tmp);
+  free(tmp);
+}
+
 // Reads the config file and returns a struct storing its contents
 game* readConfig(const path filename) {
   game* g = malloc(sizeof(game));
@@ -41,42 +66,9 @@ game* readConfig(const path filename) {
     if(!fscanf(f, "%d\n", &g->windowHeight))
       recordLog("Could not read the window height from the config file");
 
-    char* title = malloc(128 * sizeof(char));
-    if (fgets(title, 128, f)) {
-      g->windowTitle = title;
-      if (strlen(title) > 0 &&
-	  g->windowTitle[strlen(g->windowTitle) - 1] == '\n')
-	g->windowTitle[strlen(g->windowTitle) - 1] = '\0';
-    }
-    else {
-      recordLog("Could not read the window title from the config file");
-    }
-
-    char* vertexShader = malloc(256 * sizeof(char));
-    if (fgets(vertexShader, 256, f)) {
-      g->vertexShader = vertexShader;
-      if (strlen(vertexShader) > 0 &&
-	  g->vertexShader[strlen(g->vertexShader) - 1] == '\n')
-	g->vertexShader[strlen(g->vertexShader) - 1] = '\0';
-      g->vertexShader = getFullPath(g->vertexShader);
-      free(vertexShader);
-    }
-    else {
-      recordLog("Could not read the vertex shader from the config file");
-    }
-
-    char* fragmentShader = malloc(256 * sizeof(char));
-    if (fgets(fragmentShader, 256, f)) {
-      g->fragmentShader = fragmentShader;
-      if (strlen(fragmentShader) > 0 &&
-	  g->fragmentShader[strlen(g->fragmentShader) - 1] == '\n')
-	g->fragmentShader[strlen(g->fragmentShader) - 1] = '\0';
-      g->fragmentShader = getFullPath(g->fragmentShader);
-      free(fragmentShader);
-    }
-    else {
-      recordLog("Could not read the fragment shader from the config file");
-    }
+    readStringFromConfig(f, &g->windowTitle, "window title");
+    readPathFromConfig(f, &g->vertexShader, "vertex shader");
+    readPathFromConfig(f, &g->fragmentShader, "fragment shader");
 
     fclose(f);
   }
