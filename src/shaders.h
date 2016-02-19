@@ -6,5 +6,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-GLuint compileShaders(char* vertexSource, char* fragmentSource);
+#include "paths.h"
+
+GLuint compileShaders(path vertexSource, path fragmentSource);
 void deleteShader(GLuint progID);

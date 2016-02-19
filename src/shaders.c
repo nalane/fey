@@ -4,10 +4,12 @@
 #include <stdio.h>
 
 #include "log.h"
+#include "paths.h"
 
 typedef char* fileText;
 
-fileText readFile(char* filename) {
+// Reads an entire file into memory
+fileText readFile(path filename) {
   FILE* f = fopen(filename, "rb");
   fileText text = NULL;
 
@@ -30,46 +32,40 @@ fileText readFile(char* filename) {
   return text;
 }
 
+// Ensures the shaders are freed from memory
 void freeText(fileText t) {
   free(t);
 }
 
-GLuint compileShaders(char* vertexSource, char* fragmentSource) {
-  GLint compiled = 0;
-  
-  fileText vertexText = readFile(vertexSource);
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, (const char**)&vertexText, NULL);
-  glCompileShader(vertexShader);
-  freeText(vertexText);
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &compiled);
-  if (!compiled) {
-    GLint maxLength = 0;
-    glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-    
-    char* message = malloc(maxLength * sizeof(char));
-    glGetShaderInfoLog(vertexShader, maxLength, &maxLength, message);
-    
-    recordLog("Compiling vertex shader failed with the following message:\n%s", message);
-    free(message);
-  }
+// Loads a shader and returns its ID
+// If an error occurred, uses shaderName to record message
+GLuint loadShader(path sourceFile, GLenum shaderType, char* shaderName) {
+  fileText tmpText = readFile(sourceFile);
+  GLuint shaderID = glCreateShader(shaderType);
+  glShaderSource(shaderID, 1, (const char**)&tmpText, NULL);
+  glCompileShader(shaderID);
+  freeText(tmpText);
 
-  fileText fragmentText = readFile(fragmentSource);
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, (const char**)&fragmentText, NULL);
-  glCompileShader(fragmentShader);
-  freeText(fragmentText);
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &compiled);
+  GLint compiled = 0;
+  glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compiled);
   if (!compiled) {
     GLint maxLength = 0;
-    glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
+    glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
     
     char* message = malloc(maxLength * sizeof(char));
-    glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, message);
+    glGetShaderInfoLog(shaderID, maxLength, &maxLength, message);
     
-    recordLog("Compiling fragment shader failed with the following message:\n%s", message);
+    recordLog("Compiling %s shader failed with the following message:\n%s", shaderName, message);
     free(message);
   }
+  
+  return shaderID;
+}
+
+// Produces the id of the shader program
+GLuint compileShaders(path vertexSource, path fragmentSource) {
+  GLuint vertexShader = loadShader(vertexSource, GL_VERTEX_SHADER, "vertex");
+  GLuint fragmentShader = loadShader(fragmentSource, GL_FRAGMENT_SHADER, "fragment");
 
   GLuint prog = glCreateProgram();
   glAttachShader(prog, vertexShader);
