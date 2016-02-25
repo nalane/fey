@@ -20,13 +20,20 @@ int main(int argc, char** argv) {
   setUpProgramPath();
   path logPath = getFullPath(DEFAULT_LOG_FILE);
   path configPath = getFullPath(DEFAULT_CONFIG_FILE);
+
+  bool debug = false;
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-d") == 0) {
+      debug = true;
+    }
+
+    else {
+      configPath = argv[i];
+    }
+  }
   
-  initLogging(logPath);
-  game* g = NULL;
-  if (argc == 2)
-    g = readConfig(argv[1]);
-  else
-    g = readConfig(configPath);
+  initLogging(logPath, debug);
+  game* g = readConfig(configPath);
 
   if (!g)
     return EXIT_FAILURE;

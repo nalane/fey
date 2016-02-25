@@ -58,6 +58,9 @@ GLuint loadShader(path sourceFile, GLenum shaderType, char* shaderName) {
     recordLog("Compiling %s shader failed with the following message:\n%s", shaderName, message);
     free(message);
   }
+  else {
+    recordLog("Successfully compiled %s shader!", shaderName);
+  }
   
   return shaderID;
 }
@@ -86,6 +89,9 @@ GLuint compileShaders(path vertexSource, path fragmentSource) {
     
     recordLog("Linking shader program failed with the following message:\n%s", message);
     free(message);
+  }
+  else {
+    recordLog("Successfully linked all shaders!");
   }
   
   return prog;

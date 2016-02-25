@@ -5,9 +5,10 @@
 #include <stdarg.h>
 
 path logFile;
+bool debug;
 
 // Initializes the log file
-void initLogging(const path file) {
+void initLogging(const path file, bool debugFlag) {
   logFile = file;
   FILE* f = fopen(logFile, "w");
   
@@ -16,10 +17,16 @@ void initLogging(const path file) {
   }
   
   fclose(f);
+  debug = debugFlag;
 }
 
 // Records a message to the log file
 bool vRecordLog(char* message, va_list args) {
+  if (debug) {
+    vfprintf(stdout, message, args);
+    fprintf(stdout, "\n");
+  }
+  
   FILE* f = fopen(logFile, "a");
   if (f) {
     vfprintf(f, message, args);
