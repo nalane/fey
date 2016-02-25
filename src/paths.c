@@ -51,10 +51,10 @@ void setUpProgramPath() {
 
 // Convenient string concatenation
 char* strConcatenate(char* s1, char* s2) {
-  int size = strlen(s1) + strlen(s2) + 1;
+  int size = strlen(s1) + strlen(s2) + 2;
   char* sum = malloc(size * sizeof(char));
   
-  snprintf(sum, size, "%s%s", s1, s2);
+  snprintf(sum, size, "%s/%s", s1, s2);
   return sum;
 }
 

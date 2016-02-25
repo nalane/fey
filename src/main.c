@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     }
 
     else {
-      configPath = argv[i];
+      configPath = getFullPath(argv[i]);
     }
   }
   
