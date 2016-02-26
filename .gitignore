@@ -31,6 +31,7 @@ install_manifest.txt
 
 # Shared objects (inc. Windows DLLs)
 *.dll
+!lib/*.dll
 *.so
 *.so.*
 *.dylib
