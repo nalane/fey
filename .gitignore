@@ -1,6 +1,6 @@
-### Opal ###
+### Fey ###
 *.log
-opal
+fey
 build/*
 
 ## CMake ###
@@ -11,7 +11,7 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
-### C ###
+### C++ ###
 # Object files
 *.o
 *.ko

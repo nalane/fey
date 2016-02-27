@@ -5,10 +5,7 @@
  * we must give it the full path determined by the path of the program.
  */
 
-typedef char* path;
+#include <string>
 
 void setUpProgramPath();
-char* strConcatenate(char* s1, char* s2);
-path getFullPath(path s);
-void freePath(path s);
-void cleanupPaths();
+std::string getFullPath(std::string s);

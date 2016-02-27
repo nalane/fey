@@ -1,50 +1,40 @@
-#include "shaders.h"
+#include <fstream>
+#include <vector>
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "log.hpp"
+#include "paths.hpp"
+#include "shaders.hpp"
 
-#include "log.h"
-#include "paths.h"
-
-typedef char* fileText;
+using namespace std;
 
 // Reads an entire file into memory
-fileText readFile(path filename) {
-  FILE* f = fopen(filename, "rb");
-  fileText text = NULL;
-
-  if (f) {
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-
-    text = malloc(size + 1);
-    size = fread(text, 1, size, f);
-
-    text[size] = '\0';
+string readFile(string filename) {
+  string text = "";
+  
+  ifstream fin(filename.c_str());
+  if (fin.is_open()) {
+    string tmp;
+    while (getline(fin, tmp)) {
+      text += (tmp + "\n");
+    }
+    fin.close();
   }
 
   else {
-    recordLog("Could not open the file %s\n", filename);
+    recordLog("Could not open the file " + filename);
   }
-  
-  fclose(f);
+ 
   return text;
-}
-
-// Ensures the shaders are freed from memory
-void freeText(fileText t) {
-  free(t);
 }
 
 // Loads a shader and returns its ID
 // If an error occurred, uses shaderName to record message
-GLuint loadShader(path sourceFile, GLenum shaderType, char* shaderName) {
-  fileText tmpText = readFile(sourceFile);
+GLuint loadShader(string sourceFile, GLenum shaderType, string shaderName) {
+  string tmpText = readFile(sourceFile);
   GLuint shaderID = glCreateShader(shaderType);
-  glShaderSource(shaderID, 1, (const char**)&tmpText, NULL);
+  const char* data[] = {tmpText.c_str()};
+  glShaderSource(shaderID, 1, data, NULL);
   glCompileShader(shaderID);
-  freeText(tmpText);
 
   GLint compiled = 0;
   glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compiled);
@@ -52,21 +42,21 @@ GLuint loadShader(path sourceFile, GLenum shaderType, char* shaderName) {
     GLint maxLength = 0;
     glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
     
-    char* message = malloc(maxLength * sizeof(char));
+    char* message = new char[maxLength];
     glGetShaderInfoLog(shaderID, maxLength, &maxLength, message);
     
-    recordLog("Compiling %s shader failed with the following message:\n%s", shaderName, message);
-    free(message);
+    recordLog("Compiling " + shaderName + " shader failed with the following message:\n" + message);
+    delete[] message;
   }
   else {
-    recordLog("Successfully compiled %s shader!", shaderName);
+    recordLog("Successfully compiled " + shaderName + " shader!");
   }
   
   return shaderID;
 }
 
 // Produces the id of the shader program
-GLuint compileShaders(path vertexSource, path fragmentSource) {
+GLuint compileShaders(string vertexSource, string fragmentSource) {
   GLuint vertexShader = loadShader(vertexSource, GL_VERTEX_SHADER, "vertex");
   GLuint fragmentShader = loadShader(fragmentSource, GL_FRAGMENT_SHADER, "fragment");
 
@@ -84,11 +74,11 @@ GLuint compileShaders(path vertexSource, path fragmentSource) {
     GLint maxLength = 0;
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &maxLength);
     
-    char* message = malloc(maxLength * sizeof(char));
+    char* message = new char[maxLength];
     glGetProgramInfoLog(prog, maxLength, &maxLength, message);
     
-    recordLog("Linking shader program failed with the following message:\n%s", message);
-    free(message);
+    recordLog("Linking shader program failed with the following message:\n" + string(message));
+    delete[] message;
   }
   else {
     recordLog("Successfully linked all shaders!");
