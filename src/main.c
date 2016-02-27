@@ -22,13 +22,15 @@ int main(int argc, char** argv) {
   path configPath = getFullPath(DEFAULT_CONFIG_FILE);
 
   bool debug = false;
+  bool customConfig = false;
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-d") == 0) {
       debug = true;
     }
 
     else {
-      configPath = getFullPath(argv[i]);
+      configPath = argv[i];
+      customConfig = true;
     }
   }
   
@@ -41,7 +43,8 @@ int main(int argc, char** argv) {
   runGame(g);
   destroyGame(g);
 
-  freePath(configPath);
   freePath(logPath);
+  if (!customConfig)
+    freePath(configPath);
   return EXIT_SUCCESS;
 }
