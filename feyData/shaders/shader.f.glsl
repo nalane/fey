@@ -1,14 +1,9 @@
 #version 330 core
 
-in VS_COLOR {
-   vec4 color;
-} fs_in;
+smooth in vec4 theColor;
 
 out vec4 color;
 
 void main(void) {
-     color = vec4(sin(gl_FragCoord.x * 0.25) * 0.5 + 0.5,
-     	     	  cos(gl_FragCoord.y * 0.25) * 0.5 + 0.5,
-		  sin(gl_FragCoord.x * 0.15) * cos(gl_FragCoord.y * 0.15),
-		  1.0);
+  color = theColor;
 }

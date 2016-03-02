@@ -7,6 +7,9 @@
 #include <string>
 
 #include "paths.hpp"
+
+class engine;
+#include "object.hpp"
 #include "graphicsBackend.hpp"
 
 class engine {
@@ -17,13 +20,14 @@ private:
   graphicsBackend* gfx;
   std::string vertexShader;
   std::string fragmentShader;
-  GLuint vao;
+  object* obj;
 
   bool initGame();
 
 public:
   engine(std::string configFile);
   ~engine();
-  
+
+  void draw();
   void runGame();
 };

@@ -7,14 +7,18 @@
 
 #include <string>
 
+class graphicsBackend; // Resolves circular class dependencies
+#include "engine.hpp"
+
 class graphicsBackend {
 private:
   GLFWwindow* window;
   GLuint shaderProg;
+  GLuint vao;
 
 public:
   graphicsBackend(int w, int h, std::string windowTitle, std::string vertexSource, std::string fragmentSource);
   ~graphicsBackend();
 
-  void drawToGraphics(void (*drawFunction)());
+  void drawToGraphics(engine* parentEngine);
 };

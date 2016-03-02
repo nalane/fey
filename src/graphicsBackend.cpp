@@ -54,14 +54,15 @@ graphicsBackend::graphicsBackend(int w, int h, string windowTitle, string vertex
 // Quits GLFW and frees gfx
 graphicsBackend::~graphicsBackend() {
   deleteShader(shaderProg);
+  glDeleteVertexArrays(1, &vao);
   glfwTerminate();
 }
 
 // Performs drawing functions
-void graphicsBackend::drawToGraphics(void (*drawFunction)()) {
+void graphicsBackend::drawToGraphics(engine* parentEngine) {
   while (!glfwWindowShouldClose(window)) {
     glUseProgram(shaderProg);
-    drawFunction();
+    parentEngine->draw();
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
