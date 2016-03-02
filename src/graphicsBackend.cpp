@@ -54,7 +54,6 @@ graphicsBackend::graphicsBackend(int w, int h, string windowTitle, string vertex
 // Quits GLFW and frees gfx
 graphicsBackend::~graphicsBackend() {
   deleteShader(shaderProg);
-  glDeleteVertexArrays(1, &vao);
   glfwTerminate();
 }
 
