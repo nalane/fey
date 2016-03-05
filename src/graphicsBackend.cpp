@@ -1,5 +1,5 @@
 #include "graphicsBackend.hpp"
-#include "shaders.hpp"
+#include "shaderProgram.hpp"
 #include "log.hpp"
 
 #include <string>
@@ -45,7 +45,11 @@ graphicsBackend::graphicsBackend(int w, int h, string windowTitle, string vertex
 	glCullFace(GL_BACK);
       
 	// Setup the shaders
-	shaderProg = compileShaders(vertexSource, fragmentSource);
+	shaderProg.addShader(new shader(vertexSource, GL_VERTEX_SHADER));
+	shaderProg.addShader(new shader(fragmentSource, GL_FRAGMENT_SHADER));
+	shaderProg.loadShaders();
+	shaderProg.compileShaders();
+	shaderProg.linkShaders();
       }
     }
   }
@@ -53,14 +57,13 @@ graphicsBackend::graphicsBackend(int w, int h, string windowTitle, string vertex
 
 // Quits GLFW and frees gfx
 graphicsBackend::~graphicsBackend() {
-  deleteShader(shaderProg);
   glfwTerminate();
 }
 
 // Performs drawing functions
 void graphicsBackend::drawToGraphics(engine* parentEngine) {
   while (!glfwWindowShouldClose(window)) {
-    glUseProgram(shaderProg);
+    glUseProgram(shaderProg.getID());
     parentEngine->draw();
     glfwSwapBuffers(window);
     glfwPollEvents();

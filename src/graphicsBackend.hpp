@@ -9,11 +9,12 @@
 
 class graphicsBackend; // Resolves circular class dependencies
 #include "engine.hpp"
+#include "shaderProgram.hpp"
 
 class graphicsBackend {
 private:
   GLFWwindow* window;
-  GLuint shaderProg;
+  shaderProgram shaderProg;
   GLuint vao;
 
 public:
