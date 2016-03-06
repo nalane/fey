@@ -1,5 +1,11 @@
 #pragma once
+
+/*
+ * Class contains and loads the shader program
+ */
+
 #include <vector>
+
 #include "shader.hpp"
 
 class shaderProgram {
@@ -8,11 +14,12 @@ private:
   GLuint progID;
 
 public:
-  shaderProgram();
+  shaderProgram() : progID(-1) {};
   ~shaderProgram();
+  
   void addShader(shader* s);
   bool loadShaders();
   bool compileShaders();
   bool linkShaders();
-  GLuint getID() {return progID;};
+  void useProgram();
 };

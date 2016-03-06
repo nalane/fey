@@ -1,8 +1,8 @@
 #include "object.hpp"
 #include "log.hpp"
 
-object::object(graphicsBackend* gfx, float positions[3][4], float colors[3][4]) :
-  gfx(gfx) {
+// Loads the "object" into GPU memory
+object::object(graphicsBackend* gfx, float positions[3][4], float colors[3][4]) : gfx(gfx) {
   glGenVertexArrays(1, &vao);
   glGenBuffers(2, vbo);
 
@@ -19,11 +19,13 @@ object::object(graphicsBackend* gfx, float positions[3][4], float colors[3][4]) 
   glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
+// Removes "object" from GPU
 object::~object() {
   glDeleteVertexArrays(1, &vao);
   glDeleteBuffers(2, vbo);
 }
 
+// Tells GPU to render "object"
 void object::draw() {
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }

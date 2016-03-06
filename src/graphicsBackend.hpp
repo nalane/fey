@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * Contains fundamental functions for drawing to the screen
+ */
+
 #include <GL/glew.h>
 #define GLFW_NO_GLU 1
 #define GLFW_INCLUDE_COREARB 1

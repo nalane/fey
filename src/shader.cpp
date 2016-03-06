@@ -4,13 +4,16 @@
 
 using namespace std;
 
-shader::shader(string sourceFile, GLenum shaderType) : sourceFile(sourceFile), shaderType(shaderType), shaderID(-1) {
+// Initializes class values and fills the dictionary
+shader::shader(string sourceFile, GLenum shaderType) :
+  sourceFile(sourceFile), shaderType(shaderType), shaderID(-1) {
   shaderDict[GL_VERTEX_SHADER] = "vertex";
   shaderDict[GL_GEOMETRY_SHADER] = "geometry";
   shaderDict[GL_FRAGMENT_SHADER] = "fragment";
   shaderDict[GL_COMPUTE_SHADER] = "compute";
 }
 
+// Removes shader from memory
 shader::~shader() {
   glDeleteShader(shaderID);
 }

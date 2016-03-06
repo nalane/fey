@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * Class that stores a shader for the shader program
+ */
+
 #include <GL/glew.h>
 #define GLFW_NO_GLU 1
 #define GLFW_INCLUDE_COREARB 1
@@ -14,7 +18,7 @@ private:
   GLenum shaderType;
   std::string sourceFile;
   std::string source;
-std::map<GLuint, std::string> shaderDict;
+  std::map<GLuint, std::string> shaderDict;
 
 public:
   shader(std::string sourceFile, GLenum shaderType);

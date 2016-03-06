@@ -3,18 +3,17 @@
 
 using namespace std;
 
-shaderProgram::shaderProgram() : progID(-1) {
-
-}
-
+// Deletes shader program from GPU memory
 shaderProgram::~shaderProgram() {
   glDeleteProgram(progID);
 }
 
+// Adds a shader to the program
 void shaderProgram::addShader(shader* s) {
   shaders.push_back(s);
 }
 
+// Load all shaders into main memory
 bool shaderProgram::loadShaders() {
   bool loaded = true;
   for (shader* s : shaders) {
@@ -24,6 +23,7 @@ bool shaderProgram::loadShaders() {
   return loaded;
 }
 
+// Compile all shaders into GPU memory
 bool shaderProgram::compileShaders() {
   bool compiled = true;
   for (shader* s : shaders) {
@@ -33,6 +33,7 @@ bool shaderProgram::compileShaders() {
   return compiled;
 }
 
+// Link shaders into a full program in GPU
 bool shaderProgram::linkShaders() {
   progID = glCreateProgram();
   for (shader* s : shaders) {
@@ -62,4 +63,9 @@ bool shaderProgram::linkShaders() {
     recordLog("Successfully linked all shaders!");
     return true;
   }
+}
+
+// Tells GPU to use this program
+void shaderProgram::useProgram() {
+  glUseProgram(progID);
 }

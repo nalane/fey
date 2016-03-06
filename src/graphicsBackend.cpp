@@ -63,7 +63,7 @@ graphicsBackend::~graphicsBackend() {
 // Performs drawing functions
 void graphicsBackend::drawToGraphics(engine* parentEngine) {
   while (!glfwWindowShouldClose(window)) {
-    glUseProgram(shaderProg.getID());
+    shaderProg.useProgram();
     parentEngine->draw();
     glfwSwapBuffers(window);
     glfwPollEvents();

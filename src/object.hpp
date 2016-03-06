@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * A dummy class to test drawing a generic object
+ */
+
 class object;
 #include "graphicsBackend.hpp"
 
