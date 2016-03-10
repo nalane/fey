@@ -4,6 +4,7 @@
  * Class that stores a shader for the shader program
  */
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #define GLFW_NO_GLU 1
 #define GLFW_INCLUDE_COREARB 1
