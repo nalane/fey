@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.2.2)
 project(fey)
 
+include_directories(glm)
+
 file(GLOB SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
