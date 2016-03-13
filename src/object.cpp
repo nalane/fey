@@ -21,8 +21,6 @@ object::object(graphicsBackend* gfx, float positions[3][4], float colors[3][4]) 
   GLuint indices[3] = {0, 1, 2};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-  glEnable(GL_PRIMITIVE_RESTART);
-  glPrimitiveRestartIndex(3);
 }
 
 // Removes "object" from GPU
