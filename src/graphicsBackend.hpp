@@ -25,5 +25,5 @@ public:
 
   void drawToGraphics(engine* parentEngine);
   
-  void setCamera(camera* c) : currentCamera(c) {};
+  void setCamera(camera* c) {currentCamera = c;}
 };

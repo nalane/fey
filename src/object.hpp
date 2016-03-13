@@ -10,7 +10,7 @@ class object;
 class object {
 private:
   GLuint vao;
-  GLuint vbo[2];
+  GLuint vbo[3];
 
   graphicsBackend* gfx;
 
