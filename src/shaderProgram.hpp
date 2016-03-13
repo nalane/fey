@@ -22,4 +22,5 @@ public:
   bool compileShaders();
   bool linkShaders();
   void useProgram();
+  GLuint getProgID() {return progID;}
 };

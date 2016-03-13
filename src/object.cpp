@@ -3,11 +3,13 @@
 
 // Loads the "object" into GPU memory
 object::object(float positions[3][4], float colors[3][4]) {
+	modelMatrix = glm::mat4(1.0);
+	
   glGenVertexArrays(1, &vao);
   glGenBuffers(3, vbo);
 
   glBindVertexArray(vao);
-
+  
   glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
   glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);

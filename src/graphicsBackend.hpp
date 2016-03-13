@@ -16,7 +16,6 @@ class graphicsBackend {
 private:
   GLFWwindow* window;
   shaderProgram shaderProg;
-  GLuint vao;
   camera* currentCamera;
 
 public:
@@ -26,4 +25,6 @@ public:
   void drawToGraphics(engine* parentEngine);
   
   void setCamera(camera* c) {currentCamera = c;}
+  camera* getCamera() {return currentCamera;}
+  shaderProgram* getShaderProg() {return &shaderProg;}
 };
