@@ -2,7 +2,7 @@
 #include "log.hpp"
 
 // Loads the "object" into GPU memory
-object::object(graphicsBackend* gfx, float positions[3][4], float colors[3][4]) : gfx(gfx) {
+object::object(float positions[3][4], float colors[3][4]) {
   glGenVertexArrays(1, &vao);
   glGenBuffers(3, vbo);
 

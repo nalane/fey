@@ -63,7 +63,7 @@ bool engine::initGame() {
     {0.0, 1.0, 0.0, 1.0},
     {0.0, 0.0, 1.0, 1.0}
   };
-  obj = new object(gfx, triPosition, triColor);
+  obj = new object(triPosition, triColor);
   
   return (gfx != NULL);
 }
