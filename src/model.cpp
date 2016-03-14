@@ -56,6 +56,6 @@ void model::draw() {
 	
 	if (elementsIndex < 0) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);
-		glDrawElements(GL_TRIANGLES, elementsSize, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLE_STRIP, elementsSize, GL_UNSIGNED_INT, NULL);
 	}
 }

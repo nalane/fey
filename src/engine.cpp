@@ -55,16 +55,18 @@ bool engine::initGame() {
   currentCamera = new camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0),
 	 45.0, (float)windowWidth / (float)windowHeight);  
 
-  float triPosition[3][4] = {
-    { -0.4f, 0.1f, 1.0f, 1.0f},
-    {  0.4f, 0.1f, 1.0f, 1.0f},
-    {  0.0f, 0.7f, 1.0f, 1.0f},
+  float triPosition[4][4] = {
+	{  0.0f, -0.7f, 1.0f, 1.0f},
+	{  0.4f,  0.1f, 1.0f, 1.0f},
+    { -0.4f,  0.1f, 1.0f, 1.0f},
+    {  0.0f,  0.7f, 1.0f, 1.0f},
   };
 
-  float triColor[3][4] = {
+  float triColor[4][4] = {
     {1.0, 0.0, 0.0, 1.0},
     {0.0, 1.0, 0.0, 1.0},
-    {0.0, 0.0, 1.0, 1.0}
+    {0.0, 0.0, 1.0, 1.0},
+	{1.0, 0.0, 1.0, 1.0}
   };
   obj = new object(triPosition, triColor);
   

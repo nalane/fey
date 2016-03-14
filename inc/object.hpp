@@ -12,7 +12,7 @@ private:
   glm::mat4 modelMatrix;
 
 public:
-  object(float positions[3][4], float colors[3][4]);
+  object(float positions[4][4], float colors[4][4]);
   ~object();
 			
   void draw();
