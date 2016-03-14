@@ -6,25 +6,32 @@
 
 #include <string>
 
-#include "paths.hpp"
-
 class engine;
+#include "paths.hpp"
 #include "object.hpp"
-#include "graphicsBackend.hpp"
 #include "camera.hpp"
+#include "glHeaders.hpp"
+#include "shaderProgram.hpp"
 
 class engine {
 private:
   int windowWidth;
   int windowHeight;
   std::string windowTitle;
-  graphicsBackend* gfx;
   std::string vertexShader;
   std::string fragmentShader;
   object* obj;
   camera* currentCamera;
+  
+  GLFWwindow* window;
+  shaderProgram shaderProg;
 
   bool initGame();
+  bool initGLFW();
+  bool initGLEW();
+  void enableGLFeatures();
+  void setupShaders();
+  bool initGraphics();
 
 public:
   engine(std::string configFile);
