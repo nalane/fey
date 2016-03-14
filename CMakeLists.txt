@@ -6,6 +6,7 @@ include_directories(deps/glfw/include)
 include_directories(deps/glm)
 add_subdirectory(deps)
 
+include_directories(inc)
 file(GLOB SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
