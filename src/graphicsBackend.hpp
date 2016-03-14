@@ -10,13 +10,11 @@
 class graphicsBackend; // Resolves circular class dependencies
 #include "engine.hpp"
 #include "shaderProgram.hpp"
-#include "camera.hpp"
 
 class graphicsBackend {
 private:
   GLFWwindow* window;
   shaderProgram shaderProg;
-  camera* currentCamera;
 
 public:
   graphicsBackend(int w, int h, std::string windowTitle, std::string vertexSource, std::string fragmentSource);
@@ -24,7 +22,5 @@ public:
 
   void drawToGraphics(engine* parentEngine);
   
-  void setCamera(camera* c) {currentCamera = c;}
-  camera* getCamera() {return currentCamera;}
   shaderProgram* getShaderProg() {return &shaderProg;}
 };

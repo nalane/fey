@@ -49,9 +49,10 @@ engine::~engine() {
 // Initializes the graphics system
 bool engine::initGame() {
   srand(time(NULL));
+  currentCamera = new camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0),
+	 45.0, (float)windowWidth / (float)windowHeight);
   
   gfx = new graphicsBackend(windowWidth, windowHeight, windowTitle, vertexShader, fragmentShader);
-  gfx->setCamera(new camera());
 
   float triPosition[3][4] = {
     { -0.4f, 0.1f, 1.0f, 1.0f},
@@ -76,7 +77,7 @@ void engine::draw() {
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
 
-  glm::mat4 transformMatrix = glm::mat4(1.0f);//gfx->getCamera()->getVPMatrix() * obj->getModelMatrix();
+  glm::mat4 transformMatrix = glm::mat4(1.0f);//currentCamera->getVPMatrix() * obj->getModelMatrix();
   GLint mvpHandle = glGetUniformLocation(gfx->getShaderProg()->getProgID(), "transformMatrix");
   glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
   

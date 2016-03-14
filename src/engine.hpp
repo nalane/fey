@@ -11,6 +11,7 @@
 class engine;
 #include "object.hpp"
 #include "graphicsBackend.hpp"
+#include "camera.hpp"
 
 class engine {
 private:
@@ -21,6 +22,7 @@ private:
   std::string vertexShader;
   std::string fragmentShader;
   object* obj;
+  camera* currentCamera;
 
   bool initGame();
 
