@@ -4,13 +4,11 @@
  * A dummy class to test drawing a generic object
  */
  
-#include "glHeaders.hpp"
+#include "model.hpp"
 
 class object {
 private:
-  GLuint vao;
-  GLuint vbo[3];
-  
+  model m;
   glm::mat4 modelMatrix;
 
 public:

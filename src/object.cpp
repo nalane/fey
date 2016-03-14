@@ -1,38 +1,27 @@
 #include "object.hpp"
 #include "log.hpp"
 
+using namespace std;
+
 // Loads the "object" into GPU memory
 object::object(float positions[3][4], float colors[3][4]) {
 	modelMatrix = glm::mat4(1.0);
-	
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(3, vbo);
-
-  glBindVertexArray(vao);
   
-  glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-  glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), colors, GL_STATIC_DRAW);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  
-  GLuint indices[3] = {0, 1, 2};
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  indices.push_back(2);
+  m.addData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW, 0);
+  m.addData(GL_ARRAY_BUFFER, 12 * sizeof(float), colors, GL_STATIC_DRAW, 1);
+  m.setElementIndices(indices);
 }
 
 // Removes "object" from GPU
 object::~object() {
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(3, vbo);
+
 }
 
 // Tells GPU to render "object"
 void object::draw() {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+	m.draw();
 }

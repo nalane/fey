@@ -121,6 +121,7 @@ void engine::setupShaders() {
   shaderProg.loadShaders();
   shaderProg.compileShaders();
   shaderProg.linkShaders();
+  shaderProg.useProgram();
 }
 
 bool engine::initGraphics() {
