@@ -41,6 +41,19 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
   }
 }
 
+// Sends vertex data to the GPU
+void model::setVertices(vector<glm::vec3> vertexList) {
+  numVertices = vertexList.size();
+  vector<float> rawData;
+  for (glm::vec3 v : vertexList) {
+    rawData.push_back(v.x);
+    rawData.push_back(v.y);
+    rawData.push_back(v.z);
+    rawData.push_back(1.0);
+  }
+  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 0);
+}
+
 // Sets the drawing order for vertices
 void model::setElementIndices(vector<int> indexList) {
   if (elementsIndex == 0) {

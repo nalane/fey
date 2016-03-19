@@ -4,7 +4,7 @@
 using namespace std;
 
 // Loads the "object" into GPU memory
-object::object(float positions[4][4], float colors[4][4]) {
+object::object(vector<glm::vec3> positions, float colors[4][4]) {
   modelMatrix = glm::mat4(1.0);
   
   vector<int> indices;
@@ -14,7 +14,7 @@ object::object(float positions[4][4], float colors[4][4]) {
   indices.push_back(3);
   m.setElementIndices(indices);
   
-  m.addData(GL_ARRAY_BUFFER, 16 * sizeof(float), positions, GL_STATIC_DRAW, 0);
+  m.setVertices(positions);
   m.addData(GL_ARRAY_BUFFER, 16 * sizeof(float), colors, GL_STATIC_DRAW, 1);
 }
 

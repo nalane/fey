@@ -5,6 +5,9 @@
  */
  
 #include "model.hpp"
+#include "glHeaders.hpp"
+
+#include <vector>
 
 class object {
 private:
@@ -12,7 +15,7 @@ private:
   glm::mat4 modelMatrix;
 
 public:
-  object(float positions[4][4], float colors[4][4]);
+  object(std::vector<glm::vec3>, float colors[4][4]);
   ~object();
 			
   void draw();

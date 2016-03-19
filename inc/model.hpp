@@ -15,12 +15,14 @@ private:
   int nonPassIndex;
   int elementsIndex;
   int elementsSize;
+  int numVertices;
 
 public:
   model();
   ~model();
 	
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1);
+  void setVertices(std::vector<glm::vec3> vertexList);
   void setElementIndices(std::vector<int> indexList);
   void draw();
 };
