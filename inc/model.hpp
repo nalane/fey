@@ -10,17 +10,17 @@
 
 class model {
 private:
-	GLuint vao;
-	std::map<int, GLuint> vbos;
-	int nonPassIndex;
-	int elementsIndex;
-	int elementsSize;
+  GLuint vao;
+  std::map<int, GLuint> vbos;
+  int nonPassIndex;
+  int elementsIndex;
+  int elementsSize;
 
 public:
-	model();
-	~model();
+  model();
+  ~model();
 	
-	void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1);
-	void setElementIndices(std::vector<int> indexList);
-	void draw();
+  void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1);
+  void setElementIndices(std::vector<int> indexList);
+  void draw();
 };

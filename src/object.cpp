@@ -5,7 +5,7 @@ using namespace std;
 
 // Loads the "object" into GPU memory
 object::object(float positions[4][4], float colors[4][4]) {
-	modelMatrix = glm::mat4(1.0);
+  modelMatrix = glm::mat4(1.0);
   
   vector<int> indices;
   indices.push_back(0);
@@ -25,5 +25,5 @@ object::~object() {
 
 // Tells GPU to render "object"
 void object::draw() {
-	m.draw();
+  m.draw();
 }

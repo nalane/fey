@@ -42,7 +42,7 @@ engine::engine(string configFile) {
 
 // Destroys the game and all pointers used
 engine::~engine() {
-	glfwTerminate();
+  glfwTerminate();
   delete obj;
 }
 
@@ -50,14 +50,14 @@ engine::~engine() {
 bool engine::initGame() {
   srand(time(NULL));
   if (!initGraphics())
-	  return false;
+    return false;
   
   currentCamera = new camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0),
-	 45.0, (float)windowWidth / (float)windowHeight);  
+			     45.0, (float)windowWidth / (float)windowHeight);  
 
   float triPosition[4][4] = {
-	{  0.0f, -0.7f, 1.0f, 1.0f},
-	{  0.4f,  0.1f, 1.0f, 1.0f},
+    {  0.0f, -0.7f, 1.0f, 1.0f},
+    {  0.4f,  0.1f, 1.0f, 1.0f},
     { -0.4f,  0.1f, 1.0f, 1.0f},
     {  0.0f,  0.7f, 1.0f, 1.0f},
   };
@@ -66,7 +66,7 @@ bool engine::initGame() {
     {1.0, 0.0, 0.0, 1.0},
     {0.0, 1.0, 0.0, 1.0},
     {0.0, 0.0, 1.0, 1.0},
-	{1.0, 0.0, 1.0, 1.0}
+    {1.0, 0.0, 1.0, 1.0}
   };
   obj = new object(triPosition, triColor);
   
@@ -77,7 +77,7 @@ bool engine::initGLFW() {
   // GLFW Initialization
   if (!glfwInit()) {
     recordLog("FATAL ERROR: Could not initialize GLFW!");
-	return false;
+    return false;
   }
 
   // Force use of OpenGL core
@@ -91,7 +91,7 @@ bool engine::initGLFW() {
   if (!window) {
     recordLog("FATAL ERROR: Could not create a GLFW window!");
     glfwTerminate();
-	return false;
+    return false;
   }
   glfwMakeContextCurrent(window);
   return true;
@@ -102,9 +102,9 @@ bool engine::initGLEW() {
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK) {
-	string errMessage = string((const char*)glewGetErrorString(err));
-	recordLog("FATAL ERROR: GLEW did not initialize correctly: " + errMessage);
-	return false;
+    string errMessage = string((const char*)glewGetErrorString(err));
+    recordLog("FATAL ERROR: GLEW did not initialize correctly: " + errMessage);
+    return false;
   }
   
   return true;
@@ -128,10 +128,10 @@ void engine::setupShaders() {
 
 bool engine::initGraphics() {
   if (!initGLFW())
-	  return false;
+    return false;
 
   if (!initGLEW())
-	  return false;
+    return false;
 
   enableGLFeatures();
   setupShaders();
@@ -156,11 +156,11 @@ void engine::draw() {
 void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
-    shaderProg.useProgram();
-    draw();
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-  }
+      shaderProg.useProgram();
+      draw();
+      glfwSwapBuffers(window);
+      glfwPollEvents();
+    }
   }
 
   else {
