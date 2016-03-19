@@ -52,14 +52,16 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
   
-  currentCamera = new camera(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0),
+  currentCamera = new camera(glm::vec3(0.0, 0.0,  0.0),
+			     glm::vec3(0.0, 0.0, -1.0),
+			     glm::vec3(0.0, 1.0,  0.0),
 			     45.0, (float)windowWidth / (float)windowHeight);  
 
   float triPosition[4][4] = {
-    {  0.0f, -0.7f, 1.0f, 1.0f},
-    {  0.4f,  0.1f, 1.0f, 1.0f},
-    { -0.4f,  0.1f, 1.0f, 1.0f},
-    {  0.0f,  0.7f, 1.0f, 1.0f},
+    {  0.0f, -0.7f, -1.0f, 1.0f},
+    {  0.4f,  0.1f, -1.0f, 1.0f},
+    { -0.4f,  0.1f, -1.0f, 1.0f},
+    {  0.0f,  0.7f, -1.0f, 1.0f},
   };
 
   float triColor[4][4] = {
@@ -144,8 +146,8 @@ void engine::draw() {
   
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
-
-  glm::mat4 transformMatrix = glm::mat4(1.0f);//currentCamera->getVPMatrix() * obj->getModelMatrix();
+  
+  glm::mat4 transformMatrix = currentCamera->getVPMatrix() * obj->getModelMatrix();
   GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");
   glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
   
