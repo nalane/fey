@@ -76,4 +76,9 @@ void model::draw() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);
     glDrawElements(GL_TRIANGLE_STRIP, elementsSize, GL_UNSIGNED_INT, NULL);
   }
+  
+  else {
+	  glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+	  glDrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
+  }
 }
