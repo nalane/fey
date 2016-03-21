@@ -13,7 +13,7 @@ class object {
 private:
   model m;
   glm::mat4 modelMatrix;
-
+  
 public:
   object(std::vector<glm::vec3>, float colors[4][4]);
   ~object();
