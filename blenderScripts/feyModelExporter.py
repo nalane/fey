@@ -9,6 +9,16 @@ bl_info = { "name": "Export Fey Model (.fey.model)",
 import bpy
 from bpy_extras.io_utils import ExportHelper
 
+def polygonToTriangles(polygon):
+    index_list = []
+    for v in polygon.vertices:
+        if len(index_list) >= 3:
+            index_list.append(index_list[0])
+            index_list.append(index_list[-2])          
+        index_list.append(v)
+        
+    return index_list
+
 class Export_FeyModel(bpy.types.Operator, ExportHelper):
     bl_idname = "export_object.fey_model"
     bl_label = "Export Fey Model (.fey.model)"
@@ -33,8 +43,12 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                 d = obj_list[0].data
                 f.write(str(len(d.vertices)) + "\n")
                 for v in d.vertices:
-                    f.write(str(v.x) + " " + str(v.y) + " " + str(v.z))
+                    f.write(str(v.co.x) + " " + str(v.co.y) + " " + str(v.co.z))
                     f.write('\n')
+                    
+                for p in d.polygons:
+                    for v in polygonToTriangles(p):
+                        f.write(str(v) + '\n')
         
         return {'FINISHED'}
             
