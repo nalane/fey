@@ -30,7 +30,11 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
             
         else:
             with open(filepath, 'w') as f:
-                f.write(str(len(obj_list)))
+                d = obj_list[0].data
+                f.write(str(len(d.vertices)) + "\n")
+                for v in d.vertices:
+                    f.write(str(v.x) + " " + str(v.y) + " " + str(v.z))
+                    f.write('\n')
         
         return {'FINISHED'}
             
