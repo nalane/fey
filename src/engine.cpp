@@ -53,8 +53,8 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
   
-  currentCamera = new camera(glm::vec3(0.0, 0.0,  0.0),
-			     glm::vec3(0.0, 0.0, -1.0),
+  currentCamera = new camera(glm::vec3(3.0, 3.0,  3.0),
+			     glm::vec3(0.0, 0.0,  0.0),
 			     glm::vec3(0.0, 1.0,  0.0),
 			     45.0, (float)windowWidth / (float)windowHeight);  
 
@@ -115,6 +115,7 @@ bool engine::initGLEW() {
 void engine::enableGLFeatures() {
   // Enable features of openGL
   glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
 }
@@ -146,6 +147,7 @@ void engine::draw() {
   
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
+  glClear(GL_DEPTH_BUFFER_BIT);
   
   glm::mat4 transformMatrix = currentCamera->getVPMatrix() * obj->getModelMatrix();
   GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");

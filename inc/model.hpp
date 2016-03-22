@@ -23,6 +23,7 @@ public:
 	
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1);
   void setVertices(std::vector<glm::vec3> vertexList);
+  void setColors(std::vector<glm::vec4> colorList);
   void setElementIndices(std::vector<int> indexList);
   void draw();
 };

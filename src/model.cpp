@@ -1,3 +1,4 @@
+#include "log.hpp"
 #include "model.hpp"
 
 using namespace std;
@@ -54,6 +55,18 @@ void model::setVertices(vector<glm::vec3> vertexList) {
   addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 0);
 }
 
+// Sends vertex color data to GPU
+void model::setColors(std::vector<glm::vec4> colorList) {
+  vector<float> rawData;
+  for (glm::vec4 c : colorList) {
+    rawData.push_back(c.r);
+    rawData.push_back(c.g);
+    rawData.push_back(c.b);
+    rawData.push_back(c.a);
+  }
+  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1);
+}
+
 // Sets the drawing order for vertices
 void model::setElementIndices(vector<int> indexList) {
   if (elementsIndex == 0) {
@@ -74,11 +87,11 @@ void model::draw() {
 	
   if (elementsIndex < 0) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);
-    glDrawElements(GL_TRIANGLE_STRIP, elementsSize, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, elementsSize, GL_UNSIGNED_INT, NULL);
   }
   
   else {
-	  glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
-	  glDrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
   }
 }

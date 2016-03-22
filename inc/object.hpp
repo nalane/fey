@@ -11,7 +11,7 @@
 
 class object {
 private:
-  model m;
+  model* m;
   glm::mat4 modelMatrix;
   
 public:
