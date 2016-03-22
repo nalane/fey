@@ -96,6 +96,7 @@ bool engine::initGLFW() {
     return false;
   }
   glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
   return true;
 }
 
