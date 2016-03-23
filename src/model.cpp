@@ -47,9 +47,11 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
 
 // Creates a texture for the GPU
 void model::setTexture(string source, vector<glm::vec2> uvCoords) {
+  recordLog("Reading texture image file " + source + "...");
 	GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 										 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-				
+	recordLog("Successfully read texture image file " + source + "!");
+	
 	texIDs.push_back(newID);
 	vector<float> rawData;
 	for (glm::vec2 v : uvCoords) {

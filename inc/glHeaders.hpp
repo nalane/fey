@@ -1,5 +1,6 @@
 #pragma once
 
+#define GL_GLEXT_PROTOTYPES
 #define GLEW_STATIC
 #include <GL/glew.h>
 #define GLFW_NO_GLU 1
