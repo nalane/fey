@@ -1,9 +1,11 @@
 #version 330 core
 
-smooth in vec4 theColor;
+in vec2 UV;
 
-out vec4 color;
+out vec3 color;
+
+uniform sampler2D texSampler;
 
 void main(void) {
-  color = theColor;
+  color = texture(texSampler, UV).rgb;
 }

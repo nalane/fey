@@ -13,9 +13,10 @@ class object {
 private:
   model* m;
   glm::mat4 modelMatrix;
+  GLuint textureLocation;
   
 public:
-  object(std::vector<glm::vec3>, float colors[4][4]);
+  object(std::vector<glm::vec3>, float colors[4][4], GLuint textureLocation);
   ~object();
 			
   void draw();

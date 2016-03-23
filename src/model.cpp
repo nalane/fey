@@ -15,10 +15,13 @@ model::~model() {
   glDeleteVertexArrays(1, &vao);
   for (pair<int, GLuint> p : vbos)
     glDeleteBuffers(1, &(p.second));
+
+  for (GLuint id : texIDs)
+	  glDeleteTextures(1, &id);
 }
 
 // Adds a VBO
-void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation) {
+void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation, int itemSize) {
   if (shaderLocation < 0) {
     shaderLocation = nonPassIndex;
     nonPassIndex--;
@@ -38,8 +41,23 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
   
   if (shaderLocation >= 0) {
     glEnableVertexAttribArray(shaderLocation);
-    glVertexAttribPointer(shaderLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(shaderLocation, itemSize, GL_FLOAT, GL_FALSE, 0, 0);
   }
+}
+
+// Creates a texture for the GPU
+void model::setTexture(string source, vector<glm::vec2> uvCoords) {
+	GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+										 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+				
+	texIDs.push_back(newID);
+	vector<float> rawData;
+	for (glm::vec2 v : uvCoords) {
+		rawData.push_back(v.x);
+		rawData.push_back(v.y);
+	}
+	
+	addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
 }
 
 // Sends vertex data to the GPU
@@ -81,9 +99,23 @@ void model::setElementIndices(vector<int> indexList) {
   }
 }
 
+// Bind the texture to be drawn
+void model::bindTextureToUniform(GLuint uniformID) {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, uniformID);
+	glUniform1i(uniformID, 0);
+}
+
 // Draws the model
 void model::draw() {
   glBindVertexArray(vao);
+  
+  for(int i = 0; i < texIDs.size(); i++) {
+	  GLuint id = texIDs[i];
+	  glActiveTexture(GL_TEXTURE0 + i);
+	  glBindTexture(GL_TEXTURE_2D, id);
+	  
+  }
 	
   if (elementsIndex < 0) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);

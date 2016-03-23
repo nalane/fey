@@ -70,7 +70,9 @@ bool engine::initGame() {
     {0.0, 0.0, 1.0, 1.0},
     {1.0, 0.0, 1.0, 1.0}
   };
-  obj = new object(triPosition, triColor);
+  
+  GLint texHandle = glGetUniformLocation(shaderProg.getProgID(), "texSampler");
+  obj = new object(triPosition, triColor, texHandle);
   
   return true;
 }

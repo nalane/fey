@@ -11,6 +11,7 @@
 using namespace std;
 
 model* loadFeyModel(string filename) {
+	recordLog("Reading in " + filename + "...");
   model* m = NULL;
   ifstream fin(filename.c_str());
 
@@ -29,18 +30,19 @@ model* loadFeyModel(string filename) {
       vertexList.push_back(glm::vec3(x, y, z));
     }
 	
+	m = new model();
+	
 	int numTextures = 0;
 	fin >> numTextures;
-	
-	vector<map<int, glm::vec2>> uvMaps;
 	for (int i = 0; i < numTextures; i++) {
-		string filename = "";
-		int numUVCoords = 0;
+		string filename = "junk";
+		int numUVCoords = -1;
 		
-		fin >> filename;
+		getline(fin, filename);
+		getline(fin, filename);
 		fin >> numUVCoords;
 		
-		map<int, glm::vec2> uvMap;
+		vector<glm::vec2> uvMap;
 		for (int j = 0; j < numUVCoords; j++) {
 			int uvIdx;
 			float u, v;
@@ -49,10 +51,10 @@ model* loadFeyModel(string filename) {
 			fin >> u;
 			fin >> v;
 			
-			uvMap[uvIdx] = glm::vec2(u, v);
+			uvMap.push_back(glm::vec2(u, v));
 		}
 		
-		uvMaps.push_back(uvMap);
+		m->setTexture(filename, uvMap);
 	}
 
 	int numVerts = 0;
@@ -69,10 +71,10 @@ model* loadFeyModel(string filename) {
 		fin >> uvIndex;
 		uvIndexList.push_back(uvIndex);
     }
-    
-    m = new model();
+
     m->setVertices(vertexList);
     m->setElementIndices(indexList);
+	recordLog("Successfully read in fey model file " + filename + "!");
   }
 
   else {
