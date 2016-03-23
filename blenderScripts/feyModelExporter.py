@@ -11,11 +11,15 @@ from bpy_extras.io_utils import ExportHelper
 
 def polygonToTriangles(polygon):
     index_list = []
-    for v in polygon.vertices:
-        if len(index_list) >= 3:
+    for i, v in enumerate(polygon.vertices):
+        uv_coord = polygon.loop_indices[i]
+        if len(index_list) >= 6:
             index_list.append(index_list[0])
-            index_list.append(index_list[-2])          
+            index_list.append(index_list[1])
+            index_list.append(index_list[-4])   
+            index_list.append(index_list[-4])        
         index_list.append(v)
+        index_list.append(uv_coord)
         
     return index_list
 
@@ -45,26 +49,27 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                 for v in d.vertices:
                     f.write(str(v.co.x) + " " + str(v.co.y) + " " + str(v.co.z))
                     f.write('\n')
-                   
-                triangleVertexIndices = []
-                for p in d.polygons:
-                    triangleVertexIndices = triangleVertexIndices + polygonToTriangles(p)
-                    
-                f.write(str(len(triangleVertexIndices)) + "\n")
-                for v in triangleVertexIndices:
-                    f.write(str(v) + "\n")
                     
                 f.write(str(len(d.uv_layers)) + "\n")
                 for i, l in enumerate(d.uv_layers):
                     f.write(d.uv_textures[i].data[0].image.filepath + "\n")
                     seen_verts = set()
                     for index, loop in enumerate(l.data):
-                        vert_idx = d.loops[index].vertex_index
-                        if (vert_idx not in seen_verts):
-                            f.write(str(vert_idx) + " ")
-                            f.write(str(loop.uv.x) + " ")
-                            f.write(str(loop.uv.y) + "\n")
-                            seen_verts.add(vert_idx)
+                        f.write(str(index) + " ")
+                        f.write(str(loop.uv.x) + " ")
+                        f.write(str(loop.uv.y) + "\n")
+                   
+                triangleVertexIndices = []
+                for p in d.polygons:
+                    triangleVertexIndices = triangleVertexIndices + polygonToTriangles(p)
+                    
+                f.write(str(len(triangleVertexIndices)) + "\n")
+                for i, v in enumerate(triangleVertexIndices):
+                    f.write(str(v))
+                    if i % 2 == 0:
+                        f.write(" ")
+                    else:
+                        f.write("\n")
         
         return {'FINISHED'}
             
