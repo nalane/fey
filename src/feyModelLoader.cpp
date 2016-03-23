@@ -12,7 +12,7 @@
 using namespace std;
 
 model* loadFeyModel(string filename) {
-	recordLog("Reading in " + filename + "...");
+	recordLog("Reading fey model " + filename + "...");
   model* m = NULL;
   ifstream fin(filename.c_str());
 
@@ -35,6 +35,7 @@ model* loadFeyModel(string filename) {
 	
 	int numTextures = 0;
 	fin >> numTextures;
+	vector<glm::vec2> uvCoords;
 	for (int i = 0; i < numTextures; i++) {
 		string filename = "junk";
 		int numUVCoords = -1;
@@ -43,7 +44,6 @@ model* loadFeyModel(string filename) {
 		getline(fin, filename);
 		fin >> numUVCoords;
 		
-		vector<glm::vec2> uvMap;
 		for (int j = 0; j < numUVCoords; j++) {
 			int uvIdx;
 			float u, v;
@@ -52,17 +52,17 @@ model* loadFeyModel(string filename) {
 			fin >> u;
 			fin >> v;
 			
-			uvMap.push_back(glm::vec2(u, v));
+			uvCoords.push_back(glm::vec2(u, v));
 		}
 		
-		m->setTexture(getFullPath("feyData/library/" + filename), uvMap);
+		m->setTexture(getFullPath("feyData/library/" + filename));
 	}
 
 	int numVerts = 0;
 	fin >> numVerts;
 	numVerts /= 2;
 	
-    vector<int> uvIndexList;
+    vector<glm::vec2> uvMapping;
 	vector<glm::vec3> finalVerts;
     for(int i = 0; i < numVerts; i++) {
 		int index, uvIndex;
@@ -71,11 +71,11 @@ model* loadFeyModel(string filename) {
 		finalVerts.push_back(vertexList[index]);
 		
 		fin >> uvIndex;
-		uvIndexList.push_back(uvIndex);
+		uvMapping.push_back(uvCoords[uvIndex]);
     }
 
     m->setVertices(finalVerts);
-	m->setUVMapIndices(uvIndexList);
+	m->setUVMapping(uvMapping);
 	recordLog("Successfully read in fey model file " + filename + "!");
   }
 

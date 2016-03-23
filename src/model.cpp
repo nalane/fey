@@ -46,14 +46,13 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
 }
 
 // Creates a texture for the GPU
-void model::setTexture(string source, vector<glm::vec2> uvCoords) {
+void model::setTexture(string source) {
   recordLog("Reading texture image file " + source + "...");
 	GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 										 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 	recordLog("Successfully read texture image file " + source + "!");
 	
 	texIDs.push_back(newID);
-	this->uvCoords = uvCoords;
 }
 
 // Sends vertex data to the GPU
@@ -70,11 +69,11 @@ void model::setVertices(vector<glm::vec3> vertexList) {
 }
 
 // Finalize mapping of vertices to UV coordinates
-void model::setUVMapIndices(std::vector<int> indexList) {
+void model::setUVMapping(std::vector<glm::vec2> uvList) {
 	vector<float> rawData;
-	for (int i : indexList) {
-		rawData.push_back(uvCoords[i].x);
-		rawData.push_back(uvCoords[i].y);
+	for (glm::vec2 coord : uvList) {
+		rawData.push_back(coord.x);
+		rawData.push_back(coord.y);
 	}
 	
 	addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
@@ -92,20 +91,6 @@ void model::setColors(std::vector<glm::vec4> colorList) {
   addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1);
 }
 
-// Sets the drawing order for vertices
-void model::setElementIndices(vector<int> indexList) {
-  if (elementsIndex == 0) {
-    addData(GL_ELEMENT_ARRAY_BUFFER, indexList.size() * sizeof(int), &indexList[0], GL_STATIC_DRAW);
-    elementsSize = indexList.size();
-  }
-	
-  else {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexList.size() * sizeof(int), &indexList[0], GL_STATIC_DRAW);
-    elementsSize = indexList.size();
-  }
-}
-
 // Bind the texture to be drawn
 void model::bindTextureToUniform(GLuint uniformID) {
 	glActiveTexture(GL_TEXTURE0);
@@ -120,8 +105,7 @@ void model::draw() {
   for(int i = 0; i < texIDs.size(); i++) {
 	  GLuint id = texIDs[i];
 	  glActiveTexture(GL_TEXTURE0 + i);
-	  glBindTexture(GL_TEXTURE_2D, id);
-	  
+	  glBindTexture(GL_TEXTURE_2D, id);  
   }
 	
   if (elementsIndex < 0) {
