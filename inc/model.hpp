@@ -14,6 +14,7 @@ private:
   GLuint vao;
   std::map<int, GLuint> vbos;
   std::vector<GLuint> texIDs;
+  std::vector<glm::vec2> uvCoords;
   int nonPassIndex;
   int elementsIndex;
   int elementsSize;
@@ -28,6 +29,7 @@ public:
   void setVertices(std::vector<glm::vec3> vertexList);
   void setColors(std::vector<glm::vec4> colorList);
   void setElementIndices(std::vector<int> indexList);
+  void setUVMapIndices(std::vector<int> indexList);
   void bindTextureToUniform(GLuint uniformID);
   void draw();
 };

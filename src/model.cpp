@@ -53,13 +53,7 @@ void model::setTexture(string source, vector<glm::vec2> uvCoords) {
 	recordLog("Successfully read texture image file " + source + "!");
 	
 	texIDs.push_back(newID);
-	vector<float> rawData;
-	for (glm::vec2 v : uvCoords) {
-		rawData.push_back(v.x);
-		rawData.push_back(v.y);
-	}
-	
-	addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
+	this->uvCoords = uvCoords;
 }
 
 // Sends vertex data to the GPU
@@ -73,6 +67,17 @@ void model::setVertices(vector<glm::vec3> vertexList) {
     rawData.push_back(1.0);
   }
   addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 0);
+}
+
+// Finalize mapping of vertices to UV coordinates
+void model::setUVMapIndices(std::vector<int> indexList) {
+	vector<float> rawData;
+	for (int i : indexList) {
+		rawData.push_back(uvCoords[i].x);
+		rawData.push_back(uvCoords[i].y);
+	}
+	
+	addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
 }
 
 // Sends vertex color data to GPU

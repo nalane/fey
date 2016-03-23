@@ -62,19 +62,20 @@ model* loadFeyModel(string filename) {
 	fin >> numVerts;
 	numVerts /= 2;
 	
-    vector<int> indexList, uvIndexList;
+    vector<int> uvIndexList;
+	vector<glm::vec3> finalVerts;
     for(int i = 0; i < numVerts; i++) {
 		int index, uvIndex;
 		
 		fin >> index;
-		indexList.push_back(index);
+		finalVerts.push_back(vertexList[index]);
 		
 		fin >> uvIndex;
 		uvIndexList.push_back(uvIndex);
     }
 
-    m->setVertices(vertexList);
-    m->setElementIndices(indexList);
+    m->setVertices(finalVerts);
+	m->setUVMapIndices(uvIndexList);
 	recordLog("Successfully read in fey model file " + filename + "!");
   }
 
