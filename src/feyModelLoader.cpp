@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <string>
 
+#include "paths.hpp"
 #include "log.hpp"
 #include "glHeaders.hpp"
 
@@ -54,7 +55,7 @@ model* loadFeyModel(string filename) {
 			uvMap.push_back(glm::vec2(u, v));
 		}
 		
-		m->setTexture(filename, uvMap);
+		m->setTexture(getFullPath("feyData/library/" + filename), uvMap);
 	}
 
 	int numVerts = 0;
