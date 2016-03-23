@@ -45,10 +45,26 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                 for v in d.vertices:
                     f.write(str(v.co.x) + " " + str(v.co.y) + " " + str(v.co.z))
                     f.write('\n')
-                    
+                   
+                triangleVertexIndices = []
                 for p in d.polygons:
-                    for v in polygonToTriangles(p):
-                        f.write(str(v) + '\n')
+                    triangleVertexIndices = triangleVertexIndices + polygonToTriangles(p)
+                    
+                f.write(str(len(triangleVertexIndices)) + "\n")
+                for v in triangleVertexIndices:
+                    f.write(str(v) + "\n")
+                    
+                f.write(str(len(d.uv_layers)) + "\n")
+                for i, l in enumerate(d.uv_layers):
+                    f.write(d.uv_textures[i].data[0].image.filepath + "\n")
+                    seen_verts = set()
+                    for index, loop in enumerate(l.data):
+                        vert_idx = d.loops[index].vertex_index
+                        if (vert_idx not in seen_verts):
+                            f.write(str(vert_idx) + " ")
+                            f.write(str(loop.uv.x) + " ")
+                            f.write(str(loop.uv.y) + "\n")
+                            seen_verts.add(vert_idx)
         
         return {'FINISHED'}
             
