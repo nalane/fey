@@ -1,8 +1,9 @@
 #include "feyModelLoader.hpp"
 
 #include <fstream>
-#include <vector>
+#include <map>
 #include <cstdlib>
+#include <string>
 
 #include "log.hpp"
 #include "glHeaders.hpp"
@@ -18,7 +19,6 @@ model* loadFeyModel(string filename) {
     fin >> numVertices;
 
     vector<glm::vec3> vertexList;
-    vector<glm::vec4> colorList;
     for (int i = 0; i < numVertices; i++) {
       float x, y, z;
 
@@ -27,20 +27,51 @@ model* loadFeyModel(string filename) {
       fin >> z;
 
       vertexList.push_back(glm::vec3(x, y, z));
-      colorList.push_back(glm::vec4(rand() / (float) RAND_MAX,
-				    rand() / (float) RAND_MAX,
-				    rand() / (float) RAND_MAX, 1.0));
     }
+	
+	int numTextures = 0;
+	fin >> numTextures;
+	
+	vector<map<int, glm::vec2>> uvMaps;
+	for (int i = 0; i < numTextures; i++) {
+		string filename = "";
+		int numUVCoords = 0;
+		
+		fin >> filename;
+		fin >> numUVCoords;
+		
+		map<int, glm::vec2> uvMap;
+		for (int j = 0; j < numUVCoords; j++) {
+			int uvIdx;
+			float u, v;
+			
+			fin >> uvIdx;
+			fin >> u;
+			fin >> v;
+			
+			uvMap[uvIdx] = glm::vec2(u, v);
+		}
+		
+		uvMaps.push_back(uvMap);
+	}
 
-    vector<int> indexList;
-    int index;
-    while (fin >> index) {
-      indexList.push_back(index);
+	int numVerts = 0;
+	fin >> numVerts;
+	numVerts /= 2;
+	
+    vector<int> indexList, uvIndexList;
+    for(int i = 0; i < numVerts; i++) {
+		int index, uvIndex;
+		
+		fin >> index;
+		indexList.push_back(index);
+		
+		fin >> uvIndex;
+		uvIndexList.push_back(uvIndex);
     }
     
     m = new model();
     m->setVertices(vertexList);
-    m->setColors(colorList);
     m->setElementIndices(indexList);
   }
 

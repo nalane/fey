@@ -53,7 +53,7 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                 f.write(str(len(d.uv_layers)) + "\n")
                 for i, l in enumerate(d.uv_layers):
                     f.write(d.uv_textures[i].data[0].image.filepath + "\n")
-                    seen_verts = set()
+                    f.write(str(len(l.data)) + "\n")
                     for index, loop in enumerate(l.data):
                         f.write(str(index) + " ")
                         f.write(str(loop.uv.x) + " ")
