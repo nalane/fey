@@ -7,6 +7,7 @@ bl_info = { "name": "Export Fey Model (.fey.model)",
             "category": "Import-Export"}
 
 import bpy
+import ntpath
 from bpy_extras.io_utils import ExportHelper
 
 def polygonToTriangles(polygon):
@@ -52,7 +53,7 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                     
                 f.write(str(len(d.uv_layers)) + "\n")
                 for i, l in enumerate(d.uv_layers):
-                    f.write(d.uv_textures[i].data[0].image.filepath + "\n")
+                    f.write(ntpath.basename(d.uv_textures[i].data[0].image.filepath) + "\n")
                     f.write(str(len(l.data)) + "\n")
                     for index, loop in enumerate(l.data):
                         f.write(str(index) + " ")
