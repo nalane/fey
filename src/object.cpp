@@ -19,7 +19,7 @@ object::object(vector<glm::vec3> positions, float colors[4][4], GLuint textureLo
   
   //m.setVertices(positions);
   //m.addData(GL_ARRAY_BUFFER, 16 * sizeof(float), colors, GL_STATIC_DRAW, 1);
-  m = loadFeyModel(getFullPath("feyData/library/cube.fey.fey.model"));
+  m = loadFeyModel(getFullPath("feyData/library/monkey.fey.model"));
 
   modelMatrix = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0)) * modelMatrix;
 }
