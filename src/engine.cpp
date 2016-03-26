@@ -57,22 +57,9 @@ bool engine::initGame() {
 			     glm::vec3(0.0, 0.0,  0.0),
 			     glm::vec3(0.0, 1.0,  0.0),
 			     45.0, (float)windowWidth / (float)windowHeight);  
-
-  vector<glm::vec3> triPosition;
-  triPosition.push_back(glm::vec3( 0.0f, -0.7f, -1.0f));
-  triPosition.push_back(glm::vec3( 0.4f,  0.1f, -1.0f));
-  triPosition.push_back(glm::vec3(-0.4f,  0.1f, -1.0f));
-  triPosition.push_back(glm::vec3( 0.0f,  0.7f, -1.0f));
-
-  float triColor[4][4] = {
-    {1.0, 0.0, 0.0, 1.0},
-    {0.0, 1.0, 0.0, 1.0},
-    {0.0, 0.0, 1.0, 1.0},
-    {1.0, 0.0, 1.0, 1.0}
-  };
   
   GLint texHandle = glGetUniformLocation(shaderProg.getProgID(), "texSampler");
-  obj = new object(triPosition, triColor, texHandle);
+  obj = new object(texHandle);
   
   return true;
 }

@@ -16,7 +16,7 @@ private:
   GLuint textureLocation;
   
 public:
-  object(std::vector<glm::vec3>, float colors[4][4], GLuint textureLocation);
+  object(GLuint textureLocation);
   ~object();
 			
   void draw();
