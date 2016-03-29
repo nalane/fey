@@ -16,24 +16,32 @@ using namespace std;
 engine::engine(string configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
+	  string dataPath, libraryPath;
     fin >> windowWidth;
     fin >> windowHeight;
     fin.ignore(1, '\n');
     getline(fin, windowTitle);
+	getline(fin, dataPath);
+	getline(fin, libraryPath);
     getline(fin, vertexShader);
     getline(fin, fragmentShader);
     fin.close();
 
     recordLog("Values found in config file:");
     recordLog("----------------------------");
-    recordLog("windowWidth: " + to_string(windowWidth));
-    recordLog("windowHeight: " + to_string(windowHeight));
-    recordLog("windowTitle: " + windowTitle);
-    recordLog("vertexShader: " + vertexShader);
-    recordLog("fragmentShader: " + fragmentShader);
+    recordLog("Window Width: " + to_string(windowWidth));
+    recordLog("Window Height: " + to_string(windowHeight));
+	recordLog("Window Title: " + windowTitle);
+    recordLog("Data Path: " + windowTitle);
+	recordLog("Library Path: " + windowTitle);
+    recordLog("Vertex Shader: " + vertexShader);
+    recordLog("Fragment Shader: " + fragmentShader);
 
-    vertexShader = getFullPath(vertexShader);
-    fragmentShader = getFullPath(fragmentShader);
+	setDataFolder(dataPath);
+	setLibraryFolder(libraryPath);
+	
+    vertexShader = getDataFolderPath(vertexShader);
+    fragmentShader = getDataFolderPath(fragmentShader);
   }
 
   else {

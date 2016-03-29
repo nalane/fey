@@ -8,7 +8,7 @@ using namespace std;
 // Loads the "object" into GPU memory
 object::object(GLuint textureLocation) :
 	textureLocation(textureLocation) {
-  m = loadFeyModel(getFullPath("feyData/library/monkey.fey.model"));
+  m = loadFeyModel(getLibraryFolderPath("monkey.fey.model"));
 
   modelMatrix = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0)) * modelMatrix;
 }

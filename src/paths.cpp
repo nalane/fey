@@ -11,6 +11,8 @@
 using namespace std;
 
 string programPath = "";
+string dataPath = "";
+string libraryPath = "";
 
 // Gets the path the program is running from so that
 // the data files can be easily read
@@ -42,7 +44,28 @@ void setUpProgramPath() {
   delete[] tmp;
 }
 
+// As the config file is read in, we will set the path to the data folder
+void setDataFolder(std::string relativeData) {
+	dataPath = getFullPath(relativeData);
+}
+
+// Sets the library folder.
+// Assumes it is in, or at least relative to, the data folder
+void setLibraryFolder(std::string libraryInData) {
+	libraryPath = getDataFolderPath(libraryInData);
+}
+
 // Get the full path for a file in the program's path
 string getFullPath(string s) {
   return programPath + "/" + s;
+}
+
+// Given a file path in the data folder, finds full path
+std::string getDataFolderPath(std::string s) {
+	return dataPath + "/" + s;
+}
+
+// Given a file path in the library, finds full path
+std::string getLibraryFolderPath(std::string s) {
+	return libraryPath + "/" + s;
 }
