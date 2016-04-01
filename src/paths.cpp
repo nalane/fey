@@ -2,6 +2,8 @@
 #include <unistd.h>
 #elif _WIN32
 #include <windows.h>
+#elif __APPLE__
+#include <mach-o/dyld.h>
 #endif
 
 #include <string>
@@ -33,6 +35,15 @@ void setUpProgramPath() {
     numBytes = 0;
   
   for (int i = numBytes - 1; i >= 0; i--) {
+    if (tmp[i] == '/') {
+      tmp[i] = '\0';
+      break;
+    }
+  }
+  #elif __APPLE__
+  unsigned int size = DIR_LENGTH;
+  _NSGetExecutablePath(tmp, &size);
+  for (int i = size - 1; i >= 0; i--) {
     if (tmp[i] == '/') {
       tmp[i] = '\0';
       break;
