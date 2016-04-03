@@ -15,9 +15,9 @@ model::~model() {
   glDeleteVertexArrays(1, &vao);
   for (pair<int, GLuint> p : vbos)
     glDeleteBuffers(1, &(p.second));
-
+  
   for (GLuint id : texIDs)
-	  glDeleteTextures(1, &id);
+    glDeleteTextures(1, &id);
 }
 
 // Adds a VBO
@@ -30,9 +30,9 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
   if (target == GL_ELEMENT_ARRAY_BUFFER) {
     elementsIndex = shaderLocation;
   }
-	
+  
   glBindVertexArray(vao);
-	
+  
   vbos[shaderLocation] = -1;
   glGenBuffers(1, &(vbos[shaderLocation]));
 	
@@ -48,11 +48,11 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
 // Creates a texture for the GPU
 void model::setTexture(string source) {
   recordLog("Reading texture image file " + source + "...");
-	GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
-										 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-	recordLog("Successfully read texture image file " + source + "!");
-	
-	texIDs.push_back(newID);
+  GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+				       SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+  recordLog("Successfully read texture image file " + source + "!");
+  
+  texIDs.push_back(newID);
 }
 
 // Sends vertex data to the GPU
@@ -70,13 +70,13 @@ void model::setVertices(vector<glm::vec3> vertexList) {
 
 // Finalize mapping of vertices to UV coordinates
 void model::setUVMapping(std::vector<glm::vec2> uvList) {
-	vector<float> rawData;
-	for (glm::vec2 coord : uvList) {
-		rawData.push_back(coord.x);
-		rawData.push_back(coord.y);
-	}
+  vector<float> rawData;
+  for (glm::vec2 coord : uvList) {
+    rawData.push_back(coord.x);
+    rawData.push_back(coord.y);
+  }
 	
-	addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
+  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
 }
 
 // Sends vertex color data to GPU
@@ -93,9 +93,9 @@ void model::setColors(std::vector<glm::vec4> colorList) {
 
 // Bind the texture to be drawn
 void model::bindTextureToUniform(GLuint uniformID) {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, uniformID);
-	glUniform1i(uniformID, 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, uniformID);
+  glUniform1i(uniformID, 0);
 }
 
 // Draws the model
@@ -103,9 +103,9 @@ void model::draw() {
   glBindVertexArray(vao);
   
   for(int i = 0; i < texIDs.size(); i++) {
-	  GLuint id = texIDs[i];
-	  glActiveTexture(GL_TEXTURE0 + i);
-	  glBindTexture(GL_TEXTURE_2D, id);  
+    GLuint id = texIDs[i];
+    glActiveTexture(GL_TEXTURE0 + i);
+    glBindTexture(GL_TEXTURE_2D, id);  
   }
 	
   if (elementsIndex < 0) {

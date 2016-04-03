@@ -16,13 +16,13 @@ using namespace std;
 engine::engine(string configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
-	  string dataPath, libraryPath;
+    string dataPath, libraryPath;
     fin >> windowWidth;
     fin >> windowHeight;
     fin.ignore(1, '\n');
     getline(fin, windowTitle);
-	getline(fin, dataPath);
-	getline(fin, libraryPath);
+    getline(fin, dataPath);
+    getline(fin, libraryPath);
     getline(fin, vertexShader);
     getline(fin, fragmentShader);
     fin.close();
@@ -31,14 +31,14 @@ engine::engine(string configFile) {
     recordLog("----------------------------");
     recordLog("Window Width: " + to_string(windowWidth));
     recordLog("Window Height: " + to_string(windowHeight));
-	recordLog("Window Title: " + windowTitle);
+    recordLog("Window Title: " + windowTitle);
     recordLog("Data Path: " + windowTitle);
-	recordLog("Library Path: " + windowTitle);
+    recordLog("Library Path: " + windowTitle);
     recordLog("Vertex Shader: " + vertexShader);
     recordLog("Fragment Shader: " + fragmentShader);
 
-	setDataFolder(dataPath);
-	setLibraryFolder(libraryPath);
+    setDataFolder(dataPath);
+    setLibraryFolder(libraryPath);
 	
     vertexShader = getDataFolderPath(vertexShader);
     fragmentShader = getDataFolderPath(fragmentShader);
@@ -68,6 +68,8 @@ bool engine::initGame() {
   
   GLint texHandle = glGetUniformLocation(shaderProg.getProgID(), "texSampler");
   obj = new object(texHandle);
+  obj->load();
+  obj->init();
   
   return true;
 }
@@ -94,6 +96,7 @@ bool engine::initGLFW() {
   }
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
+
   return true;
 }
 
@@ -151,6 +154,7 @@ void engine::draw() {
   GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");
   glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
   
+  obj->update();
   obj->draw();
 }
 
