@@ -13,7 +13,6 @@
 class object : public resource {
 private:
   model* m;
-  glm::mat4 modelMatrix;
   GLuint textureLocation;
   
 public:
@@ -24,5 +23,4 @@ public:
   void init();
   void update();
   void draw();
-  glm::mat4 getModelMatrix() {return modelMatrix;}
 };

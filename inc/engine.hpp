@@ -5,8 +5,10 @@
  */
 
 #include <string>
+#include <vector>
 
 class engine;
+#include "resource.hpp"
 #include "paths.hpp"
 #include "object.hpp"
 #include "camera.hpp"
@@ -20,7 +22,7 @@ private:
   std::string windowTitle;
   std::string vertexShader;
   std::string fragmentShader;
-  object* obj;
+  std::vector<resource*> resources;
   camera* currentCamera;
   
   GLFWwindow* window;

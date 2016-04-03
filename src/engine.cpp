@@ -52,7 +52,9 @@ engine::engine(string configFile) {
 // Destroys the game and all pointers used
 engine::~engine() {
   glfwTerminate();
-  delete obj;
+
+  for (resource* obj : resources)
+    delete obj;
 }
 
 // Initializes the graphics system
@@ -67,9 +69,12 @@ bool engine::initGame() {
 			     45.0, (float)windowWidth / (float)windowHeight);  
   
   GLint texHandle = glGetUniformLocation(shaderProg.getProgID(), "texSampler");
-  obj = new object(texHandle);
-  obj->load();
-  obj->init();
+  resources.push_back(new object(texHandle));
+
+  for (resource* obj : resources) {
+    obj->load();
+    obj->init();
+  }
   
   return true;
 }
@@ -149,13 +154,15 @@ void engine::draw() {
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
   glClearBufferfv(GL_COLOR, 0, color);
   glClear(GL_DEPTH_BUFFER_BIT);
-  
-  glm::mat4 transformMatrix = currentCamera->getVPMatrix() * obj->getModelMatrix();
-  GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");
-  glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
-  
-  obj->update();
-  obj->draw();
+
+  for (resource* obj : resources) {
+    glm::mat4 transformMatrix = currentCamera->getVPMatrix() * obj->getModelMatrix();
+    GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");
+    glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
+
+    obj->update();
+    obj->draw();
+  }
 }
 
 // Run the game
