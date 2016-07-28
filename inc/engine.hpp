@@ -14,6 +14,10 @@ class engine;
 #include "camera.hpp"
 #include "glHeaders.hpp"
 #include "shaderProgram.hpp"
+#include "resourceHandler.hpp"
+
+// Game objects
+#include "monkey.hpp"
 
 class engine {
 private:
@@ -22,17 +26,17 @@ private:
   std::string windowTitle;
   std::string vertexShader;
   std::string fragmentShader;
-  std::vector<resource*> resources;
+
+  resourceHandler* rHandler;
+  std::vector<object*> objects;
   camera* currentCamera;
   
   GLFWwindow* window;
-  shaderProgram shaderProg;
 
   bool initGame();
   bool initGLFW();
   bool initGLEW();
   void enableGLFeatures();
-  void setupShaders();
   bool initGraphics();
 
 public:

@@ -17,6 +17,7 @@ engine::engine(string configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
     string dataPath, libraryPath;
+
     fin >> windowWidth;
     fin >> windowHeight;
     fin.ignore(1, '\n');
@@ -25,6 +26,7 @@ engine::engine(string configFile) {
     getline(fin, libraryPath);
     getline(fin, vertexShader);
     getline(fin, fragmentShader);
+
     fin.close();
 
     recordLog("Values found in config file:");
@@ -42,6 +44,8 @@ engine::engine(string configFile) {
 	
     vertexShader = getDataFolderPath(vertexShader);
     fragmentShader = getDataFolderPath(fragmentShader);
+
+    rHandler = new resourceHandler();
   }
 
   else {
@@ -51,9 +55,11 @@ engine::engine(string configFile) {
 
 // Destroys the game and all pointers used
 engine::~engine() {
+  delete rHandler;
+  
   glfwTerminate();
 
-  for (resource* obj : resources)
+  for (object* obj : objects)
     delete obj;
 }
 
@@ -63,15 +69,14 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
   
-  currentCamera = new camera(glm::vec3(3.0, 3.0,  3.0),
-			     glm::vec3(0.0, 0.0,  0.0),
-			     glm::vec3(0.0, 1.0,  0.0),
-			     45.0, (float)windowWidth / (float)windowHeight);  
+  rHandler->setCamera("main", new camera(glm::vec3(3.0, 3.0,  3.0),
+			                                   glm::vec3(0.0, 0.0,  0.0),
+			                                   glm::vec3(0.0, 1.0,  0.0),
+			                                   45.0, (float)windowWidth / (float)windowHeight));  
   
-  GLint texHandle = glGetUniformLocation(shaderProg.getProgID(), "texSampler");
-  resources.push_back(new object(texHandle));
+  objects.push_back(new monkey(rHandler, vertexShader, fragmentShader));
 
-  for (resource* obj : resources) {
+  for (object* obj : objects) {
     obj->load();
     obj->init();
   }
@@ -126,6 +131,7 @@ void engine::enableGLFeatures() {
   glCullFace(GL_BACK);
 }
 
+/*
 void engine::setupShaders() {
   shaderProg.addShader(new shader(vertexShader, GL_VERTEX_SHADER));
   shaderProg.addShader(new shader(fragmentShader, GL_FRAGMENT_SHADER));
@@ -134,6 +140,7 @@ void engine::setupShaders() {
   shaderProg.linkShaders();
   shaderProg.useProgram();
 }
+*/
 
 bool engine::initGraphics() {
   if (!initGLFW())
@@ -143,7 +150,6 @@ bool engine::initGraphics() {
     return false;
 
   enableGLFeatures();
-  setupShaders();
   return true;
 }
 
@@ -155,11 +161,7 @@ void engine::draw() {
   glClearBufferfv(GL_COLOR, 0, color);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  for (resource* obj : resources) {
-    glm::mat4 transformMatrix = currentCamera->getVPMatrix() * obj->getModelMatrix();
-    GLint mvpHandle = glGetUniformLocation(shaderProg.getProgID(), "transformMatrix");
-    glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
-
+  for (object* obj : objects) {
     obj->update();
     obj->draw();
   }
@@ -169,7 +171,6 @@ void engine::draw() {
 void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
-      shaderProg.useProgram();
       draw();
       glfwSwapBuffers(window);
       glfwPollEvents();

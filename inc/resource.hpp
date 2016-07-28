@@ -1,11 +1,13 @@
 #pragma once
 
 #include "glHeaders.hpp"
+#include "resourceHandler.hpp"
 
 class resource {
 
 protected:
   glm::mat4 modelMatrix;
+  resourceHandler* rHandler;
 
 public:
   virtual ~resource();
