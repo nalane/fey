@@ -4,7 +4,6 @@
  * A generic game object.
  */
  
-#include "resource.hpp"
 #include "resourceHandler.hpp"
 #include "shaderProgram.hpp"
 

@@ -8,7 +8,6 @@
 #include <vector>
 
 class engine;
-#include "resource.hpp"
 #include "paths.hpp"
 #include "object.hpp"
 #include "camera.hpp"

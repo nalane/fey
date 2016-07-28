@@ -5,11 +5,11 @@
 
 class model;
 class resourceHandler;
-#include "model.hpp"
 #include "glHeaders.hpp"
 #include "shader.hpp"
 #include "shaderProgram.hpp"
 #include "camera.hpp"
+#include "model.hpp"
 
 class resourceHandler {
 private:

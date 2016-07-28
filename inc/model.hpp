@@ -8,7 +8,6 @@
 #include <vector>
 #include <string>
 #include "glHeaders.hpp"
-#include "resource.hpp"
 
 class model {
 private:
