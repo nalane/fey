@@ -7,9 +7,11 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "glHeaders.hpp"
 
-class model {
+#include "glHeaders.hpp"
+#include "resource.hpp"
+
+class model : public resource {
 private:
   GLuint vao;
   std::map<int, GLuint> vbos;

@@ -1,37 +1,43 @@
 #pragma once
 
+/*
+ * Handles all data read in from a file and stores it in a resource
+ */
+
 #include <string>
 #include <map>
 
 class model;
 class resourceHandler;
+
 #include "glHeaders.hpp"
 #include "shader.hpp"
 #include "shaderProgram.hpp"
 #include "camera.hpp"
 #include "model.hpp"
+#include "resource.hpp"
 
 class resourceHandler {
 private:
-	std::map<std::string, model*> models;
-	std::map<std::string, shader*> vertexShaders;
-	std::map<std::string, shader*> fragmentShaders;
-	std::map<std::string, shaderProgram*> shaderPrograms;
-	std::map<std::string, camera*> cameras;
+  std::map<std::string, resource*> resources;
+  std::map<std::string, shader*> vertexShaders;
+  std::map<std::string, shader*> fragmentShaders;
+  std::map<std::string, shaderProgram*> shaderPrograms;
+  std::map<std::string, camera*> cameras;
 
-	model* loadFeyModel(std::string filename);
-	shader* loadVertexShader(std::string vertexShaderPath);
-	shader* loadFragmentShader(std::string fragmentShaderPath);
+  model* loadFeyModel(std::string filename);
+  shader* loadVertexShader(std::string vertexShaderPath);
+  shader* loadFragmentShader(std::string fragmentShaderPath);
 
 public:
-	resourceHandler() {};
-	~resourceHandler();
+  resourceHandler() {};
+  ~resourceHandler();
 
-	model* loadModel(std::string filepath);
-	shaderProgram* loadShaderProg(std::string vertexShader, std::string fragmentShader);
+  model* loadModel(std::string filepath);
+  shaderProgram* loadShaderProg(std::string vertexShader, std::string fragmentShader);
 
-	void unloadAll();
+  void unloadAll();
 
-	void setCamera(std::string id, camera* cam);
-	camera* getCamera(std::string id);
+  void setCamera(std::string id, camera* cam);
+  camera* getCamera(std::string id);
 };

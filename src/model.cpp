@@ -5,6 +5,7 @@ using namespace std;
 
 // Sets up the vao
 model::model() {
+  resource();
   glGenVertexArrays(1, &vao);
   nonPassIndex = -2;
   elementsIndex = 0;
