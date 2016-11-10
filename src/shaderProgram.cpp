@@ -41,11 +41,6 @@ bool shaderProgram::linkShaders() {
   }
   glLinkProgram(progID);
 
-  for (shader* s : shaders) {
-    delete s;
-    s = NULL;
-  }
-
   GLint isLinked = 0;
   glGetProgramiv(progID, GL_LINK_STATUS, &isLinked);
   if (!isLinked) {

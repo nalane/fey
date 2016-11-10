@@ -6,9 +6,10 @@
 
 #include <vector>
 
+#include "resource.hpp"
 #include "shader.hpp"
 
-class shaderProgram {
+class shaderProgram : public resource {
 private:
   std::vector<shader*> shaders;
   GLuint progID;

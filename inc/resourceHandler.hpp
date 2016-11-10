@@ -20,9 +20,6 @@ class resourceHandler;
 class resourceHandler {
 private:
   std::map<std::string, resource*> resources;
-  std::map<std::string, shader*> vertexShaders;
-  std::map<std::string, shader*> fragmentShaders;
-  std::map<std::string, shaderProgram*> shaderPrograms;
   std::map<std::string, camera*> cameras;
 
   model* loadFeyModel(std::string filename);

@@ -110,40 +110,39 @@ model* resourceHandler::loadModel(string filepath) {
 
 // Get a vertex shader
 shader* resourceHandler::loadVertexShader(string vertexShaderPath) {
-  if (vertexShaders.find(vertexShaderPath) == vertexShaders.end())
-    vertexShaders[vertexShaderPath] = new shader(vertexShaderPath, GL_VERTEX_SHADER);
+  if (resources.find(vertexShaderPath) == resources.end())
+    resources[vertexShaderPath] = new shader(vertexShaderPath, GL_VERTEX_SHADER);
 
-  return vertexShaders[vertexShaderPath];
+  return (shader*) resources[vertexShaderPath];
 }
 
 // Get a fragment shader
 shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
-  if (fragmentShaders.find(fragmentShaderPath) == fragmentShaders.end())
-    fragmentShaders[fragmentShaderPath] = new shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
+  if (resources.find(fragmentShaderPath) == resources.end())
+    resources[fragmentShaderPath] = new shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
 
-  return fragmentShaders[fragmentShaderPath];
+  return (shader*) resources[fragmentShaderPath];
 }
 
 // Get a shader program
 shaderProgram* resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
   string key = vertexShader + fragmentShader;
-  if (shaderPrograms.find(key) == shaderPrograms.end()) {
-    shaderPrograms[key] = new shaderProgram();
-    shaderPrograms[key]->addShader(loadVertexShader(vertexShader));
-    shaderPrograms[key]->addShader(loadFragmentShader(fragmentShader));
-    shaderPrograms[key]->loadShaders();
-    shaderPrograms[key]->compileShaders();
-    shaderPrograms[key]->linkShaders();
+  if (resources.find(key) == resources.end()) {
+    shaderProgram* prog = new shaderProgram();
+    prog->addShader(loadVertexShader(vertexShader));
+    prog->addShader(loadFragmentShader(fragmentShader));
+    prog->loadShaders();
+    prog->compileShaders();
+    prog->linkShaders();
+
+    resources[key] = prog;
   }
 
-  return shaderPrograms[key];
+  return (shaderProgram*) resources[key];
 }
 
 void resourceHandler::unloadAll() {
   for (auto p : resources)
-    delete p.second;
-
-  for (auto p : shaderPrograms)
     delete p.second;
 
   for (auto p : cameras)
