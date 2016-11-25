@@ -59,8 +59,8 @@ engine::~engine() {
   
   glfwTerminate();
 
-  for (object* obj : objects)
-    delete obj;
+  activeScene->unload();
+  delete activeScene;
 }
 
 // Initializes the graphics system
@@ -78,12 +78,8 @@ bool engine::initGame() {
 					 45.0, (float)windowWidth / (float)windowHeight));
   rHandler->setActiveCamera("main");
   
-  objects.push_back(new monkey(rHandler));
-
-  for (object* obj : objects) {
-    obj->load();
-    obj->init();
-  }
+  activeScene = new main_scene(rHandler);
+  activeScene->load();
   
   return true;
 }
@@ -165,10 +161,8 @@ void engine::draw() {
   glClearBufferfv(GL_COLOR, 0, color);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  for (object* obj : objects) {
-    obj->update();
-    obj->draw();
-  }
+  activeScene->update();
+  activeScene->draw();
 }
 
 // Run the game

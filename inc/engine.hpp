@@ -9,14 +9,13 @@
 
 class engine;
 #include "paths.hpp"
-#include "object.hpp"
 #include "camera.hpp"
 #include "glHeaders.hpp"
 #include "shaderProgram.hpp"
 #include "resourceHandler.hpp"
 
-// Game objects
-#include "monkey.hpp"
+// Game scenes
+#include "main_scene.hpp"
 
 class engine {
 private:
@@ -27,11 +26,12 @@ private:
   std::string fragmentShader;
 
   resourceHandler* rHandler;
-  std::vector<object*> objects;
   camera* currentCamera;
   shaderProgram* shaderProg;
   
   GLFWwindow* window;
+
+  scene* activeScene;
 
   bool initGame();
   bool initGLFW();
