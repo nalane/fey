@@ -34,8 +34,8 @@ engine::engine(string configFile) {
     recordLog("Window Width: " + to_string(windowWidth));
     recordLog("Window Height: " + to_string(windowHeight));
     recordLog("Window Title: " + windowTitle);
-    recordLog("Data Path: " + windowTitle);
-    recordLog("Library Path: " + windowTitle);
+    recordLog("Data Path: " + dataPath);
+    recordLog("Library Path: " + libraryPath);
     recordLog("Vertex Shader: " + vertexShader);
     recordLog("Fragment Shader: " + fragmentShader);
 

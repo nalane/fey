@@ -155,7 +155,7 @@ shaderProgram* resourceHandler::getShaderProg() {
 
 // Remove all resources
 void resourceHandler::unloadAll() {
-  for (auto p : resources)
+  for (auto p : resources) 
     delete p.second;
   resources.clear();
 
