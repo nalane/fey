@@ -14,15 +14,10 @@ class object {
 protected: 
   glm::mat4 modelMatrix;
   resourceHandler* rHandler;
-  shaderProgram* prog;
   GLint texHandle;
-
-  std::string vertexShader;
-  std::string fragmentShader;
   
 public:
-  object(resourceHandler* rHandler, std::string vertexShader, std::string fragmentShader) : 
-    rHandler(rHandler), vertexShader(vertexShader), fragmentShader(fragmentShader) {};
+  object(resourceHandler* rHandler) : rHandler(rHandler) {};
   ~object();
 				
   virtual void load();

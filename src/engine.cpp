@@ -68,13 +68,16 @@ bool engine::initGame() {
   srand(time(NULL));
   if (!initGraphics())
     return false;
+
+  shaderProg = rHandler->loadShaderProg(vertexShader, fragmentShader);
+  shaderProg->useProgram();
   
   rHandler->setCamera("main", new camera(glm::vec3(3.0, 3.0,  3.0),
-			                                   glm::vec3(0.0, 0.0,  0.0),
-			                                   glm::vec3(0.0, 1.0,  0.0),
-			                                   45.0, (float)windowWidth / (float)windowHeight));  
+					 glm::vec3(0.0, 0.0,  0.0),
+					 glm::vec3(0.0, 1.0,  0.0),
+					 45.0, (float)windowWidth / (float)windowHeight));  
   
-  objects.push_back(new monkey(rHandler, vertexShader, fragmentShader));
+  objects.push_back(new monkey(rHandler));
 
   for (object* obj : objects) {
     obj->load();

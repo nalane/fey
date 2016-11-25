@@ -3,8 +3,7 @@
 
 using namespace std;
 
-monkey::monkey(resourceHandler* rHandler, string vertexShader, string fragmentShader) 
-  : object(rHandler, vertexShader, fragmentShader) {
+monkey::monkey(resourceHandler* rHandler) : object(rHandler) {
 	
 }
 

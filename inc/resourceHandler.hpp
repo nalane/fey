@@ -32,6 +32,7 @@ public:
 
   model* loadModel(std::string filepath);
   shaderProgram* loadShaderProg(std::string vertexShader, std::string fragmentShader);
+  shaderProgram* getShaderProg();
 
   void unloadAll();
 

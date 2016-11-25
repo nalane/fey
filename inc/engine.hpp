@@ -29,6 +29,7 @@ private:
   resourceHandler* rHandler;
   std::vector<object*> objects;
   camera* currentCamera;
+  shaderProgram* shaderProg;
   
   GLFWwindow* window;
 

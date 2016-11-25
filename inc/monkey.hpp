@@ -10,13 +10,13 @@
 
 class monkey : public object {
 private:
-	model* m;
+  model* m;
 
 public:
-	monkey(resourceHandler* rHandler, std::string vertexShader, std::string fragmentShader);
-
-	void load();
-	void init();
-  	void update();
-  	void draw();
+  monkey(resourceHandler* rHandler);
+  
+  void load();
+  void init();
+  void update();
+  void draw();
 };
