@@ -75,7 +75,8 @@ bool engine::initGame() {
   rHandler->setCamera("main", new camera(glm::vec3(3.0, 3.0,  3.0),
 					 glm::vec3(0.0, 0.0,  0.0),
 					 glm::vec3(0.0, 1.0,  0.0),
-					 45.0, (float)windowWidth / (float)windowHeight));  
+					 45.0, (float)windowWidth / (float)windowHeight));
+  rHandler->setActiveCamera("main");
   
   objects.push_back(new monkey(rHandler));
 

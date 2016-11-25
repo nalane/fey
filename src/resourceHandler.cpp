@@ -153,18 +153,38 @@ shaderProgram* resourceHandler::getShaderProg() {
   return (shaderProgram*) resources[SHADER_KEY];
 }
 
+// Remove all resources
 void resourceHandler::unloadAll() {
   for (auto p : resources)
     delete p.second;
+  resources.clear();
 
   for (auto p : cameras)
     delete p.second;
+  cameras.clear();
 }
 
+// Adds a camera to the register
 void resourceHandler::setCamera(std::string id, camera* cam) {
   cameras[id] = cam;
 }
 
+// Find a camera based on its id
 camera* resourceHandler::getCamera(std::string id) {
   return cameras[id];
+}
+
+// Set the active camera
+void resourceHandler::setActiveCamera(string id) {
+  activeCameraID = id;
+}
+
+// Get the active camera
+camera* resourceHandler::getActiveCamera() {
+  if (cameras.find(activeCameraID) == cameras.end()) {
+    recordLog("WARNING: Could not find camera " + activeCameraID);
+    return NULL;
+  }
+  
+  return cameras[activeCameraID];
 }

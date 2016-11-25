@@ -22,6 +22,8 @@ private:
   std::map<std::string, resource*> resources;
   std::map<std::string, camera*> cameras;
 
+  std::string activeCameraID;
+
   model* loadFeyModel(std::string filename);
   shader* loadVertexShader(std::string vertexShaderPath);
   shader* loadFragmentShader(std::string fragmentShaderPath);
@@ -38,4 +40,7 @@ public:
 
   void setCamera(std::string id, camera* cam);
   camera* getCamera(std::string id);
+
+  void setActiveCamera(std::string id);
+  camera* getActiveCamera();
 };
