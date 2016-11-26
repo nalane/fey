@@ -84,8 +84,8 @@ bool engine::initGame() {
   return true;
 }
 
+// GLFW Initialization
 bool engine::initGLFW() {
-  // GLFW Initialization
   if (!glfwInit()) {
     recordLog("FATAL ERROR: Could not initialize GLFW!");
     return false;
@@ -110,8 +110,8 @@ bool engine::initGLFW() {
   return true;
 }
 
+// Initialize extension wrangler with core extensions
 bool engine::initGLEW() {
-  // Initialize extension wrangler with core extensions
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK) {
@@ -123,25 +123,15 @@ bool engine::initGLEW() {
   return true;
 }
 
+// Enable features of openGL
 void engine::enableGLFeatures() {
-  // Enable features of openGL
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
 }
 
-/*
-void engine::setupShaders() {
-  shaderProg.addShader(new shader(vertexShader, GL_VERTEX_SHADER));
-  shaderProg.addShader(new shader(fragmentShader, GL_FRAGMENT_SHADER));
-  shaderProg.loadShaders();
-  shaderProg.compileShaders();
-  shaderProg.linkShaders();
-  shaderProg.useProgram();
-}
-*/
-
+// Start the graphics system
 bool engine::initGraphics() {
   if (!initGLFW())
     return false;

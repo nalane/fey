@@ -9,6 +9,7 @@ add_subdirectory(deps)
 
 include_directories(inc)
 include_directories(inc/controllers)
+
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
