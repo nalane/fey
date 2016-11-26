@@ -8,7 +8,8 @@ include_directories(deps/soil/inc)
 add_subdirectory(deps)
 
 include_directories(inc)
-file(GLOB SOURCES "src/*.cpp")
+include_directories(inc/controllers)
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
 set(LINKED_LIBRARIES glfw glew soil ${GLFW_LIBRARIES})
