@@ -1,5 +1,11 @@
 #include "camera.hpp"
 
+double defaultAspectRatio = 0;
+
+void setDefaultAspectRatio(double aspectRatio) {
+  defaultAspectRatio = aspectRatio;
+}
+
 // Sets a default perspective
 camera::camera() {
   projection = glm::perspective(glm::radians(45.0), 4.0 / 3.0, 0.1, 100.0);

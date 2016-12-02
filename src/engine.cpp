@@ -72,12 +72,6 @@ bool engine::initGame() {
   shaderProg = rHandler->loadShaderProg(vertexShader, fragmentShader);
   shaderProg->useProgram();
   
-  rHandler->setCamera("main", new camera(glm::vec3(3.0, 3.0,  3.0),
-					 glm::vec3(0.0, 0.0,  0.0),
-					 glm::vec3(0.0, 1.0,  0.0),
-					 45.0, (float)windowWidth / (float)windowHeight));
-  rHandler->setActiveCamera("main");
-  
   activeScene = new main_scene(rHandler);
   activeScene->load();
   
@@ -140,6 +134,7 @@ bool engine::initGraphics() {
     return false;
 
   enableGLFeatures();
+  setDefaultAspectRatio((double) windowWidth / (double) windowHeight);
   return true;
 }
 
