@@ -13,7 +13,7 @@ public:
   ~main_scene();
 
   void load();
-  void update();
+  bool update();
   void draw();
-  void unload();
+  std::string unload();
 };

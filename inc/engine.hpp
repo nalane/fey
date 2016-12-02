@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class engine;
 #include "paths.hpp"
@@ -31,6 +32,7 @@ private:
   
   GLFWwindow* window;
 
+  std::map<std::string, scene*> scenes;
   scene* activeScene;
 
   bool initGame();

@@ -6,6 +6,7 @@
 
 #include "resourceHandler.hpp"
 #include "object.hpp"
+#include "input.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -20,7 +21,7 @@ public:
   virtual ~scene() {};
 
   virtual void load() = 0;
-  virtual void update() = 0;
+  virtual bool update() = 0;
   virtual void draw() = 0;
-  virtual void unload() = 0;
+  virtual std::string unload() = 0;
 };

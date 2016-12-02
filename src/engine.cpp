@@ -9,6 +9,7 @@
 #include "engine.hpp"
 #include "log.hpp"
 #include "paths.hpp"
+#include "second_scene.hpp"
 
 using namespace std;
 
@@ -59,8 +60,10 @@ engine::~engine() {
   
   glfwTerminate();
 
-  activeScene->unload();
-  delete activeScene;
+  activeScene = NULL;
+  for (auto p : scenes) {
+    delete p.second;
+  }
 }
 
 // Initializes the graphics system
@@ -71,8 +74,11 @@ bool engine::initGame() {
 
   shaderProg = rHandler->loadShaderProg(vertexShader, fragmentShader);
   shaderProg->useProgram();
+
   
-  activeScene = new main_scene(rHandler);
+  scenes["main"] = new main_scene(rHandler);
+  scenes["second"] = new second_scene(rHandler);
+  activeScene = scenes["main"];
   activeScene->load();
   
   return true;
@@ -100,6 +106,8 @@ bool engine::initGLFW() {
   }
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
+
+  glfwSetKeyCallback(window, key_callback);
 
   return true;
 }
@@ -146,7 +154,6 @@ void engine::draw() {
   glClearBufferfv(GL_COLOR, 0, color);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  activeScene->update();
   activeScene->draw();
 }
 
@@ -154,6 +161,13 @@ void engine::draw() {
 void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
+      if(activeScene->update()) {
+	string nextScene = activeScene->unload();
+	activeScene = scenes[nextScene];
+	activeScene->load();
+	activeScene->update();
+      }
+      
       draw();
       glfwSwapBuffers(window);
       glfwPollEvents();
