@@ -14,6 +14,7 @@ class engine;
 #include "glHeaders.hpp"
 #include "shaderProgram.hpp"
 #include "resourceHandler.hpp"
+#include "resource.hpp"
 
 // Game scenes
 #include "main_scene.hpp"
@@ -28,7 +29,7 @@ private:
 
   resourceHandler* rHandler;
   camera* currentCamera;
-  shaderProgram* shaderProg;
+  resource<shaderProgram>* shaderProg;
   
   GLFWwindow* window;
 
@@ -48,3 +49,5 @@ public:
   void draw();
   void runGame();
 };
+
+#include "resource.cpp"

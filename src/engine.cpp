@@ -56,14 +56,15 @@ engine::engine(string configFile) {
 
 // Destroys the game and all pointers used
 engine::~engine() {
-  delete rHandler;
-  
   glfwTerminate();
 
   activeScene = NULL;
   for (auto p : scenes) {
     delete p.second;
   }
+
+  delete shaderProg;
+  delete rHandler;
 }
 
 // Initializes the graphics system
@@ -73,14 +74,14 @@ bool engine::initGame() {
     return false;
 
   shaderProg = rHandler->loadShaderProg(vertexShader, fragmentShader);
-  shaderProg->useProgram();
+  shaderProg->res->useProgram();
 
-  
   scenes["main"] = new main_scene(rHandler);
   scenes["second"] = new second_scene(rHandler);
   activeScene = scenes["main"];
+
   activeScene->load();
-  
+
   return true;
 }
 

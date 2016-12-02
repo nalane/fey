@@ -1,18 +1,23 @@
 #pragma once
 
 /*
- * Resource base class; primarily manages ref count
+ * Resource wrapper.
  */
 
-#include <string>
+template <class T>
+class resource;
 
+#include "resourceHandler.hpp"
+
+template <class T>
 class resource {
-protected:
-  int refCount;
-
+private:
+  resourceHandler* rHandler;
+  
 public:
-  resource() : refCount(0) { }
+  T* res;
 
-  void incRef();
-  void decRef();
+  resource() : rHandler(NULL), res(NULL) {}
+  resource(T* res, resourceHandler* rHandler);
+  ~resource();
 };

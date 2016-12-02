@@ -4,7 +4,10 @@
 using namespace std;
 
 monkey::monkey(resourceHandler* rHandler) : object(rHandler) {
-	
+}
+
+monkey::~monkey() {
+  
 }
 
 void monkey::load() {
@@ -26,6 +29,6 @@ void monkey::update() {
 
 void monkey::draw() {
   object::draw();
-  m->bindTextureToUniform(texHandle);
-  m->draw();
+  m->res->bindTextureToUniform(texHandle);
+  m->res->draw();
 }

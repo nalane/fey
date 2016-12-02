@@ -41,7 +41,7 @@ model* resourceHandler::loadFeyModel(string filename) {
       vertexList.push_back(glm::vec3(x, y, z));
     }
 	
-    m = new model();
+    m = new model(filename);
 		
     // Get the number of textures
     int numTextures = 0;
@@ -103,11 +103,11 @@ model* resourceHandler::loadFeyModel(string filename) {
 }
 
 // Get the model associated with the given filename
-model* resourceHandler::loadModel(string filepath) {
+resource<model>* resourceHandler::loadModel(string filepath) {
   if (resources.find(filepath) == resources.end())
     resources[filepath] = loadFeyModel(getLibraryFolderPath(filepath));
 
-  return (model*) resources[filepath];
+  return new resource<model>((model*) resources[filepath], this);
 }
 
 // Get a vertex shader
@@ -127,10 +127,10 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
 }
 
 // Get a shader program
-shaderProgram* resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
+resource<shaderProgram>* resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
   string key = SHADER_KEY;
   if (resources.find(key) == resources.end()) {
-    shaderProgram* prog = new shaderProgram();
+    shaderProgram* prog = new shaderProgram(SHADER_KEY);
     prog->addShader(loadVertexShader(vertexShader));
     prog->addShader(loadFragmentShader(fragmentShader));
     prog->loadShaders();
@@ -140,17 +140,25 @@ shaderProgram* resourceHandler::loadShaderProg(string vertexShader, string fragm
     resources[key] = prog;
   }
 
-  return (shaderProgram*) resources[key];
+  return new resource<shaderProgram>((shaderProgram*) resources[key], this);
 }
 
 // Find the shader program, if it is set
-shaderProgram* resourceHandler::getShaderProg() {
+resource<shaderProgram>* resourceHandler::getShaderProg() {
   if (resources.find(SHADER_KEY) == resources.end()) {
     recordLog("ERROR: Could not find the main shader. Are you sure it loaded?");
-    return NULL;
+    return new resource<shaderProgram>(NULL, this);
   }
 
-  return (shaderProgram*) resources[SHADER_KEY];
+  return new resource<shaderProgram>((shaderProgram*) resources[SHADER_KEY], this);
+}
+
+void resourceHandler::unload(string name) {
+  map<string, raw_resource*>::iterator it = resources.find(name);
+  if (it != resources.end()) {
+    delete it->second;
+    resources.erase(it);
+  }
 }
 
 // Remove all resources

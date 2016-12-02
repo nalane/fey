@@ -36,6 +36,6 @@ string second_scene::unload() {
   }
 
   objects.clear();
-
+  
   return "main";
 }

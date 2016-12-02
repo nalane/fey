@@ -9,9 +9,9 @@
 #include <string>
 
 #include "glHeaders.hpp"
-#include "resource.hpp"
+#include "raw_resource.hpp"
 
-class model : public resource {
+class model : public raw_resource {
 private:
   GLuint vao;
   std::map<int, GLuint> vbos;
@@ -22,7 +22,7 @@ private:
   int numVertices;
 
 public:
-  model();
+  model(std::string name);
   ~model();
 
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);

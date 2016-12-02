@@ -5,12 +5,12 @@
  */
 
 #include "glHeaders.hpp"
-#include "resource.hpp"
+#include "raw_resource.hpp"
 
 #include <string>
 #include <map>
 
-class shader : public resource {
+class shader : public raw_resource {
 private:
   GLuint shaderID;
   GLenum shaderType;

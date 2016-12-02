@@ -15,11 +15,12 @@ class resourceHandler;
 #include "shaderProgram.hpp"
 #include "camera.hpp"
 #include "model.hpp"
+#include "raw_resource.hpp"
 #include "resource.hpp"
 
 class resourceHandler {
 private:
-  std::map<std::string, resource*> resources;
+  std::map<std::string, raw_resource*> resources;
   std::map<std::string, camera*> cameras;
 
   std::string activeCameraID;
@@ -32,10 +33,11 @@ public:
   resourceHandler() {};
   ~resourceHandler();
 
-  model* loadModel(std::string filepath);
-  shaderProgram* loadShaderProg(std::string vertexShader, std::string fragmentShader);
-  shaderProgram* getShaderProg();
+  resource<model>* loadModel(std::string filepath);
+  resource<shaderProgram>* loadShaderProg(std::string vertexShader, std::string fragmentShader);
+  resource<shaderProgram>* getShaderProg();
 
+  void unload(std::string name);
   void unloadAll();
 
   void setCamera(std::string id, camera* cam);
@@ -44,3 +46,5 @@ public:
   void setActiveCamera(std::string id);
   camera* getActiveCamera();
 };
+
+#include "resource.cpp"

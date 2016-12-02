@@ -6,16 +6,16 @@
 
 #include <vector>
 
-#include "resource.hpp"
+#include "raw_resource.hpp"
 #include "shader.hpp"
 
-class shaderProgram : public resource {
+class shaderProgram : public raw_resource {
 private:
   std::vector<shader*> shaders;
   GLuint progID;
 
 public:
-  shaderProgram() : progID(-1) {};
+  shaderProgram(std::string name) : progID(-1), raw_resource(name) { }
   ~shaderProgram();
   
   void addShader(shader* s);
