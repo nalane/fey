@@ -20,9 +20,10 @@ resourceHandler::~resourceHandler() {
 
 // Loads a fey model into memory and returns the data
 model* resourceHandler::loadFeyModel(string filename) {
-  recordLog("Reading fey model " + filename + "...");
+  string fullPath = getLibraryFolderPath(filename);
+  recordLog("Reading fey model " + fullPath + "...");
   model* m = NULL;
-  ifstream fin(filename.c_str());
+  ifstream fin(fullPath.c_str());
 
   if (fin.is_open()) {
     // Get number of vertices
@@ -105,7 +106,7 @@ model* resourceHandler::loadFeyModel(string filename) {
 // Get the model associated with the given filename
 resource<model>* resourceHandler::loadModel(string filepath) {
   if (resources.find(filepath) == resources.end())
-    resources[filepath] = loadFeyModel(getLibraryFolderPath(filepath));
+    resources[filepath] = loadFeyModel(filepath);
 
   return new resource<model>((model*) resources[filepath], this);
 }
@@ -156,8 +157,12 @@ resource<shaderProgram>* resourceHandler::getShaderProg() {
 void resourceHandler::unload(string name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
+    recordLog("Unloading resource " + name);
     delete it->second;
     resources.erase(it);
+  }
+  else {
+    recordLog("WARNING: Could not find resource " + name + " for unloading.");
   }
 }
 

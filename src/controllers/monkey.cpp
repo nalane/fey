@@ -7,7 +7,7 @@ monkey::monkey(resourceHandler* rHandler) : object(rHandler) {
 }
 
 monkey::~monkey() {
-  
+  delete m;
 }
 
 void monkey::load() {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <iostream>
+#include "log.hpp"
+#include <string>
 
 template <class T>
 resource<T>::resource(T* res, resourceHandler* rHandler) {
@@ -11,7 +12,8 @@ resource<T>::resource(T* res, resourceHandler* rHandler) {
 
 template <class T>
 resource<T>::~resource() {
-  if (res->unload() == 0) {
+  int numRefs = res->unload();
+  if (numRefs == 0) {
     rHandler->unload(res->getName());
   }
 }

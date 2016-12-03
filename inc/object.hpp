@@ -18,7 +18,7 @@ protected:
   
 public:
   object(resourceHandler* rHandler) : rHandler(rHandler) {};
-  ~object();
+  virtual ~object();
 				
   virtual void load();
   virtual void init();
