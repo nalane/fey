@@ -13,6 +13,7 @@ protected:
   
 public:
   raw_resource(std::string name) : refCount(0), name(name) { }
+  virtual ~raw_resource();
   
   void load();
   int unload();
