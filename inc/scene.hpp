@@ -6,7 +6,6 @@
 
 #include "resourceHandler.hpp"
 #include "object.hpp"
-#include "input.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -20,6 +19,7 @@ public:
   scene(resourceHandler* rHandler) : rHandler(rHandler) {};
   virtual ~scene() {};
 
+  virtual void keyPress(int key, int action, int mods) = 0;
   virtual void load() = 0;
   virtual bool update() = 0;
   virtual void draw() = 0;

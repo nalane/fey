@@ -13,8 +13,15 @@
 
 using namespace std;
 
+// GLFW Key press call back can't be a method.
+engine* runningGame = NULL;
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+  runningGame->keyPress(key, action, mods);
+}
+
 // The constructor. Uses the values found in configFile
 engine::engine(string configFile) {
+  runningGame = this;
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
     string dataPath, libraryPath;

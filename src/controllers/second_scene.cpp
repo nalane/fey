@@ -6,6 +6,11 @@ second_scene::~second_scene() {
   unload();
 }
 
+void second_scene::keyPress(int key, int action, int mods) {
+  if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    switchScenes = true;
+}
+
 void second_scene::load() {
   objects["monkey"] = new monkey(rHandler);
   objects["monkey"]->load();
@@ -19,8 +24,10 @@ void second_scene::load() {
 }
 
 bool second_scene::update() {
-  if (key_state(GLFW_KEY_SPACE) == GLFW_PRESS)
+  if (switchScenes) {
+    switchScenes = false;
     return true;
+  }
   
   objects["monkey"]->update();
   return false;

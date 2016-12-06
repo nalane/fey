@@ -48,6 +48,10 @@ public:
 
   void draw();
   void runGame();
+  
+  void keyPress(int key, int action, int mods) {
+    activeScene->keyPress(key, action, mods);
+  }
 };
 
 #include "resource.cpp"
