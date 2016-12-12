@@ -17,3 +17,10 @@ resource<T>::~resource() {
     rHandler->unload(res->getName());
   }
 }
+
+template <class T>
+void resource<T>::operator = (const resource<T>& rhs) {
+  res = rhs.res;
+  res->load();
+  rHandler = rhs.rHandler;
+}

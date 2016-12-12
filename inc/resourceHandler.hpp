@@ -33,9 +33,9 @@ public:
   resourceHandler() {};
   ~resourceHandler();
 
-  resource<model>* loadModel(std::string filepath);
-  resource<shaderProgram>* loadShaderProg(std::string vertexShader, std::string fragmentShader);
-  resource<shaderProgram>* getShaderProg();
+  resource<model> loadModel(std::string filepath);
+  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader);
+  resource<shaderProgram> getShaderProg();
 
   void unload(std::string name);
   void unloadAll();

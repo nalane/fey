@@ -52,8 +52,6 @@ engine::engine(string configFile) {
 	
     vertexShader = getDataFolderPath(vertexShader);
     fragmentShader = getDataFolderPath(fragmentShader);
-
-    rHandler = new resourceHandler();
   }
 
   else {
@@ -69,9 +67,6 @@ engine::~engine() {
   for (auto p : scenes) {
     delete p.second;
   }
-
-  delete shaderProg;
-  delete rHandler;
 }
 
 // Initializes the graphics system
@@ -80,11 +75,11 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
 
-  shaderProg = rHandler->loadShaderProg(vertexShader, fragmentShader);
-  shaderProg->res->useProgram();
+  shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader);
+  shaderProg.res->useProgram();
 
-  scenes["main"] = new main_scene(rHandler);
-  scenes["second"] = new second_scene(rHandler);
+  scenes["main"] = new main_scene(&rHandler);
+  scenes["second"] = new second_scene(&rHandler);
   activeScene = scenes["main"];
 
   activeScene->load();

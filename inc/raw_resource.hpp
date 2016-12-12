@@ -5,11 +5,13 @@
  */
 
 #include <string>
+#include <mutex>
 
 class raw_resource {
 protected:
   int refCount;
   std::string name;
+  std::mutex locker;
   
 public:
   raw_resource(std::string name) : refCount(0), name(name) { }

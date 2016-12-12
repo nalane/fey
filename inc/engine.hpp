@@ -27,9 +27,9 @@ private:
   std::string vertexShader;
   std::string fragmentShader;
 
-  resourceHandler* rHandler;
+  resourceHandler rHandler;
   camera* currentCamera;
-  resource<shaderProgram>* shaderProg;
+  resource<shaderProgram> shaderProg;
   
   GLFWwindow* window;
 

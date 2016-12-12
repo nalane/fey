@@ -7,7 +7,7 @@ monkey::monkey(resourceHandler* rHandler) : object(rHandler) {
 }
 
 monkey::~monkey() {
-  delete m;
+
 }
 
 void monkey::load() {
@@ -29,6 +29,6 @@ void monkey::update() {
 
 void monkey::draw() {
   object::draw();
-  m->res->bindTextureToUniform(texHandle);
-  m->res->draw();
+  m.res->bindTextureToUniform(texHandle);
+  m.res->draw();
 }

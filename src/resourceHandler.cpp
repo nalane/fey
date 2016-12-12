@@ -12,10 +12,8 @@
 
 using namespace std;
 
-const string SHADER_KEY = "___MAIN_SHADER_KEY___";
-
 resourceHandler::~resourceHandler() {
-  unloadAll();
+  //  unloadAll();
 }
 
 // Loads a fey model into memory and returns the data
@@ -104,11 +102,11 @@ model* resourceHandler::loadFeyModel(string filename) {
 }
 
 // Get the model associated with the given filename
-resource<model>* resourceHandler::loadModel(string filepath) {
+resource<model> resourceHandler::loadModel(string filepath) {
   if (resources.find(filepath) == resources.end())
     resources[filepath] = loadFeyModel(filepath);
 
-  return new resource<model>((model*) resources[filepath], this);
+  return resource<model>((model*) resources[filepath], this);
 }
 
 // Get a vertex shader
@@ -128,7 +126,7 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
 }
 
 // Get a shader program
-resource<shaderProgram>* resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
+resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
   string key = SHADER_KEY;
   if (resources.find(key) == resources.end()) {
     shaderProgram* prog = new shaderProgram(SHADER_KEY);
@@ -141,17 +139,17 @@ resource<shaderProgram>* resourceHandler::loadShaderProg(string vertexShader, st
     resources[key] = prog;
   }
 
-  return new resource<shaderProgram>((shaderProgram*) resources[key], this);
+  return resource<shaderProgram>((shaderProgram*) resources[key], this);
 }
 
 // Find the shader program, if it is set
-resource<shaderProgram>* resourceHandler::getShaderProg() {
+resource<shaderProgram> resourceHandler::getShaderProg() {
   if (resources.find(SHADER_KEY) == resources.end()) {
     recordLog("ERROR: Could not find the main shader. Are you sure it loaded?");
-    return new resource<shaderProgram>(NULL, this);
+    return resource<shaderProgram>(NULL, this);
   }
 
-  return new resource<shaderProgram>((shaderProgram*) resources[SHADER_KEY], this);
+  return resource<shaderProgram>((shaderProgram*) resources[SHADER_KEY], this);
 }
 
 void resourceHandler::unload(string name) {

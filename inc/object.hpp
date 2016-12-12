@@ -15,6 +15,7 @@ protected:
   glm::mat4 modelMatrix;
   resourceHandler* rHandler;
   GLint texHandle;
+  GLint progID;
   
 public:
   object(resourceHandler* rHandler) : rHandler(rHandler) {};
