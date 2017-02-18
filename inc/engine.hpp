@@ -53,5 +53,3 @@ public:
     activeScene->keyPress(key, action, mods);
   }
 };
-
-#include "resource.cpp"

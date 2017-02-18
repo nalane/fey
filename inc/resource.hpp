@@ -24,3 +24,5 @@ public:
   
   ~resource();
 };
+
+#include "resource.cpp"
