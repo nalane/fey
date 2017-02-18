@@ -25,4 +25,4 @@ public:
   ~resource();
 };
 
-#include "resource.cpp"
+#include "resource.tpp"

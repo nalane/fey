@@ -22,5 +22,3 @@ public:
   void update();
   void draw();
 };
-
-#include "resource.cpp"

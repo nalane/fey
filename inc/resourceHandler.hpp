@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 
+template <typename T> class resource;
 class model;
 class resourceHandler;
 
@@ -16,7 +17,6 @@ class resourceHandler;
 #include "camera.hpp"
 #include "model.hpp"
 #include "raw_resource.hpp"
-#include "resource.hpp"
 
 class resourceHandler {
 private:
@@ -47,4 +47,4 @@ public:
   camera* getActiveCamera();
 };
 
-#include "resource.cpp"
+#include "resource.hpp"
