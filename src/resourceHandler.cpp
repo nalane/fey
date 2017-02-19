@@ -13,7 +13,7 @@
 using namespace std;
 
 resourceHandler::~resourceHandler() {
-  //  unloadAll();
+  unloadAll();
 }
 
 // Loads a fey model into memory and returns the data
