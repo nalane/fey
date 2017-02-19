@@ -75,7 +75,7 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
 
-  shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader);
+  shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader, true);
   shaderProg.res->useProgram();
 
   scenes["main"] = new main_scene(&rHandler);

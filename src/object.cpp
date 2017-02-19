@@ -9,9 +9,14 @@ object::~object() {
 
 }
 
+void object::setShaderProg() {
+  shaderProg = rHandler->loadShaderProg();
+  texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
+}
+
 void object::load() {
-  texHandle = glGetUniformLocation(rHandler->getShaderProg().res->getProgID(), "texSampler");
-  progID = rHandler->getShaderProg().res->getProgID();
+  this->setShaderProg();
+  progID = shaderProg.res->getProgID();
 }
 
 void object::init() {

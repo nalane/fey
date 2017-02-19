@@ -14,8 +14,11 @@ class object {
 protected: 
   glm::mat4 modelMatrix;
   resourceHandler* rHandler;
+  
   GLint texHandle;
   GLint progID;
+  resource<shaderProgram> shaderProg;
+  virtual void setShaderProg();
   
 public:
   object(resourceHandler* rHandler) : rHandler(rHandler) {};

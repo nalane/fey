@@ -34,8 +34,8 @@ public:
   ~resourceHandler();
 
   resource<model> loadModel(std::string filepath);
-  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader);
-  resource<shaderProgram> getShaderProg();
+  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
+  resource<shaderProgram> loadShaderProg();
 
   void unload(std::string name);
   void unloadAll();

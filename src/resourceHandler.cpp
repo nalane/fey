@@ -126,8 +126,8 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
 }
 
 // Get a shader program
-resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader) {
-  string key = SHADER_KEY;
+resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader, bool defaultShader) {
+  string key = defaultShader ? SHADER_KEY : "v" + vertexShader + "f" + fragmentShader;
   if (resources.find(key) == resources.end()) {
     shaderProgram* prog = new shaderProgram(SHADER_KEY);
     prog->addShader(loadVertexShader(vertexShader));
@@ -142,8 +142,8 @@ resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, str
   return resource<shaderProgram>((shaderProgram*) resources[key], this);
 }
 
-// Find the shader program, if it is set
-resource<shaderProgram> resourceHandler::getShaderProg() {
+// Find the default shader program, if it is set
+resource<shaderProgram> resourceHandler::loadShaderProg() {
   if (resources.find(SHADER_KEY) == resources.end()) {
     recordLog("ERROR: Could not find the main shader. Are you sure it loaded?");
     return resource<shaderProgram>(NULL, this);
