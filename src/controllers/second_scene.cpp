@@ -13,8 +13,13 @@ void second_scene::keyPress(int key, int action, int mods) {
 
 void second_scene::load() {
   objects["monkey"] = new monkey(rHandler);
+  objects["cube"] = new cube(rHandler);
+  
   objects["monkey"]->load();
+  objects["cube"]->load();
+  
   objects["monkey"]->init();
+  objects["cube"]->init();
 
   rHandler->setCamera("main", new camera(glm::vec3(-3.0, -3.0,  -3.0),
 					 glm::vec3(0.0, 0.0,  0.0),
@@ -28,13 +33,18 @@ bool second_scene::update() {
     switchScenes = false;
     return true;
   }
+
+  for (auto p : objects) {
+    p.second->update();
+  }
   
-  objects["monkey"]->update();
   return false;
 }
 
 void second_scene::draw() {
-  objects["monkey"]->draw();
+  for (auto p : objects) {
+    p.second->draw();
+  }
 }
 
 string second_scene::unload() {

@@ -6,6 +6,7 @@
 
 #include "scene.hpp"
 #include "monkey.hpp"
+#include "cube.hpp"
 
 class second_scene : public scene {
 private:
