@@ -12,6 +12,8 @@
 
 using namespace std;
 
+const string SHADER_KEY = "___MAIN_SHADER_KEY___";
+
 resourceHandler::~resourceHandler() {
   unloadAll();
 }
@@ -129,7 +131,7 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
 resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader, bool defaultShader) {
   string key = defaultShader ? SHADER_KEY : "v" + vertexShader + "f" + fragmentShader;
   if (resources.find(key) == resources.end()) {
-    shaderProgram* prog = new shaderProgram(SHADER_KEY);
+    shaderProgram* prog = new shaderProgram(key);
     prog->addShader(loadVertexShader(vertexShader));
     prog->addShader(loadFragmentShader(fragmentShader));
     prog->loadShaders();
