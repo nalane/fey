@@ -45,6 +45,13 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
             
         else:
             with open(filepath, 'w') as f:
+                f.write(str(len(obj_list[0].material_slots)) + "\n")
+                for mat in obj_list[0].material_slots:
+                    diffuse = mat.material.diffuse_color
+                    specular = mat.material.specular_color
+                    f.write(str(diffuse.r) + " " + str(diffuse.g) + " " + str(diffuse.b) + "\n")
+                    f.write(str(specular.r) + " " + str(specular.g) + " " + str(specular.b) + "\n")
+				
                 d = obj_list[0].data
                 f.write(str(len(d.vertices)) + "\n")
                 for v in d.vertices:
