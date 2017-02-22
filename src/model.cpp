@@ -79,6 +79,18 @@ void model::setUVMapping(std::vector<glm::vec2> uvList) {
   addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
 }
 
+// Sends normal data to the GPU
+void model::setNormals(vector<glm::vec3> normalList) {
+  vector<float> rawData;
+  for (glm::vec3 n : normalList) {
+    rawData.push_back(n.x);
+    rawData.push_back(n.y);
+    rawData.push_back(n.z);
+    rawData.push_back(1.0);
+  }
+  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 2);
+}
+
 // Sends vertex color data to GPU
 void model::setColors(std::vector<glm::vec4> colorList) {
   vector<float> rawData;
@@ -88,7 +100,7 @@ void model::setColors(std::vector<glm::vec4> colorList) {
     rawData.push_back(c.b);
     rawData.push_back(c.a);
   }
-  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1);
+  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 3);
 }
 
 // Bind the texture to be drawn

@@ -80,6 +80,8 @@ model* resourceHandler::loadFeyModel(string filename) {
     // Get the UV map
     vector<glm::vec2> uvMapping;
     vector<glm::vec3> finalVerts;
+	vector<glm::vec3> normals;
+	glm::vec3 face[3];
     for(int i = 0; i < numVerts; i++) {
       int index, uvIndex;
 			
@@ -88,11 +90,20 @@ model* resourceHandler::loadFeyModel(string filename) {
 			
       fin >> uvIndex;
       uvMapping.push_back(uvCoords[uvIndex]);
+	  
+	  face[i % 3] = vertexList[index];
+	  if (i % 3 == 2) {
+		  glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
+		  normals.push_back(normal);
+		  normals.push_back(normal);
+		  normals.push_back(normal);
+	  }
     }
 
     // Push data into the model
     m->setVertices(finalVerts);
     m->setUVMapping(uvMapping);
+	m->setNormals(normals);
     recordLog("Successfully read in fey model file " + filename + "!");
   }
 
