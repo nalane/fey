@@ -26,6 +26,24 @@ model* resourceHandler::loadFeyModel(string filename) {
   ifstream fin(fullPath.c_str());
 
   if (fin.is_open()) {
+    m = new model(filename);
+    
+    // Get number of materials
+    int numMaterials = 0;
+    fin >> numMaterials;
+
+    // Get materials
+    for (int i = 0; i < numMaterials; i++) {
+      glm::vec4 amb(0.0);
+      glm::vec4 diffuse(1.0);
+      glm::vec4 specular(1.0);
+
+      fin >> diffuse[0] >> diffuse[1] >> diffuse[2];
+      fin >> specular[0] >> specular[1] >> specular[2];
+
+      m->addMaterial(material(amb, diffuse, specular));
+    }
+    
     // Get number of vertices
     int numVertices = 0;
     fin >> numVertices;
@@ -41,8 +59,6 @@ model* resourceHandler::loadFeyModel(string filename) {
 
       vertexList.push_back(glm::vec3(x, y, z));
     }
-	
-    m = new model(filename);
 		
     // Get the number of textures
     int numTextures = 0;
@@ -103,7 +119,7 @@ model* resourceHandler::loadFeyModel(string filename) {
     // Push data into the model
     m->setVertices(finalVerts);
     m->setUVMapping(uvMapping);
-	m->setNormals(normals);
+    m->setNormals(normals);
     recordLog("Successfully read in fey model file " + filename + "!");
   }
 
