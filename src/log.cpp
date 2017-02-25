@@ -7,36 +7,43 @@ using namespace std;
 
 string logFile;
 bool debug;
+ofstream fout;
 
 // Initializes the log file
 void initLogging(string file, bool debugFlag) {
   debug = debugFlag;
   logFile = file;
-  ofstream fout(logFile.c_str());
+  fout = ofstream(logFile.c_str());
 
   if (!fout.is_open())
     cout << "Could not open the logging file." << endl;
-
-  else 
-    fout.close();
 }
 
 // Records a message to the log file
 bool recordLog(string message) {
   if (debug)
-    cout << message << endl;
+    cout << message << "\n";
   
-  ofstream fout(logFile.c_str(), ostream::app);
   if (fout.is_open()) {
-    fout << message << endl;
-    fout.close();
+    fout << message << "\n";
     return true;
   }
 
   else {
+    fout = ofstream(logFile.c_str(), ostream::app);
+    if (fout.is_open()) {
+      fout << message << "\n";
+      return true;
+    }
+    
     cerr << "ERROR: Could not write to the log file at " << logFile << endl;
     cerr << "Message intended to be logged:" << endl;
     cerr << message << endl << endl;
     return false;
   }
+}
+
+// Close log file
+void endLogging() {
+  fout.close();
 }

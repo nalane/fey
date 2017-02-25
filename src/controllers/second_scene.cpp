@@ -42,9 +42,8 @@ bool second_scene::update() {
 }
 
 void second_scene::draw() {
-  for (auto p : objects) {
-    p.second->draw();
-  }
+  objects["cube"]->draw();
+  objects["monkey"]->draw();
 }
 
 string second_scene::unload() {

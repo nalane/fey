@@ -8,3 +8,4 @@
 
 void initLogging(std::string file, bool debugFlag);
 bool recordLog(std::string message);
+void endLogging();

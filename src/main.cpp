@@ -37,5 +37,6 @@ int main(int argc, char** argv) {
 
   // Clean up and exit
   delete e;
+  endLogging();
   return EXIT_SUCCESS;
 }
