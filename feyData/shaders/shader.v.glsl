@@ -1,7 +1,16 @@
 #version 330 core
+
+struct material {
+     vec4 ambient;
+     vec4 diffuse;
+     vec4 specular;
+};
+
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec2 vertexUV;
 layout (location = 2) in vec4 normal;
+
+uniform material mat;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

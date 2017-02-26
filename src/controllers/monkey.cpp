@@ -30,5 +30,5 @@ void monkey::update() {
 void monkey::draw() {
   object::draw();
   m.res->bindTextureToUniform(texHandle);
-  m.res->draw();
+  m.res->draw(progID);
 }

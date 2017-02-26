@@ -4,7 +4,10 @@
  * Contains a material
  */
 
+class material;
+
 #include "glHeaders.hpp"
+#include "resourceHandler.hpp"
 
 class material {
 private:
@@ -19,4 +22,6 @@ public:
   glm::vec4 getAmbientVals() { return ambientVals; }
   glm::vec4 getDiffuseVals() { return diffuseVals; }
   glm::vec4 getSpecularVals() { return specularVals; }
+
+  void sendToShader(GLint progID);
 };

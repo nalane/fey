@@ -27,7 +27,7 @@ public:
   model(std::string name);
   ~model();
 
-  void addMaterial(material mat) { materials.push_back(mat); }
+  void addMaterial(material mat);
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);
   void setTexture(std::string source);
   void setVertices(std::vector<glm::vec3> vertexList);
@@ -36,5 +36,5 @@ public:
   void setColors(std::vector<glm::vec4> colorList);
   void bindTextureToUniform(GLuint uniformID);
 
-  void draw();
+  void draw(GLint progID);
 };

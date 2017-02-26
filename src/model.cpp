@@ -20,6 +20,11 @@ model::~model() {
     glDeleteTextures(1, &id);
 }
 
+// Adds a material
+void model::addMaterial (material mat) {
+  materials.push_back(mat);
+}
+
 // Adds a VBO
 void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation, int itemSize) {
   if (shaderLocation < 0) {
@@ -111,13 +116,17 @@ void model::bindTextureToUniform(GLuint uniformID) {
 }
 
 // Draws the model
-void model::draw() {
+void model::draw(GLint progID) {
   glBindVertexArray(vao);
   
   for(int i = 0; i < texIDs.size(); i++) {
     GLuint id = texIDs[i];
     glActiveTexture(GL_TEXTURE0 + i);
     glBindTexture(GL_TEXTURE_2D, id);  
+  }
+
+  if (materials.size() > 0) {
+    materials[0].sendToShader(progID);
   }
 	
   if (elementsIndex < 0) {

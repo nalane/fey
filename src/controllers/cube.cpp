@@ -26,5 +26,5 @@ void cube::update() {
 void cube::draw() {
   object::draw();
   m.res->bindTextureToUniform(texHandle);
-  m.res->draw();
+  m.res->draw(progID);
 }

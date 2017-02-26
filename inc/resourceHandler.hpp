@@ -10,6 +10,7 @@
 template <typename T> class resource;
 class model;
 class resourceHandler;
+class material;
 
 #include "glHeaders.hpp"
 #include "shader.hpp"
