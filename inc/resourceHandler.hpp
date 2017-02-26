@@ -17,11 +17,13 @@ class resourceHandler;
 #include "camera.hpp"
 #include "model.hpp"
 #include "raw_resource.hpp"
+#include "light.hpp"
 
 class resourceHandler {
 private:
   std::map<std::string, raw_resource*> resources;
   std::map<std::string, camera*> cameras;
+  std::map<std::string, light*> lights;
 
   std::string activeCameraID;
 
