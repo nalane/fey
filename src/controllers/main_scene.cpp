@@ -21,6 +21,9 @@ void main_scene::load() {
 					 glm::vec3(0.0, 1.0,  0.0),
 					 45.0));
   rHandler->setActiveCamera("main");
+
+  rHandler->setLight("main", new light(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0), glm::vec3(1.0, 1.0, 1.0)));
+  rHandler->setLight("static", new light(glm::vec4(0.0, 0.2, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0)));
 }
 
 bool main_scene::update() {
@@ -28,8 +31,12 @@ bool main_scene::update() {
     switchScenes = false;
     return true;
   }
+
+  rad += 0.05;
+  rHandler->getLight("main")->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
   
   objects["monkey"]->update();
+  
   return false;
 }
 
