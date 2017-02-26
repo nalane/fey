@@ -40,4 +40,15 @@ void object::draw() {
   glm::mat4 projectionMatrix = rHandler->getActiveCamera()->getProjectionMatrix();
   GLint projectionHandle = glGetUniformLocation(progID, "projectionMatrix");
   glUniformMatrix4fv(projectionHandle, 1, GL_FALSE, &projectionMatrix[0][0]);
+
+  vector<light*> lights = rHandler->getAllLights();
+  GLint numLightsHandle = glGetUniformLocation(progID, "numLights");
+  glUniform1i(numLightsHandle, lights.size());
+  for (int i = 0; i < lights.size(); i++) {
+    GLint lightHandle = glGetUniformLocation(progID, ("lights[" + to_string(i) + "].position").c_str());
+    glUniform4fv(lightHandle, 1, lights[i]->getPosition());
+
+    lightHandle = glGetUniformLocation(progID, ("lights[" + to_string(i) + "].color").c_str());
+    glUniform3fv(lightHandle, 1, lights[i]->getColor());
+  }
 }

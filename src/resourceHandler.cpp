@@ -204,6 +204,26 @@ void resourceHandler::unloadAll() {
   cameras.clear();
 }
 
+// Add a named light
+void resourceHandler::setLight(string id, light* l) {
+  lights[id] = l;
+}
+
+// Get a light based on its id
+light* resourceHandler::getLight(string id) {
+  return lights[id];
+}
+
+// Get a list of all lights in the scene
+vector<light*> resourceHandler::getAllLights() {
+  vector<light*> lightList;
+  for (auto p : lights) {
+    lightList.push_back(p.second);
+  }
+
+  return lightList;
+}
+
 // Adds a camera to the register
 void resourceHandler::setCamera(std::string id, camera* cam) {
   cameras[id] = cam;

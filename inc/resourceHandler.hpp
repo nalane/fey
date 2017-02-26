@@ -4,6 +4,7 @@
  * Handles all data read in from a file and stores it in a resource
  */
 
+#include <vector>
 #include <string>
 #include <map>
 
@@ -42,6 +43,10 @@ public:
 
   void unload(std::string name);
   void unloadAll();
+
+  void setLight(std::string id, light* l);
+  light* getLight(std::string id);
+  std::vector<light*> getAllLights();
 
   void setCamera(std::string id, camera* cam);
   camera* getCamera(std::string id);

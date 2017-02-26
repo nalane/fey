@@ -16,6 +16,6 @@ public:
 
   void setPosition(glm::vec4 position) { this->position = position; }
   void setColor(glm::vec3 color) { this->color = color; }
-  glm::vec4 getPosition() { return position; }
-  glm::vec3 getColor() { return color; }
+  float* getPosition() { return &position[0]; }
+  float* getColor() { return &color[0]; }
 };
