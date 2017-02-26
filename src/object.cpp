@@ -29,7 +29,15 @@ void object::update() {
 
 // Tells GPU to render "object"
 void object::draw() {
-  glm::mat4 transformMatrix = rHandler->getActiveCamera()->getVPMatrix() * getModelMatrix();
-  GLint mvpHandle = glGetUniformLocation(progID, "transformMatrix");
-  glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &transformMatrix[0][0]);
+  glm::mat4 modelMatrix = getModelMatrix();
+  GLint modelHandle = glGetUniformLocation(progID, "modelMatrix");
+  glUniformMatrix4fv(modelHandle, 1, GL_FALSE, &modelMatrix[0][0]);
+  
+  glm::mat4 viewMatrix = rHandler->getActiveCamera()->getViewMatrix();
+  GLint viewHandle = glGetUniformLocation(progID, "viewMatrix");
+  glUniformMatrix4fv(viewHandle, 1, GL_FALSE, &viewMatrix[0][0]);
+  
+  glm::mat4 projectionMatrix = rHandler->getActiveCamera()->getProjectionMatrix();
+  GLint projectionHandle = glGetUniformLocation(progID, "projectionMatrix");
+  glUniformMatrix4fv(projectionHandle, 1, GL_FALSE, &projectionMatrix[0][0]);
 }

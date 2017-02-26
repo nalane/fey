@@ -20,5 +20,6 @@ public:
   camera(glm::vec3 pos, glm::vec3 target, glm::vec3 upVector,
 	 float fieldOfView, float aspectRatio = defaultAspectRatio, float nearClip = 0.1, float farClip = 100.0);
 
-  glm::mat4 getVPMatrix() {return projection * view;}
+  glm::mat4 getViewMatrix() { return view; }
+  glm::mat4 getProjectionMatrix() { return projection; }
 };
