@@ -185,12 +185,14 @@ resource<shaderProgram> resourceHandler::loadShaderProg() {
 
 // Find the named light, if it is set.
 resource<light> resourceHandler::loadLight(string name) {
-	map<string, light*>::iterator it = lights.find(name);
-	if (it == lights.end()) {
-		lights[name] = new light(name, glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
-	}
+  map<string, raw_resource*>::iterator it = resources.find(name);
+  if (it == resources.end()) {
+    recordLog("Loading light " + name);
+    resources[name] = new light(name, glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
+    lights[name] = (light*) resources[name];
+  }
 	
-	return resource<light>(lights[name], this);
+  return resource<light>((light*) resources[name], this);
 }
 
 void resourceHandler::unload(string name) {
@@ -199,6 +201,7 @@ void resourceHandler::unload(string name) {
     recordLog("Unloading resource " + name);
     delete it->second;
     resources.erase(it);
+    lights.erase(name);
   }
   else {
     recordLog("WARNING: Could not find resource " + name + " for unloading.");
@@ -218,16 +221,6 @@ void resourceHandler::unloadAll() {
   for (auto p : lights)
     delete p.second;
   lights.clear();
-}
-
-// Add a named light
-void resourceHandler::setLight(string id, light* l) {
-  lights[id] = l;
-}
-
-// Get a light based on its id
-light* resourceHandler::getLight(string id) {
-  return lights[id];
 }
 
 // Get a list of all lights in the scene
