@@ -47,9 +47,11 @@ public:
   void setLight(std::string id, light* l);
   light* getLight(std::string id);
   std::vector<light*> getAllLights();
+  void removeLights();
 
   void setCamera(std::string id, camera* cam);
   camera* getCamera(std::string id);
+  void removeCameras();
 
   void setActiveCamera(std::string id);
   camera* getActiveCamera();

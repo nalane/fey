@@ -6,6 +6,7 @@ struct material {
      vec4 ambient;
      vec4 diffuse;
      vec4 specular;
+	 float specularIntensity;
 };
 
 struct light {
@@ -13,47 +14,34 @@ struct light {
      vec3 color;
 };
 
-in vec2 UV;
+in vec2 fragUV;
 in vec4 fragNormal;
-in vec4 vertPos;
+in vec4 fragPosition;
 
 uniform material mat;
 uniform int numLights;
 uniform light lights[MAX_LIGHTS];
 uniform sampler2D texSampler;
 
-uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
 
 out vec3 color;
 
 void main(void) {
-  vec3 tex_color = texture(texSampler, UV).rgb;
+  vec3 tex_color = texture(texSampler, fragUV).rgb;
   vec3 light_color = vec3(0.0, 0.0, 0.0);
   
   for (int i = 0; i < numLights; i++) {
-      vec4 result = vec4(0.0);
+	  // Calculate vectors
+      vec3 lightVector = normalize(viewMatrix * lights[i].position - fragPosition).xyz;
+      vec3 halfVector = normalize(lightVector.xyz - fragNormal.xyz);
 
-      // Calcs for diffuse
-      vec4 lightVector = normalize(viewMatrix * lights[i].position - viewMatrix * modelMatrix * vertPos);
-      float cosTheta = clamp(dot(viewMatrix * modelMatrix * normalize(fragNormal), lightVector), 0, 1);
+	  // Calculate diffuse and specular
+      vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0) * tex_color * lights[i].color;
+      vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), mat.specularIntensity)
+                        	* mat.specular.rgb * lights[i].color;
 
-      // Calcs for spec
-      vec4 eyeVector = vec4(0.0) - viewMatrix * modelMatrix * vertPos;
-      vec3 reflection = reflect(-lightVector.xyz, normalize(fragNormal.xyz));
-      float cosAlpha = clamp(dot(eyeVector, vec4(reflection, 1.0)), 0.0, 1.0);
-
-      float dist = distance(lights[i].position, modelMatrix * vertPos);
-
-      vec4 diffuseResult = vec4(tex_color, 1.0) * vec4(lights[i].color, 1.0) * cosTheta / (dist * dist);
-      vec4 ambientResult = mat.ambient * vec4(tex_color, 1.0);
-      vec4 specularResult = mat.specular * vec4(lights[i].color, 1.0) * pow(cosAlpha, 5) / (dist * dist);
-
-      result = diffuseResult + ambientResult + specularResult;
-      light_color += result.rgb;
+      light_color += (diffuseResult + specularResult);
   }
-  light_color = clamp(light_color, vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0));
-
-  color = tex_color * light_color;
+  color = clamp(mat.ambient.rgb + light_color, vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0));
 }

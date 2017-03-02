@@ -26,6 +26,8 @@ void second_scene::load() {
 					 glm::vec3(0.0, 1.0,  0.0),
 					 45.0));
   rHandler->setActiveCamera("main");
+  
+  rHandler->setLight("static", new light(glm::vec4(-1.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0)));
 }
 
 bool second_scene::update() {

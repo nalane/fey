@@ -51,6 +51,7 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                     specular = mat.material.specular_color
                     f.write(str(diffuse.r) + " " + str(diffuse.g) + " " + str(diffuse.b) + "\n")
                     f.write(str(specular.r) + " " + str(specular.g) + " " + str(specular.b) + "\n")
+                    f.write(str(mat.material.specular_hardness) + "\n")
 				
                 d = obj_list[0].data
                 f.write(str(len(d.vertices)) + "\n")

@@ -9,4 +9,7 @@ void material::sendToShader(GLint progID) {
 
   GLint specularHandle = glGetUniformLocation(progID, "mat.specular");
   glUniform4fv(specularHandle, 1, &specularVals[0]);
+  
+  GLint specularIntHandle = glGetUniformLocation(progID, "mat.specularIntensity");
+  glUniform1f(specularIntHandle, specularIntensity);
 }

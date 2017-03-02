@@ -37,11 +37,13 @@ model* resourceHandler::loadFeyModel(string filename) {
       glm::vec4 amb(0.0);
       glm::vec4 diffuse(1.0);
       glm::vec4 specular(1.0);
+	  float specularIntensity;
 
       fin >> diffuse[0] >> diffuse[1] >> diffuse[2];
       fin >> specular[0] >> specular[1] >> specular[2];
+	  fin >> specularIntensity;
 
-      m->addMaterial(material(amb, diffuse, specular));
+      m->addMaterial(material(amb, diffuse, specular, specularIntensity));
     }
     
     // Get number of vertices
@@ -202,6 +204,10 @@ void resourceHandler::unloadAll() {
   for (auto p : cameras)
     delete p.second;
   cameras.clear();
+  
+  for (auto p : lights)
+    delete p.second;
+  lights.clear();
 }
 
 // Add a named light
@@ -224,6 +230,14 @@ vector<light*> resourceHandler::getAllLights() {
   return lightList;
 }
 
+// Removes all lights from a scene
+void resourceHandler::removeLights() {
+	for (auto p : lights) {
+		delete p.second;
+	}
+	lights.clear();
+}
+
 // Adds a camera to the register
 void resourceHandler::setCamera(std::string id, camera* cam) {
   cameras[id] = cam;
@@ -232,6 +246,14 @@ void resourceHandler::setCamera(std::string id, camera* cam) {
 // Find a camera based on its id
 camera* resourceHandler::getCamera(std::string id) {
   return cameras[id];
+}
+
+// Removes all cameras from a scene
+void resourceHandler::removeCameras() {
+	for (auto p : cameras) {
+		delete p.second;
+	}
+	cameras.clear();
 }
 
 // Set the active camera
