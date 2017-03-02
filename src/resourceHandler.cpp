@@ -183,6 +183,16 @@ resource<shaderProgram> resourceHandler::loadShaderProg() {
   return resource<shaderProgram>((shaderProgram*) resources[SHADER_KEY], this);
 }
 
+// Find the named light, if it is set.
+resource<light> resourceHandler::loadLight(string name) {
+	map<string, light*>::iterator it = lights.find(name);
+	if (it == lights.end()) {
+		lights[name] = new light(name, glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
+	}
+	
+	return resource<light>(lights[name], this);
+}
+
 void resourceHandler::unload(string name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
@@ -230,14 +240,6 @@ vector<light*> resourceHandler::getAllLights() {
   return lightList;
 }
 
-// Removes all lights from a scene
-void resourceHandler::removeLights() {
-	for (auto p : lights) {
-		delete p.second;
-	}
-	lights.clear();
-}
-
 // Adds a camera to the register
 void resourceHandler::setCamera(std::string id, camera* cam) {
   cameras[id] = cam;
@@ -246,14 +248,6 @@ void resourceHandler::setCamera(std::string id, camera* cam) {
 // Find a camera based on its id
 camera* resourceHandler::getCamera(std::string id) {
   return cameras[id];
-}
-
-// Removes all cameras from a scene
-void resourceHandler::removeCameras() {
-	for (auto p : cameras) {
-		delete p.second;
-	}
-	cameras.clear();
 }
 
 // Set the active camera

@@ -27,7 +27,9 @@ void second_scene::load() {
 					 45.0));
   rHandler->setActiveCamera("main");
   
-  rHandler->setLight("static", new light(glm::vec4(-1.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0)));
+  lights["static"] = rHandler->loadLight("static");
+  lights["static"].res->setPosition(glm::vec4(-1.0, 0.0, 0.0, 1.0));
+  lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
 }
 
 bool second_scene::update() {
@@ -49,11 +51,7 @@ void second_scene::draw() {
 }
 
 string second_scene::unload() {
-  for (auto p : objects) {
-    delete p.second;
-  }
-
-  objects.clear();
+  unloadResources();
   
   return "main";
 }

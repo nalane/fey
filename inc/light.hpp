@@ -5,14 +5,16 @@
  */
 
 #include "glHeaders.hpp"
+#include "raw_resource.hpp"
 
-class light {
+class light : public raw_resource {
 private:
   glm::vec4 position;
   glm::vec3 color;
 
 public:
-  light(glm::vec4 position, glm::vec3 color) : position(position), color(color) {}
+  light(std::string name, glm::vec4 position, glm::vec3 color) :
+	raw_resource(name), position(position), color(color) {}
 
   void setPosition(glm::vec4 position) { this->position = position; }
   void setColor(glm::vec3 color) { this->color = color; }

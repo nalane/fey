@@ -165,8 +165,6 @@ void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {
-		  rHandler.removeCameras();
-		  rHandler.removeLights();
 	string nextScene = activeScene->unload();
 	activeScene = scenes[nextScene];
 	activeScene->load();

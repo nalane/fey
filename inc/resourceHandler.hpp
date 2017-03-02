@@ -40,6 +40,7 @@ public:
   resource<model> loadModel(std::string filepath);
   resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
+  resource<light> loadLight(std::string lightName);
 
   void unload(std::string name);
   void unloadAll();
@@ -47,11 +48,9 @@ public:
   void setLight(std::string id, light* l);
   light* getLight(std::string id);
   std::vector<light*> getAllLights();
-  void removeLights();
 
   void setCamera(std::string id, camera* cam);
   camera* getCamera(std::string id);
-  void removeCameras();
 
   void setActiveCamera(std::string id);
   camera* getActiveCamera();

@@ -21,9 +21,14 @@ void main_scene::load() {
 					 glm::vec3(0.0, 1.0,  0.0),
 					 45.0));
   rHandler->setActiveCamera("main");
+  
+  lights["main"] = rHandler->loadLight("main");
+  lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
+  lights["main"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
-  rHandler->setLight("main", new light(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0), glm::vec3(1.0, 1.0, 1.0)));
-  rHandler->setLight("static", new light(glm::vec4(0.0, 0.2, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0)));
+  lights["static"] = rHandler->loadLight("static");
+  lights["static"].res->setPosition(glm::vec4(0.0, 0.2, 0.0, 1.0));
+  lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
 }
 
 bool main_scene::update() {
@@ -33,7 +38,7 @@ bool main_scene::update() {
   }
 
   rad += 0.05;
-  rHandler->getLight("main")->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
+  lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
   
   objects["monkey"]->update();
   
@@ -45,11 +50,7 @@ void main_scene::draw() {
 }
 
 string main_scene::unload() {
-  for (auto p : objects) {
-    delete p.second;
-  }
-
-  objects.clear();
+  unloadResources();
 
   return "second";
 }
