@@ -29,18 +29,27 @@ void object::update() {
 
 // Tells GPU to render "object"
 void object::draw() {
+  // Get matrices
   glm::mat4 modelMatrix = getModelMatrix();
-  GLint modelHandle = glGetUniformLocation(progID, "modelMatrix");
-  glUniformMatrix4fv(modelHandle, 1, GL_FALSE, &modelMatrix[0][0]);
-  
   glm::mat4 viewMatrix = rHandler->getActiveCamera()->getViewMatrix();
+  glm::mat4 projectionMatrix = rHandler->getActiveCamera()->getProjectionMatrix();
+  
+  // Send view matrix to GPU
   GLint viewHandle = glGetUniformLocation(progID, "viewMatrix");
   glUniformMatrix4fv(viewHandle, 1, GL_FALSE, &viewMatrix[0][0]);
   
-  glm::mat4 projectionMatrix = rHandler->getActiveCamera()->getProjectionMatrix();
-  GLint projectionHandle = glGetUniformLocation(progID, "projectionMatrix");
-  glUniformMatrix4fv(projectionHandle, 1, GL_FALSE, &projectionMatrix[0][0]);
+  // Send MV matrix to GPU
+  glm::mat4 mvMatrix = viewMatrix * modelMatrix;
+  GLint mvHandle = glGetUniformLocation(progID, "mvMatrix");
+  glUniformMatrix4fv(mvHandle, 1, GL_FALSE, &mvMatrix[0][0]);
 
+  
+  // Send MVP matrix to GPU
+  glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+  GLint mvpHandle = glGetUniformLocation(progID, "mvpMatrix");
+  glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &mvpMatrix[0][0]);
+
+  // Send lights to GPU
   vector<light*> lights = rHandler->getAllLights();
   GLint numLightsHandle = glGetUniformLocation(progID, "numLights");
   glUniform1i(numLightsHandle, lights.size());
