@@ -8,4 +8,6 @@ void scene::unloadResources() {
 
   objects.clear();
   lights.clear();
+  cameras.clear();
+  firstPersonCameras.clear();
 }

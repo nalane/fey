@@ -20,6 +20,7 @@ class material;
 #include "model.hpp"
 #include "raw_resource.hpp"
 #include "light.hpp"
+#include "firstPersonCamera.hpp"
 
 class resourceHandler {
 private:
@@ -38,9 +39,11 @@ public:
   ~resourceHandler();
 
   resource<model> loadModel(std::string filepath);
+  resource<light> loadLight(std::string lightName);
+  resource<camera> loadCamera(std::string name);
+  resource<firstPersonCamera> loadFirstPersonCamera(std::string name);
   resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
-  resource<light> loadLight(std::string lightName);
 
   void unload(std::string name);
   void unloadAll();

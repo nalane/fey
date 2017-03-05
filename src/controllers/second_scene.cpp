@@ -21,7 +21,7 @@ void second_scene::load() {
   objects["monkey"]->init();
   objects["cube"]->init();
 
-  rHandler->setCamera("main", new camera(glm::vec3(-3.0, -3.0,  -3.0),
+  rHandler->setCamera("main", new camera("main", glm::vec3(-3.0, -3.0,  -3.0),
 					 glm::vec3(0.0, 0.0,  0.0),
 					 glm::vec3(0.0, 1.0,  0.0),
 					 45.0));

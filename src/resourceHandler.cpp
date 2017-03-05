@@ -37,11 +37,11 @@ model* resourceHandler::loadFeyModel(string filename) {
       glm::vec4 amb(0.0);
       glm::vec4 diffuse(1.0);
       glm::vec4 specular(1.0);
-	  float specularIntensity;
+      float specularIntensity;
 
       fin >> diffuse[0] >> diffuse[1] >> diffuse[2];
       fin >> specular[0] >> specular[1] >> specular[2];
-	  fin >> specularIntensity;
+      fin >> specularIntensity;
 
       m->addMaterial(material(amb, diffuse, specular, specularIntensity));
     }
@@ -98,8 +98,8 @@ model* resourceHandler::loadFeyModel(string filename) {
     // Get the UV map
     vector<glm::vec2> uvMapping;
     vector<glm::vec3> finalVerts;
-	vector<glm::vec3> normals;
-	glm::vec3 face[3];
+    vector<glm::vec3> normals;
+    glm::vec3 face[3];
     for(int i = 0; i < numVerts; i++) {
       int index, uvIndex;
 			
@@ -109,13 +109,13 @@ model* resourceHandler::loadFeyModel(string filename) {
       fin >> uvIndex;
       uvMapping.push_back(uvCoords[uvIndex]);
 	  
-	  face[i % 3] = vertexList[index];
-	  if (i % 3 == 2) {
-		  glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
-		  normals.push_back(normal);
-		  normals.push_back(normal);
-		  normals.push_back(normal);
-	  }
+      face[i % 3] = vertexList[index];
+      if (i % 3 == 2) {
+	glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
+	normals.push_back(normal);
+	normals.push_back(normal);
+	normals.push_back(normal);
+      }
     }
 
     // Push data into the model
@@ -195,6 +195,31 @@ resource<light> resourceHandler::loadLight(string name) {
   return resource<light>((light*) resources[name], this);
 }
 
+// Find the named camera, if it exists.
+resource<camera> resourceHandler::loadCamera(string name) {
+  map<string, raw_resource*>::iterator it = resources.find(name);
+  if (it == resources.end()) {
+    recordLog("Loading camera " + name);
+    resources[name] = new camera(name);
+    cameras[name] = (camera*) resources[name];
+  }
+
+  return resource<camera>((camera*) resources[name], this);
+}
+
+// Find the named fp camera, if it exists.
+resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(string name) {
+  map<string, raw_resource*>::iterator it = resources.find(name);
+  if (it == resources.end()) {
+    recordLog("Loading camera " + name);
+    resources[name] = new firstPersonCamera(name);
+    cameras[name] = (camera*) resources[name];
+  }
+
+  return resource<firstPersonCamera>((firstPersonCamera*) resources[name], this);
+}
+
+// Unload the named resource
 void resourceHandler::unload(string name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
@@ -202,6 +227,7 @@ void resourceHandler::unload(string name) {
     delete it->second;
     resources.erase(it);
     lights.erase(name);
+    cameras.erase(name);
   }
   else {
     recordLog("WARNING: Could not find resource " + name + " for unloading.");

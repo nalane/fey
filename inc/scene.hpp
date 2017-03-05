@@ -7,6 +7,8 @@
 #include "resourceHandler.hpp"
 #include "object.hpp"
 #include "light.hpp"
+#include "camera.hpp"
+#include "firstPersonCamera.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -16,6 +18,8 @@ protected:
   resourceHandler* rHandler;
   std::unordered_map<std::string, object*> objects;
   std::unordered_map<std::string, resource<light>> lights;
+  std::unordered_map<std::string, resource<camera>> cameras;
+  std::unordered_map<std::string, resource<firstPersonCamera>> firstPersonCameras;
   
 public:
   scene(resourceHandler* rHandler) : rHandler(rHandler) {};

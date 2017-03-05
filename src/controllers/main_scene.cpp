@@ -9,6 +9,18 @@ main_scene::~main_scene() {
 void main_scene::keyPress(int key, int action, int mods) {
   if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     switchScenes = true;
+
+  if (key == GLFW_KEY_UP)
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, 1.0));
+
+  if (key == GLFW_KEY_DOWN)
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, -1.0));
+  
+  if (key == GLFW_KEY_LEFT)
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(-1.0, 0.0, 0.0));
+
+  if (key == GLFW_KEY_RIGHT)
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
 }
 
 void main_scene::load() {
@@ -16,11 +28,11 @@ void main_scene::load() {
   objects["monkey"]->load();
   objects["monkey"]->init();
 
-  rHandler->setCamera("main", new camera(glm::vec3(3.0, 3.0,  3.0),
-					 glm::vec3(0.0, 0.0,  0.0),
-					 glm::vec3(0.0, 1.0,  0.0),
-					 45.0));
-  rHandler->setActiveCamera("main");
+  firstPersonCameras["mainCam"] = rHandler->loadFirstPersonCamera("mainCam");
+  firstPersonCameras["mainCam"].res->setPosition(glm::vec3(3.0, 3.0, 3.0));
+  firstPersonCameras["mainCam"].res->setTarget(glm::vec3(0.0, 0.0, 0.0));
+  firstPersonCameras["mainCam"].res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
+  rHandler->setActiveCamera("mainCam");
   
   lights["main"] = rHandler->loadLight("main");
   lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
