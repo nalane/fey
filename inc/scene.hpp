@@ -17,11 +17,6 @@
 class scene {
 protected:
   resourceHandler* rHandler;
-  std::unordered_map<std::string, object*> objects;
-  std::unordered_map<std::string, resource<light>> lights;
-  std::unordered_map<std::string, resource<camera>> cameras;
-  std::unordered_map<std::string, resource<firstPersonCamera>> firstPersonCameras;
-
   std::vector<bool> pressedKeys;
   
 public:
@@ -32,7 +27,6 @@ public:
   virtual void load() = 0;
   virtual bool update() = 0;
   virtual void draw() = 0;
-  
-  void unloadResources();
-  virtual std::string unload() = 0;
+ 
+  virtual scene* nextScene() = 0;
 };

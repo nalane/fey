@@ -1,31 +1,29 @@
 #include "main_scene.hpp"
+#include "second_scene.hpp"
 
 using namespace std;
 
 main_scene::~main_scene() {
-  unload();
+
 }
 
 void main_scene::load() {
-  objects["monkey"] = new monkey(rHandler);
-  objects["monkey"]->load();
-  objects["monkey"]->init();
+  suz.load();
+  suz.init();
 
-  firstPersonCameras["mainCam"] = rHandler->loadFirstPersonCamera("mainCam");
-  firstPersonCameras["mainCam"].res->setPosition(glm::vec3(3.0, 3.0, 3.0));
-  firstPersonCameras["mainCam"].res->setTarget(glm::vec3(0.0, 0.0, 0.0));
-  firstPersonCameras["mainCam"].res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
+  cam = rHandler->loadFirstPersonCamera("mainCam");
+  cam.res->setPosition(glm::vec3(3.0, 3.0, 3.0));
+  cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
+  cam.res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
   rHandler->setActiveCamera("mainCam");
   
-  lights["main"] = rHandler->loadLight("main");
-  lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
-  lights["main"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
+  mainLight = rHandler->loadLight("main");
+  mainLight.res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
+  mainLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
-  lights["static"] = rHandler->loadLight("static");
-  lights["static"].res->setPosition(glm::vec4(0.0, 0.2, 0.0, 1.0));
-  lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
-
-  fill(pressedKeys.begin(), pressedKeys.end(), false);
+  staticLight = rHandler->loadLight("static");
+  staticLight.res->setPosition(glm::vec4(0.0, 0.2, 0.0, 1.0));
+  staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 }
 
 bool main_scene::update() {
@@ -33,31 +31,29 @@ bool main_scene::update() {
     return true;
 
   if (pressedKeys[GLFW_KEY_UP])
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, 1.0));
+    cam.res->move(0.1, glm::vec3(0.0, 0.0, 1.0));
 
   if (pressedKeys[GLFW_KEY_DOWN])
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, -1.0));
+    cam.res->move(0.1, glm::vec3(0.0, 0.0, -1.0));
   
   if (pressedKeys[GLFW_KEY_LEFT])
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(-1.0, 0.0, 0.0));
+    cam.res->move(0.1, glm::vec3(-1.0, 0.0, 0.0));
 
   if (pressedKeys[GLFW_KEY_RIGHT])
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
+    cam.res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
 
   rad += 0.05;
-  lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
+  mainLight.res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
   
-  objects["monkey"]->update();
+  suz.update();
   
   return false;
 }
 
 void main_scene::draw() {
-  objects["monkey"]->draw();
+  suz.draw();
 }
 
-string main_scene::unload() {
-  unloadResources();
-
-  return "second";
+scene* main_scene::nextScene() {
+  return new second_scene(rHandler);
 }

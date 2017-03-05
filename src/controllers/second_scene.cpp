@@ -1,20 +1,17 @@
 #include "second_scene.hpp"
+#include "main_scene.hpp"
 
 using namespace std;
 
 second_scene::~second_scene() {
-  unload();
 }
 
 void second_scene::load() {
-  objects["monkey"] = new monkey(rHandler);
-  objects["cube"] = new cube(rHandler);
+  suz.load();
+  c.load();
   
-  objects["monkey"]->load();
-  objects["cube"]->load();
-  
-  objects["monkey"]->init();
-  objects["cube"]->init();
+  suz.init();
+  c.init();
 
   rHandler->setCamera("main", new camera("main", glm::vec3(-3.0, -3.0,  -3.0),
 					 glm::vec3(0.0, 0.0,  0.0),
@@ -22,31 +19,25 @@ void second_scene::load() {
 					 45.0));
   rHandler->setActiveCamera("main");
   
-  lights["static"] = rHandler->loadLight("static");
-  lights["static"].res->setPosition(glm::vec4(-1.0, 0.0, 0.0, 1.0));
-  lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
-
-  fill(pressedKeys.begin(), pressedKeys.end(), false);
+  staticLight = rHandler->loadLight("static");
+  staticLight.res->setPosition(glm::vec4(-1.0, 0.0, 0.0, 1.0));
+  staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 }
 
 bool second_scene::update() {
   if (pressedKeys[GLFW_KEY_SPACE])
     return true;
 
-  for (auto p : objects) {
-    p.second->update();
-  }
+  suz.update();
   
   return false;
 }
 
 void second_scene::draw() {
-  objects["cube"]->draw();
-  objects["monkey"]->draw();
+  c.draw();
+  suz.draw();
 }
 
-string second_scene::unload() {
-  unloadResources();
-  
-  return "main";
+scene* second_scene::nextScene() {
+  return new main_scene(rHandler);
 }

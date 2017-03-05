@@ -28,12 +28,10 @@ private:
   std::string fragmentShader;
 
   resourceHandler rHandler;
-  camera* currentCamera;
   resource<shaderProgram> shaderProg;
   
   GLFWwindow* window;
 
-  std::map<std::string, scene*> scenes;
   scene* activeScene;
 
   bool initGame();

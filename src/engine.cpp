@@ -63,13 +63,11 @@ engine::engine(string configFile) {
 engine::~engine() {
   glfwTerminate();
 
+  delete activeScene;
   activeScene = NULL;
-  for (auto p : scenes) {
-    delete p.second;
-  }
 }
 
-// Initializes the graphics system
+// Prepares the game to run
 bool engine::initGame() {
   srand(time(NULL));
   if (!initGraphics())
@@ -78,10 +76,7 @@ bool engine::initGame() {
   shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader, true);
   shaderProg.res->useProgram();
 
-  scenes["main"] = new main_scene(&rHandler);
-  scenes["second"] = new second_scene(&rHandler);
-  activeScene = scenes["main"];
-
+  activeScene = new main_scene(&rHandler);
   activeScene->load();
 
   return true;
@@ -165,8 +160,9 @@ void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {
-	string nextScene = activeScene->unload();
-	activeScene = scenes[nextScene];
+	scene* nextScene = activeScene->nextScene();
+	delete activeScene;
+	activeScene = nextScene;
 	activeScene->load();
 	activeScene->update();
       }
