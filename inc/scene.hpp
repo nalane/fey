@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 class scene {
 protected:
@@ -20,12 +21,14 @@ protected:
   std::unordered_map<std::string, resource<light>> lights;
   std::unordered_map<std::string, resource<camera>> cameras;
   std::unordered_map<std::string, resource<firstPersonCamera>> firstPersonCameras;
+
+  std::vector<bool> pressedKeys;
   
 public:
-  scene(resourceHandler* rHandler) : rHandler(rHandler) {};
+  scene(resourceHandler* rHandler) : rHandler(rHandler), pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {};
   virtual ~scene() {};
 
-  virtual void keyPress(int key, int action, int mods) = 0;
+  virtual void keyPress(int key, int action, int mods);
   virtual void load() = 0;
   virtual bool update() = 0;
   virtual void draw() = 0;

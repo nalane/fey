@@ -6,11 +6,6 @@ second_scene::~second_scene() {
   unload();
 }
 
-void second_scene::keyPress(int key, int action, int mods) {
-  if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    switchScenes = true;
-}
-
 void second_scene::load() {
   objects["monkey"] = new monkey(rHandler);
   objects["cube"] = new cube(rHandler);
@@ -30,13 +25,13 @@ void second_scene::load() {
   lights["static"] = rHandler->loadLight("static");
   lights["static"].res->setPosition(glm::vec4(-1.0, 0.0, 0.0, 1.0));
   lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
+
+  fill(pressedKeys.begin(), pressedKeys.end(), false);
 }
 
 bool second_scene::update() {
-  if (switchScenes) {
-    switchScenes = false;
+  if (pressedKeys[GLFW_KEY_SPACE])
     return true;
-  }
 
   for (auto p : objects) {
     p.second->update();

@@ -6,23 +6,6 @@ main_scene::~main_scene() {
   unload();
 }
 
-void main_scene::keyPress(int key, int action, int mods) {
-  if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    switchScenes = true;
-
-  if (key == GLFW_KEY_UP)
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, 1.0));
-
-  if (key == GLFW_KEY_DOWN)
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, -1.0));
-  
-  if (key == GLFW_KEY_LEFT)
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(-1.0, 0.0, 0.0));
-
-  if (key == GLFW_KEY_RIGHT)
-    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
-}
-
 void main_scene::load() {
   objects["monkey"] = new monkey(rHandler);
   objects["monkey"]->load();
@@ -41,13 +24,25 @@ void main_scene::load() {
   lights["static"] = rHandler->loadLight("static");
   lights["static"].res->setPosition(glm::vec4(0.0, 0.2, 0.0, 1.0));
   lights["static"].res->setColor(glm::vec3(1.0, 1.0, 1.0));
+
+  fill(pressedKeys.begin(), pressedKeys.end(), false);
 }
 
 bool main_scene::update() {
-  if (switchScenes) {
-    switchScenes = false;
+  if (pressedKeys[GLFW_KEY_SPACE])
     return true;
-  }
+
+  if (pressedKeys[GLFW_KEY_UP])
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, 1.0));
+
+  if (pressedKeys[GLFW_KEY_DOWN])
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(0.0, 0.0, -1.0));
+  
+  if (pressedKeys[GLFW_KEY_LEFT])
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(-1.0, 0.0, 0.0));
+
+  if (pressedKeys[GLFW_KEY_RIGHT])
+    firstPersonCameras["mainCam"].res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
 
   rad += 0.05;
   lights["main"].res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
