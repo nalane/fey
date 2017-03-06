@@ -24,6 +24,7 @@ public:
   virtual ~scene() {};
 
   virtual void keyPress(int key, int action, int mods);
+  virtual void mousePosition(double xPos, double yPos) { }
   virtual void load() = 0;
   virtual bool update() = 0;
   virtual void draw() = 0;

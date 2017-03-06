@@ -7,6 +7,19 @@ main_scene::~main_scene() {
 
 }
 
+void main_scene::mousePosition(double xPos, double yPos) {
+  if (mouseX > 0 && mouseY > 0) {
+    double diffX = xPos - mouseX;
+    double diffY = yPos - mouseY;
+
+    cam.res->rotate(diffX / 250, glm::vec3(0.0, 1.0, 0.0));
+    cam.res->rotate(diffY / 250, glm::vec3(1.0, 0.0, 0.0));
+  }
+
+  mouseX = xPos;
+  mouseY = yPos;
+}
+
 void main_scene::load() {
   suz.load();
   suz.init();

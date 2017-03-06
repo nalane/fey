@@ -19,6 +19,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
   runningGame->keyPress(key, action, mods);
 }
 
+void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
+  runningGame->mousePosition(xpos, ypos);
+}
+
 // The constructor. Uses the values found in configFile
 engine::engine(string configFile) {
   runningGame = this;
@@ -105,7 +109,9 @@ bool engine::initGLFW() {
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetKeyCallback(window, key_callback);
+  glfwSetCursorPosCallback(window, cursor_callback);
 
   return true;
 }

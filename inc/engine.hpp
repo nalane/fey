@@ -47,7 +47,6 @@ public:
   void draw();
   void runGame();
   
-  void keyPress(int key, int action, int mods) {
-    activeScene->keyPress(key, action, mods);
-  }
+  void keyPress(int key, int action, int mods) { activeScene->keyPress(key, action, mods); }
+  void mousePosition(double xpos, double ypos) { activeScene->mousePosition(xpos, ypos); }
 };
