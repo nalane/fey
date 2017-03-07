@@ -13,6 +13,7 @@ private:
   monkey suz;
   cube c;
   resource<light> staticLight;
+  resource<camera> cam;
   
 public:
   second_scene(resourceHandler* rHandler) : scene(rHandler), suz(monkey(rHandler)), c(cube(rHandler)) { }

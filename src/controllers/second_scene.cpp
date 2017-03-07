@@ -12,12 +12,12 @@ void second_scene::load() {
   
   suz.init();
   c.init();
-
-  rHandler->setCamera("main", new camera("main", glm::vec3(-3.0, -3.0,  -3.0),
-					 glm::vec3(0.0, 0.0,  0.0),
-					 glm::vec3(0.0, 1.0,  0.0),
-					 45.0));
-  rHandler->setActiveCamera("main");
+  
+  cam = rHandler->loadCamera("mainCam");
+  cam.res->setPosition(glm::vec3(-3.0, -3.0, -3.0));
+  cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
+  cam.res->setUpVector(glm::vec3(0.0, 1.0,  0.0));
+  rHandler->setActiveCamera("mainCam");
   
   staticLight = rHandler->loadLight("static");
   staticLight.res->setPosition(glm::vec4(-1.0, 0.0, 0.0, 1.0));
