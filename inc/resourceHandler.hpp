@@ -21,6 +21,7 @@ class material;
 #include "raw_resource.hpp"
 #include "light.hpp"
 #include "firstPersonCamera.hpp"
+#include "trackBallCamera.hpp"
 
 class resourceHandler {
 private:
@@ -42,6 +43,7 @@ public:
   resource<light> loadLight(std::string lightName);
   resource<camera> loadCamera(std::string name);
   resource<firstPersonCamera> loadFirstPersonCamera(std::string name);
+  resource<trackBallCamera> loadTrackBallCamera(std::string name);
   resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
 

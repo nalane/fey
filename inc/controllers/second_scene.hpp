@@ -13,12 +13,18 @@ private:
   monkey suz;
   cube c;
   resource<light> staticLight;
-  resource<camera> cam;
+  resource<trackBallCamera> cam;
+
+  bool loggedMouseLocation;
+  double mouseX;
+  double mouseY;
   
 public:
-  second_scene(resourceHandler* rHandler) : scene(rHandler), suz(monkey(rHandler)), c(cube(rHandler)) { }
+  second_scene(resourceHandler* rHandler) : scene(rHandler), suz(monkey(rHandler)), c(cube(rHandler)),
+					    loggedMouseLocation(false) { }
   ~second_scene();
 
+  void mousePosition(double xPos, double yPos);
   void load();
   bool update();
   void draw();

@@ -219,6 +219,18 @@ resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(string name) 
   return resource<firstPersonCamera>((firstPersonCamera*) resources[name], this);
 }
 
+// Find the named tb camera, if it exists
+resource<trackBallCamera> resourceHandler::loadTrackBallCamera(std::string name) {
+  map<string, raw_resource*>::iterator it = resources.find(name);
+  if (it == resources.end()) {
+    recordLog("Loading camera " + name);
+    resources[name] = new trackBallCamera(name);
+    cameras[name] = (camera*) resources[name];
+  }
+
+  return resource<trackBallCamera>((trackBallCamera*) resources[name], this);
+}
+
 // Unload the named resource
 void resourceHandler::unload(string name) {
   map<string, raw_resource*>::iterator it = resources.find(name);

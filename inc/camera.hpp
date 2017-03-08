@@ -19,7 +19,7 @@ protected:
   glm::vec3 target;
   glm::vec3 upVector;
 
-  void resetView() { view = glm::lookAt(position, target, upVector); }
+  virtual void resetView() { view = glm::lookAt(position, target, upVector); }
 
 public:
   camera(std::string name);
