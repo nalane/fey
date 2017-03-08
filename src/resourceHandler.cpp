@@ -196,7 +196,7 @@ resource<light> resourceHandler::loadLight(string name) {
 }
 
 // Find the named camera, if it exists.
-resource<camera> resourceHandler::loadCamera(string name) {
+resource<camera> resourceHandler::loadCamera(string name) {  
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
