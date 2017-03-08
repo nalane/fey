@@ -26,7 +26,7 @@ public:
   camera(std::string name, glm::mat4 projection, glm::mat4 view) : raw_resource(name), projection(projection), view(view) { }
   camera(std::string name, glm::vec3 pos, glm::vec3 target, glm::vec3 upVector,
 	 float fieldOfView, float aspectRatio = defaultAspectRatio, float nearClip = 0.1, float farClip = 100.0);
-
+	 
   void setPosition(glm::vec3 position) { this->position = position; resetView(); }
   void setTarget(glm::vec3 target) { this->target = target; resetView(); }
   void setUpVector(glm::vec3 upVector) { this->upVector = upVector; resetView(); }

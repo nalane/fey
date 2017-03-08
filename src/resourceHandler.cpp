@@ -271,16 +271,6 @@ vector<light*> resourceHandler::getAllLights() {
   return lightList;
 }
 
-// Adds a camera to the register
-void resourceHandler::setCamera(std::string id, camera* cam) {
-  cameras[id] = cam;
-}
-
-// Find a camera based on its id
-camera* resourceHandler::getCamera(std::string id) {
-  return cameras[id];
-}
-
 // Set the active camera
 void resourceHandler::setActiveCamera(string id) {
   activeCameraID = id;

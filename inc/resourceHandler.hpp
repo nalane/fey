@@ -49,13 +49,8 @@ public:
 
   void unload(std::string name);
   void unloadAll();
-
-  void setLight(std::string id, light* l);
-  light* getLight(std::string id);
+  
   std::vector<light*> getAllLights();
-
-  void setCamera(std::string id, camera* cam);
-  camera* getCamera(std::string id);
 
   void setActiveCamera(std::string id);
   camera* getActiveCamera();

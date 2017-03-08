@@ -167,10 +167,10 @@ void engine::runGame() {
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {
 	scene* nextScene = activeScene->nextScene();
-	nextScene->load();
 	delete activeScene;
 	
 	activeScene = nextScene;
+	activeScene->load();
 	activeScene->update();
       }
       

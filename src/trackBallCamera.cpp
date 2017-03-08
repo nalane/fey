@@ -1,5 +1,6 @@
+#define _USE_MATH_DEFINES  
+#include <cmath> 
 #include "trackBallCamera.hpp"
-#include <cmath>
 
 void trackBallCamera::resetView() {
   position = glm::vec3(rho * sin(M_PI * phi / 180.0) * cos(M_PI * theta / 180.0),
