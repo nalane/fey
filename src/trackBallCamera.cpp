@@ -1,12 +1,17 @@
 #define _USE_MATH_DEFINES  
 #include <cmath> 
 #include "trackBallCamera.hpp"
+#include "log.hpp"
+
+using namespace std;
 
 void trackBallCamera::resetView() {
   position = glm::vec3(rho * sin(M_PI * phi / 180.0) * cos(M_PI * theta / 180.0),
 		       rho * cos(M_PI * phi / 180.0),
 		       rho * sin(M_PI * phi / 180.0) * sin(M_PI * theta / 180.0));
 
+  //recordLog("x: " + to_string(position[0]) + " y: " + to_string(position[1]) + " z: " + to_string(position[2]));
+  
   camera::resetView();
 }
 

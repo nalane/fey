@@ -31,12 +31,12 @@ void main_scene::load() {
   rHandler->setActiveCamera("mainCam");
   
   mainLight = rHandler->loadLight("main");
-  mainLight.res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
-  mainLight.res->setColor(glm::vec3(0.0, 0.0, 0.0));
+  mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 0.0, 1.5 * cos(rad), 1.0));
+  mainLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
   staticLight = rHandler->loadLight("static");
-  staticLight.res->setPosition(glm::vec4(0.0, 1.0, 0.0, 1.0));
-  staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
+  staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
+  staticLight.res->setColor(glm::vec3(0.7, 0.7, 0.7));
 }
 
 bool main_scene::update() {
@@ -56,7 +56,7 @@ bool main_scene::update() {
     cam.res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
 
   rad += 0.01;
-  mainLight.res->setPosition(glm::vec4(2 * sin(rad), 0.0, 2 * cos(rad), 1.0));
+  mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 2.0, 1.5 * cos(rad), 1.0));
   
   suz.update();
   

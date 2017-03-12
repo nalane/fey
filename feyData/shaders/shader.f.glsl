@@ -33,7 +33,7 @@ void main(void) {
   
   for (int i = 0; i < numLights; i++) {
 	  // Calculate vectors
-      vec3 lightVector = normalize(viewMatrix * lights[i].position - fragPosition).xyz;
+      vec3 lightVector = -normalize(viewMatrix * lights[i].position - fragPosition).xyz;
       vec3 halfVector = normalize(lightVector.xyz - fragNormal.xyz);
 
 	  // Calculate diffuse and specular
