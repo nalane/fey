@@ -38,10 +38,9 @@ void object::draw() {
   GLint viewHandle = glGetUniformLocation(progID, "viewMatrix");
   glUniformMatrix4fv(viewHandle, 1, GL_FALSE, &viewMatrix[0][0]);
   
-  // Send MV matrix to GPU
-  glm::mat4 mvMatrix = viewMatrix * modelMatrix;
-  GLint mvHandle = glGetUniformLocation(progID, "mvMatrix");
-  glUniformMatrix4fv(mvHandle, 1, GL_FALSE, &mvMatrix[0][0]);
+  // Send model matrix to GPU
+  GLint modelHandle = glGetUniformLocation(progID, "modelMatrix");
+  glUniformMatrix4fv(modelHandle, 1, GL_FALSE, &modelMatrix[0][0]);
 
   
   // Send MVP matrix to GPU

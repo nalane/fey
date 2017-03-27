@@ -7,7 +7,6 @@
 #include "firstPersonCamera.hpp"
 #include "scene.hpp"
 #include "monkey.hpp"
-#include "plane.hpp"
 
 class main_scene : public scene {
 private:

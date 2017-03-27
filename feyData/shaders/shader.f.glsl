@@ -28,18 +28,21 @@ uniform mat4 viewMatrix;
 out vec4 color;
 
 void main(void) {
-  vec3 tex_color = clamp(texture(texSampler, fragUV).rgb + mat.diffuse.rgb, vec3(0.0), vec3(1.0));
+  vec3 tex_color = clamp(texture(texSampler, fragUV).rgb + mat.diffuse.rgb,
+						 vec3(0.0), vec3(1.0));
   vec3 light_color = vec3(0.0);
   
   for (int i = 0; i < numLights; i++) {
 	  // Calculate vectors
       vec3 lightVector = normalize((lights[i].position - fragView).xyz);
-      vec3 halfVector = normalize(normalize(viewMatrix * vec4(lightVector, 1.0)).xyz - normalize((viewMatrix * fragView).xyz));
+      vec3 halfVector = normalize(normalize(viewMatrix * vec4(lightVector, 1.0)).xyz
+								  - normalize((viewMatrix * fragView).xyz));
 
 	  // Calculate diffuse and specular
-      vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0) * tex_color * lights[i].color;
-      vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), mat.specularIntensity)
-                        	* mat.specular.rgb * lights[i].color;
+      vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0)
+						   * tex_color * lights[i].color;
+      vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0),
+								mat.specularIntensity) * mat.specular.rgb * lights[i].color;
 
       light_color += (diffuseResult);
   }
