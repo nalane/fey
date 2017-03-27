@@ -14,7 +14,7 @@
 using namespace std;
 
 // GLFW Key press call back can't be a method.
-engine* runningGame = NULL;
+engine* runningGame = nullptr;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
   runningGame->keyPress(key, action, mods);
 }
@@ -68,12 +68,12 @@ engine::~engine() {
   glfwTerminate();
 
   delete activeScene;
-  activeScene = NULL;
+  activeScene = nullptr;
 }
 
 // Prepares the game to run
 bool engine::initGame() {
-  srand(time(NULL));
+  srand(time(nullptr));
   if (!initGraphics())
     return false;
 
@@ -100,7 +100,7 @@ bool engine::initGLFW() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   // GLFW window creation
-  window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
+  window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), nullptr, nullptr);
   if (!window) {
     recordLog("FATAL ERROR: Could not create a GLFW window!");
     glfwTerminate();

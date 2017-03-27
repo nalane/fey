@@ -23,7 +23,7 @@ resourceHandler::~resourceHandler() {
 model* resourceHandler::loadFeyModel(string filename) {
   string fullPath = getLibraryFolderPath(filename);
   recordLog("Reading fey model " + fullPath + "...");
-  model* m = NULL;
+  model* m = nullptr;
   ifstream fin(fullPath.c_str());
 
   if (fin.is_open()) {
@@ -199,7 +199,7 @@ resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, str
 resource<shaderProgram> resourceHandler::loadShaderProg() {
   if (resources.find(SHADER_KEY) == resources.end()) {
     recordLog("ERROR: Could not find the main shader. Are you sure it loaded?");
-    return resource<shaderProgram>(NULL, this);
+    return resource<shaderProgram>(nullptr, this);
   }
 
   return resource<shaderProgram>((shaderProgram*) resources[SHADER_KEY], this);
@@ -302,7 +302,7 @@ void resourceHandler::setActiveCamera(string id) {
 camera* resourceHandler::getActiveCamera() {
   if (cameras.find(activeCameraID) == cameras.end()) {
     recordLog("WARNING: Could not find camera " + activeCameraID);
-    return NULL;
+    return nullptr;
   }
   
   return cameras[activeCameraID];

@@ -137,7 +137,7 @@ void model::draw(GLint progID) {
 	
   if (elementsIndex < 0) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[elementsIndex]);
-    glDrawElements(GL_TRIANGLES, elementsSize, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, elementsSize, GL_UNSIGNED_INT, nullptr);
   }
   
   else {

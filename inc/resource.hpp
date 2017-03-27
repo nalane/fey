@@ -17,7 +17,7 @@ private:
 public:
   T* res;
 
-  resource() : rHandler(NULL), res(NULL) {}
+  resource() : rHandler(nullptr), res(nullptr) {}
   resource(T* res, resourceHandler* rHandler);
 
   void operator = (const resource<T>& rhs);

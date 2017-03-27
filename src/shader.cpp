@@ -45,7 +45,7 @@ bool shader::compile() {
   
   shaderID = glCreateShader(shaderType);
   const char* data[] = {source.c_str()};
-  glShaderSource(shaderID, 1, data, NULL);
+  glShaderSource(shaderID, 1, data, nullptr);
   glCompileShader(shaderID);
 
   GLint compiled = 0;
