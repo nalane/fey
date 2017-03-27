@@ -6,22 +6,23 @@ using namespace std;
   unload();
 }
 
-void @name@::keyPress(int key, int action, int mods) {
-
+void @name@::mousePosition(double xPos, double yPos) {
+  mouseX = xPos;
+  mouseY = yPos;
 }
 
 void @name@::load() {
-
+  
 }
 
 bool @name@::update() {
-
+  return false;
 }
 
 void @name@::draw() {
   
 }
 
-string @name@::unload() {
+scene* @name@::unload() {
   
 }

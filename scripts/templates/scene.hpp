@@ -8,15 +8,16 @@
 
 class @name@ : public scene {
 private:
-  bool switchScenes;
+  double mouseX;
+  double mouseY;
   
 public:
-  @name@(resourceHandler* rHandler) : scene(rHandler), switchScenes(false) {};
+  @name@(resourceHandler* rHandler) : scene(rHandler), mouseX(-1), mouseY(-1) { };
   ~@name@();
 
-  void keyPress(int key, int action, int mods);
+  void mousePosition(double xPos, double yPos);
   void load();
   bool update();
   void draw();
-  std::string unload();
+  scene* nextScene();
 };
