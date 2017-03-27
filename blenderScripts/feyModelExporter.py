@@ -14,13 +14,22 @@ def polygonToTriangles(polygon):
     index_list = []
     for i, v in enumerate(polygon.vertices):
         uv_coord = polygon.loop_indices[i]
-        if len(index_list) >= 6:
+        if len(index_list) >= 15:
             index_list.append(index_list[0])
             index_list.append(index_list[1])
-            index_list.append(index_list[-4])   
-            index_list.append(index_list[-4])        
+            index_list.append(index_list[2])
+            index_list.append(index_list[3])
+            index_list.append(index_list[4])
+            index_list.append(index_list[-10])   
+            index_list.append(index_list[-10])
+            index_list.append(index_list[-10])
+            index_list.append(index_list[-10])
+            index_list.append(index_list[-10])        
         index_list.append(v)
         index_list.append(uv_coord)
+        index_list.append(polygon.normal.x)
+        index_list.append(polygon.normal.y)
+        index_list.append(polygon.normal.z)
         
     return index_list
 
@@ -45,6 +54,7 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
             
         else:
             with open(filepath, 'w') as f:
+                f.write("v0.01\n")
                 f.write(str(len(obj_list[0].material_slots)) + "\n")
                 for mat in obj_list[0].material_slots:
                     diffuse = mat.material.diffuse_color
@@ -74,11 +84,7 @@ class Export_FeyModel(bpy.types.Operator, ExportHelper):
                     
                 f.write(str(len(triangleVertexIndices)) + "\n")
                 for i, v in enumerate(triangleVertexIndices):
-                    f.write(str(v))
-                    if i % 2 == 0:
-                        f.write(" ")
-                    else:
-                        f.write("\n")
+                    f.write(str(v) + "\n")
         
         return {'FINISHED'}
             

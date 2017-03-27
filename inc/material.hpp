@@ -18,9 +18,12 @@ private:
 
 public:
   material(glm::vec4 ambientVals, glm::vec4 diffuseVals,
-		   glm::vec4 specularVals, float specularIntensity) :
+	   glm::vec4 specularVals, float specularIntensity) :
     ambientVals(ambientVals), diffuseVals(diffuseVals),
-	specularVals(specularVals), specularIntensity(specularIntensity) { }
+    specularVals(specularVals), specularIntensity(specularIntensity) { }
+
+  material() : ambientVals(glm::vec4(0.0)), diffuseVals(glm::vec4(0.0)),
+	       specularVals(glm::vec4(0.0)), specularIntensity(0.0) { }
   
   glm::vec4 getAmbientVals() { return ambientVals; }
   glm::vec4 getDiffuseVals() { return diffuseVals; }

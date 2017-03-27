@@ -75,13 +75,15 @@ void model::setVertices(vector<glm::vec3> vertexList) {
 
 // Finalize mapping of vertices to UV coordinates
 void model::setUVMapping(std::vector<glm::vec2> uvList) {
-  vector<float> rawData;
-  for (glm::vec2 coord : uvList) {
-    rawData.push_back(coord.x);
-    rawData.push_back(coord.y);
-  }
+  if (uvList.size() > 0) {
+    vector<float> rawData;
+    for (glm::vec2 coord : uvList) {
+      rawData.push_back(coord.x);
+      rawData.push_back(coord.y);
+    }
 	
-  addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
+    addData(GL_ARRAY_BUFFER, rawData.size() * sizeof(float), &rawData[0], GL_STATIC_DRAW, 1, 2);
+  }
 }
 
 // Sends normal data to the GPU
@@ -127,6 +129,10 @@ void model::draw(GLint progID) {
 
   if (materials.size() > 0) {
     materials[0].sendToShader(progID);
+  }
+  else {
+    material dummy;
+    dummy.sendToShader(progID);
   }
 	
   if (elementsIndex < 0) {

@@ -7,11 +7,13 @@
 #include "scene.hpp"
 #include "monkey.hpp"
 #include "cube.hpp"
+#include "plane.hpp"
 
 class second_scene : public scene {
 private:
   monkey suz;
   cube c;
+  plane p;
   resource<light> staticLight;
   resource<trackBallCamera> cam;
 
@@ -20,8 +22,8 @@ private:
   double mouseY;
   
 public:
-  second_scene(resourceHandler* rHandler) : scene(rHandler), suz(monkey(rHandler)), c(cube(rHandler)),
-					    loggedMouseLocation(false) { }
+  second_scene(resourceHandler* rHandler) : scene(rHandler), loggedMouseLocation(false),
+					    suz(monkey(rHandler)), c(cube(rHandler)), p(plane(rHandler)) { }
   ~second_scene();
 
   void mousePosition(double xPos, double yPos);

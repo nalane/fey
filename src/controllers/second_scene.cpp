@@ -22,9 +22,11 @@ void second_scene::mousePosition(double xPos, double yPos) {
 void second_scene::load() {
   suz.load();
   c.load();
+  p.load();
   
   suz.init();
   c.init();
+  p.init();
   
   cam = rHandler->loadTrackBallCamera("tCam");
   cam.res->zoom(5.0);
@@ -55,6 +57,7 @@ bool second_scene::update() {
 void second_scene::draw() {
   c.draw();
   suz.draw();
+  p.draw();
 }
 
 scene* second_scene::nextScene() {

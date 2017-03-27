@@ -1,5 +1,6 @@
 #include "resourceHandler.hpp"
 
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <cstdlib>
@@ -27,10 +28,18 @@ model* resourceHandler::loadFeyModel(string filename) {
 
   if (fin.is_open()) {
     m = new model(filename);
-    
-    // Get number of materials
+
+    // Get version number and number of materials
+    string version = "";
     int numMaterials = 0;
-    fin >> numMaterials;
+    fin >> version;
+    if (version.substr(0, 1) == "v") {
+      fin >> numMaterials;
+    }
+    else {
+      numMaterials = stoi(version);
+    }
+    
 
     // Get materials
     for (int i = 0; i < numMaterials; i++) {
@@ -93,7 +102,8 @@ model* resourceHandler::loadFeyModel(string filename) {
     // Number of vertices in final model
     int numVerts = 0;
     fin >> numVerts;
-    numVerts /= 2;
+    int factor = version.substr(0, 1) == "v" ? 5 : 2;
+    numVerts /= factor;
 		
     // Get the UV map
     vector<glm::vec2> uvMapping;
@@ -105,23 +115,35 @@ model* resourceHandler::loadFeyModel(string filename) {
 			
       fin >> index;
       finalVerts.push_back(vertexList[index]);
-			
+
       fin >> uvIndex;
-      uvMapping.push_back(uvCoords[uvIndex]);
-	  
-      face[i % 3] = vertexList[index];
-      if (i % 3 == 2) {
-	glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
-	normals.push_back(normal);
-	normals.push_back(normal);
+      if (uvCoords.size() > 0) {
+	uvMapping.push_back(uvCoords[uvIndex]);
+      }
+
+      if (version.substr(0, 1) != "v") {
+	face[i % 3] = vertexList[index];
+	if (i % 3 == 2) {
+	  glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
+	  normals.push_back(normal);
+	  normals.push_back(normal);
+	  normals.push_back(normal);
+	}
+      }
+
+      else {
+	glm::vec3 normal;
+	fin >> normal.x >> normal.y >> normal.z;
 	normals.push_back(normal);
       }
     }
 
     // Push data into the model
     m->setVertices(finalVerts);
-    m->setUVMapping(uvMapping);
     m->setNormals(normals);
+    if (uvMapping.size() > 0)
+      m->setUVMapping(uvMapping);
+    
     recordLog("Successfully read in fey model file " + filename + "!");
   }
 

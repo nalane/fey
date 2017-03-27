@@ -6,14 +6,15 @@ layout (location = 2) in vec4 normal;
 
 uniform mat4 mvMatrix;
 uniform mat4 mvpMatrix;
+uniform mat4 viewMatrix;
 
 out vec2 fragUV;
 out vec4 fragNormal;
-out vec4 fragPosition;
+out vec4 fragView;
 
 void main(void) {	
 	fragUV = vertexUV;
-    fragNormal = normalize(mvMatrix * normal);
-	fragPosition = mvMatrix * position;
+    	fragNormal = normalize(inverse(viewMatrix) * mvMatrix * normal);	
+	fragView = inverse(viewMatrix) * mvMatrix * position;
 	gl_Position = mvpMatrix * position;
 }
