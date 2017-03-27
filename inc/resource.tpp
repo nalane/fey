@@ -6,21 +6,27 @@
 template <class T>
 resource<T>::resource(T* res, resourceHandler* rHandler) {
   this->res = res;
-  res->load();
   this->rHandler = rHandler;
+  if (res != NULL) {
+    res->load();
+  }
 }
 
 template <class T>
 resource<T>::~resource() {
-  int numRefs = res->unload();
-  if (numRefs == 0) {
-    rHandler->unload(res->getName());
+  if (res != NULL) {
+    int numRefs = res->unload();
+    if (numRefs == 0) {
+      rHandler->unload(res->getName());
+    }
   }
 }
 
 template <class T>
 void resource<T>::operator = (const resource<T>& rhs) {
   res = rhs.res;
-  res->load();
   rHandler = rhs.rHandler;
+  if (res != NULL) {
+    res->load();
+  }
 }
