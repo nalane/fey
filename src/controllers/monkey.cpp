@@ -13,8 +13,7 @@ monkey::~monkey() {
 void monkey::load() {
   object::load();
   m = rHandler->loadModel("monkey.fey.model");
-  modelMatrix = glm::rotate(glm::radians(-90.0f),
-			    glm::vec3(1.0, 0.0, 0.0)) * modelMatrix;
+  rotate(-90, 1, 0, 0);
 }
 
 void monkey::init() {
@@ -23,8 +22,7 @@ void monkey::init() {
 
 void monkey::update() {
   object::update();
-  modelMatrix = glm::rotate(glm::radians(0.2f),
-			    glm::vec3(0.0, 1.0, 0.0)) * modelMatrix;
+  rotate(0.2, 0, 1, 0);
 }
 
 void monkey::draw() {
