@@ -6,6 +6,7 @@
 
 #include "resourceHandler.hpp"
 #include "shaderProgram.hpp"
+#include "model.hpp"
 
 #include <vector>
 #include <string>
@@ -14,14 +15,21 @@ class object {
 protected: 
 	glm::mat4 modelMatrix;
 	resourceHandler* rHandler;
+	
+	std::vector<object*> children;
+	object* parent;
+	void addChild(object* child);
+	void removeChildren();
   
 	GLint texHandle;
 	GLint progID;
+	resource<model> mesh;
+	
 	resource<shaderProgram> shaderProg;
 	virtual void setShaderProg();
   
 public:
-	object(resourceHandler* rHandler) : rHandler(rHandler) {};
+	object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr), texHandle(-1) {};
 	virtual ~object();
 				
 	virtual void load();
@@ -42,5 +50,5 @@ public:
 	virtual void scale(float allDimensions) {
 		scale(allDimensions, allDimensions, allDimensions);
 	}
-	virtual glm::mat4 getModelMatrix() { return modelMatrix; }
+	virtual glm::mat4 getModelMatrix();
 };

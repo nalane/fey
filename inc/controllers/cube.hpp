@@ -6,12 +6,12 @@
 #include "shaderProgram.hpp"
 #include "glHeaders.hpp"
 #include "resource.hpp"
+#include "monkey.hpp"
 
 #include <string>
 
 class cube : public object {
 private:
-  resource<model> m;
   
 public:
   cube(resourceHandler* rHandler);

@@ -11,7 +11,6 @@
 
 class plane : public object {
 private:
-  resource<model> m;
   
 public:
   plane(resourceHandler* rHandler);

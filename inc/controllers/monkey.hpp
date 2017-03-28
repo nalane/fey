@@ -11,7 +11,6 @@
 
 class monkey : public object {
 private:
-  resource<model> m;
   
 public:
   monkey(resourceHandler* rHandler);

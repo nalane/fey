@@ -20,11 +20,9 @@ void second_scene::mousePosition(double xPos, double yPos) {
 }
 
 void second_scene::load() {
-  suz.load();
   c.load();
   p.load();
   
-  suz.init();
   c.init();
   p.init();
   
@@ -49,14 +47,13 @@ bool second_scene::update() {
   if (pressedKeys[GLFW_KEY_DOWN])
     cam.res->zoom(0.1);
 
-  suz.update();
+	c.update();
   
   return false;
 }
 
 void second_scene::draw() {
   c.draw();
-  suz.draw();
   p.draw();
 }
 

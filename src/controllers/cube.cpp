@@ -4,15 +4,16 @@
 using namespace std;
 
 cube::cube(resourceHandler* rHandler) : object(rHandler) {
+	addChild(new monkey(rHandler));
 }
 
 cube::~cube() {
-
+	removeChildren();
 }
 
 void cube::load() {
   object::load();
-  m = rHandler->loadModel("cube.fey.model");
+  mesh = rHandler->loadModel("cube.fey.model");
 }
 
 void cube::init() {
@@ -21,10 +22,9 @@ void cube::init() {
 
 void cube::update() {
   object::update();
+  rotate(0.2, 1.0, 0.0, 0.0);
 }
 
 void cube::draw() {
   object::draw();
-  m.res->bindTextureToUniform(texHandle);
-  m.res->draw(progID);
 }

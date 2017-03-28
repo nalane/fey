@@ -12,8 +12,9 @@ monkey::~monkey() {
 
 void monkey::load() {
   object::load();
-  m = rHandler->loadModel("monkey.fey.model");
+  mesh = rHandler->loadModel("monkey.fey.model");
   rotate(-90, 1, 0, 0);
+  scale(1.3);
 }
 
 void monkey::init() {
@@ -27,6 +28,4 @@ void monkey::update() {
 
 void monkey::draw() {
   object::draw();
-  m.res->bindTextureToUniform(texHandle);
-  m.res->draw(progID);
 }

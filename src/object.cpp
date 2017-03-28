@@ -9,22 +9,45 @@ object::~object() {
 
 }
 
+void object::addChild(object* child) {
+	children.push_back(child);
+	child->parent = this;
+}
+
+void object::removeChildren() {
+	for (object* o : children) {
+		delete o;
+	}
+}
+
 void object::setShaderProg() {
   shaderProg = rHandler->loadShaderProg();
   texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
 }
 
+glm::mat4 object::getModelMatrix() {
+	if (parent == nullptr)
+		return modelMatrix;
+	else
+		return parent->getModelMatrix() * modelMatrix;
+}
+
 void object::load() {
   this->setShaderProg();
   progID = shaderProg.res->getProgID();
+  
+  for (object* o : children)
+	  o->load();
 }
 
 void object::init() {
-
+  for (object* o : children)
+	  o->init();
 }
 
 void object::update() {
-  
+  for (object* o : children)
+	  o->update();
 }
 
 // Tells GPU to render "object"
@@ -59,4 +82,11 @@ void object::draw() {
     lightHandle = glGetUniformLocation(progID, ("lights[" + to_string(i) + "].color").c_str());
     glUniform3fv(lightHandle, 1, lights[i]->getColor());
   }
+  
+    mesh.res->bindTextureToUniform(texHandle);
+  mesh.res->draw(progID);
+  
+    // Draw children
+  for (object* o : children)
+	  o->draw();
 }

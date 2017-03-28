@@ -12,7 +12,7 @@ plane::~plane() {
 
 void plane::load() {
   object::load();
-  m = rHandler->loadModel("plane.fey.model");
+  mesh = rHandler->loadModel("plane.fey.model");
   rotate(-90.0, 1.0, 0.0, 0.0);
   scale(10.0);
 }
@@ -27,5 +27,4 @@ void plane::update() {
 
 void plane::draw() {
   object::draw();
-  m.res->draw(progID);
 }
