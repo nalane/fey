@@ -35,6 +35,8 @@ void second_scene::load() {
   staticLight = rHandler->loadLight("static");
   staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
   staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
+
+  sky = rHandler->loadSkybox(getLibraryFolderPath("skybox/"), "tga");
 }
 
 bool second_scene::update() {
@@ -47,14 +49,16 @@ bool second_scene::update() {
   if (pressedKeys[GLFW_KEY_DOWN])
     cam.res->zoom(0.1);
 
-	c.update();
+  c.update();
   
   return false;
 }
 
 void second_scene::draw() {
+  rHandler->loadShaderProg().res->useProgram();
   c.draw();
   p.draw();
+  //sky.res->draw();
 }
 
 scene* second_scene::nextScene() {

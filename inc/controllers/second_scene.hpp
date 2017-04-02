@@ -4,6 +4,7 @@
  * Code for the second monkey scene
  */
 
+#include "skybox.hpp"
 #include "scene.hpp"
 #include "cube.hpp"
 #include "plane.hpp"
@@ -12,6 +13,7 @@ class second_scene : public scene {
 private:
   cube c;
   plane p;
+  resource<skybox> sky;
   resource<light> staticLight;
   resource<trackBallCamera> cam;
 

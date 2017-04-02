@@ -11,11 +11,26 @@ void raw_resource::load() {
   locker.lock();
   refCount++;
   locker.unlock();
+
+  for (auto p : child_resources) {
+    p.second->load();
+  }
 }
 
-int raw_resource::unload() {
+set<string> raw_resource::unload() {
+  set<string> unloadResources;
+  
   locker.lock();
   refCount--;
   locker.unlock();
-  return refCount;
+
+  if (refCount <= 0)
+    unloadResources.insert(name);
+
+  for (auto p : child_resources) {
+    for (string r : p.second->unload())
+      unloadResources.insert(name);
+  }
+  
+  return unloadResources;
 }

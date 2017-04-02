@@ -12,12 +12,15 @@ template <typename T> class resource;
 class model;
 class resourceHandler;
 class material;
+class skybox;
 
+#include "resource.hpp"
 #include "glHeaders.hpp"
 #include "shader.hpp"
 #include "shaderProgram.hpp"
 #include "camera.hpp"
 #include "model.hpp"
+#include "skybox.hpp"
 #include "raw_resource.hpp"
 #include "light.hpp"
 #include "firstPersonCamera.hpp"
@@ -46,6 +49,7 @@ public:
   resource<trackBallCamera> loadTrackBallCamera(std::string name);
   resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
+  resource<skybox> loadSkybox(std::string path, std::string extension);
 
   void unload(std::string name);
   void unloadAll();
@@ -56,4 +60,4 @@ public:
   camera* getActiveCamera();
 };
 
-#include "resource.hpp"
+#include "resource.tpp"

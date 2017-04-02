@@ -4,10 +4,7 @@
  * Resource wrapper.
  */
 
-template <class T>
-class resource;
-
-#include "resourceHandler.hpp"
+class resourceHandler;
 
 template <class T>
 class resource {
@@ -25,4 +22,4 @@ public:
   ~resource();
 };
 
-#include "resource.tpp"
+#include "resourceHandler.hpp"

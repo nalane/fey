@@ -253,6 +253,31 @@ resource<trackBallCamera> resourceHandler::loadTrackBallCamera(std::string name)
   return resource<trackBallCamera>((trackBallCamera*) resources[name], this);
 }
 
+resource<skybox> resourceHandler::loadSkybox(std::string path, std::string extension) {
+  map<string, raw_resource*>::iterator it = resources.find(path);
+  if (it == resources.end()) {
+    recordLog("Loading skybox " + path);
+    
+    const char* skyboxTextures[NUM_SKYBOX_TEXTURES];
+    skyboxTextures[SKYBOX_RIGHT]  = (path + "/right." + extension).c_str();
+    skyboxTextures[SKYBOX_LEFT]   = (path + "/left." + extension).c_str();
+    skyboxTextures[SKYBOX_TOP]    = (path + "/top." + extension).c_str();
+    skyboxTextures[SKYBOX_BOTTOM] = (path + "/bottom." + extension).c_str();
+    skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension).c_str();
+    skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension).c_str();
+
+    skybox* newSkybox = new skybox(path);
+    resource<shaderProgram> shaderProg = loadShaderProg(getDataFolderPath("shaders/skybox.v.glsl"),
+							getDataFolderPath("shaders/skybox.f.glsl"));
+    newSkybox->setShaderProgram(shaderProg.res);
+    newSkybox->setTextures(skyboxTextures);
+    newSkybox->setActiveCamera(cameras[activeCameraID]);
+    resources[path] = newSkybox;
+  }
+
+  return resource<skybox>((skybox*) resources[path], this);
+}
+
 // Unload the named resource
 void resourceHandler::unload(string name) {
   map<string, raw_resource*>::iterator it = resources.find(name);

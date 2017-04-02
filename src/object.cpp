@@ -10,14 +10,14 @@ object::~object() {
 }
 
 void object::addChild(object* child) {
-	children.push_back(child);
-	child->parent = this;
+  children.push_back(child);
+  child->parent = this;
 }
 
 void object::removeChildren() {
-	for (object* o : children) {
-		delete o;
-	}
+  for (object* o : children) {
+    delete o;
+  }
 }
 
 void object::setShaderProg() {
@@ -26,10 +26,10 @@ void object::setShaderProg() {
 }
 
 glm::mat4 object::getModelMatrix() {
-	if (parent == nullptr)
-		return modelMatrix;
-	else
-		return parent->getModelMatrix() * modelMatrix;
+  if (parent == nullptr)
+    return modelMatrix;
+  else
+    return parent->getModelMatrix() * modelMatrix;
 }
 
 void object::load() {
@@ -37,17 +37,17 @@ void object::load() {
   progID = shaderProg.res->getProgID();
   
   for (object* o : children)
-	  o->load();
+    o->load();
 }
 
 void object::init() {
   for (object* o : children)
-	  o->init();
+    o->init();
 }
 
 void object::update() {
   for (object* o : children)
-	  o->update();
+    o->update();
 }
 
 // Tells GPU to render "object"
@@ -64,7 +64,6 @@ void object::draw() {
   // Send model matrix to GPU
   GLint modelHandle = glGetUniformLocation(progID, "modelMatrix");
   glUniformMatrix4fv(modelHandle, 1, GL_FALSE, &modelMatrix[0][0]);
-
   
   // Send MVP matrix to GPU
   glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
