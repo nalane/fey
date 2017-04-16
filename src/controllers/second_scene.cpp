@@ -37,6 +37,8 @@ void second_scene::load() {
   staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
   sky = rHandler->loadSkybox(getLibraryFolderPath("skybox/"), "tga");
+
+  defaultShader = rHandler->loadShaderProg();
 }
 
 bool second_scene::update() {
@@ -55,10 +57,10 @@ bool second_scene::update() {
 }
 
 void second_scene::draw() {
-  rHandler->loadShaderProg().res->useProgram();
+  defaultShader.res->useProgram();
   c.draw();
   p.draw();
-  //sky.res->draw();
+  sky.res->draw();
 }
 
 scene* second_scene::nextScene() {

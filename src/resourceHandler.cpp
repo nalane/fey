@@ -178,18 +178,22 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
   return (shader*) resources[fragmentShaderPath];
 }
 
+// Create a new shader program
+shaderProgram* resourceHandler::newShader(string vertexShader, string fragmentShader, string key) {
+  shaderProgram* prog = new shaderProgram(key);
+  prog->addShader(loadVertexShader(vertexShader));
+  prog->addShader(loadFragmentShader(fragmentShader));
+  prog->loadShaders();
+  prog->compileShaders();
+  prog->linkShaders();
+  return prog;
+}
+
 // Get a shader program
 resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader, bool defaultShader) {
-  string key = defaultShader ? SHADER_KEY : "v" + vertexShader + "f" + fragmentShader;
+  string key = defaultShader ? SHADER_KEY : getShaderKey(vertexShader, fragmentShader);
   if (resources.find(key) == resources.end()) {
-    shaderProgram* prog = new shaderProgram(key);
-    prog->addShader(loadVertexShader(vertexShader));
-    prog->addShader(loadFragmentShader(fragmentShader));
-    prog->loadShaders();
-    prog->compileShaders();
-    prog->linkShaders();
-
-    resources[key] = prog;
+    resources[key] = newShader(vertexShader, fragmentShader, key);
   }
 
   return resource<shaderProgram>((shaderProgram*) resources[key], this);
@@ -266,10 +270,15 @@ resource<skybox> resourceHandler::loadSkybox(std::string path, std::string exten
     skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension).c_str();
     skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension).c_str();
 
+    string vertexShader = getDataFolderPath("shaders/skybox.v.glsl");
+    string fragShader = getDataFolderPath("shaders/skybox.f.glsl");
+    string shaderKey = getShaderKey(vertexShader, fragShader);
+    if (resources.find(shaderKey) == resources.end()) {
+      resources[shaderKey] = newShader(vertexShader, fragShader, shaderKey);
+    }
+
     skybox* newSkybox = new skybox(path);
-    resource<shaderProgram> shaderProg = loadShaderProg(getDataFolderPath("shaders/skybox.v.glsl"),
-							getDataFolderPath("shaders/skybox.f.glsl"));
-    newSkybox->setShaderProgram(shaderProg.res);
+    newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures(skyboxTextures);
     newSkybox->setActiveCamera(cameras[activeCameraID]);
     resources[path] = newSkybox;

@@ -4,11 +4,11 @@
 using namespace std;
 
 cube::cube(resourceHandler* rHandler) : object(rHandler) {
-	addChild(new monkey(rHandler));
+  addChild(new monkey(rHandler));
 }
 
 cube::~cube() {
-	removeChildren();
+  removeChildren();
 }
 
 void cube::load() {

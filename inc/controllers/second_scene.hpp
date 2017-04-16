@@ -16,6 +16,7 @@ private:
   resource<skybox> sky;
   resource<light> staticLight;
   resource<trackBallCamera> cam;
+  resource<shaderProgram> defaultShader;
 
   bool loggedMouseLocation;
   double mouseX;

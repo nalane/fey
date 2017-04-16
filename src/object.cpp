@@ -82,10 +82,10 @@ void object::draw() {
     glUniform3fv(lightHandle, 1, lights[i]->getColor());
   }
   
-    mesh.res->bindTextureToUniform(texHandle);
+  mesh.res->bindTextureToUniform(texHandle);
   mesh.res->draw(progID);
   
-    // Draw children
+  // Draw children
   for (object* o : children)
-	  o->draw();
+    o->draw();
 }

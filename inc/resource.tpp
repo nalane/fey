@@ -2,7 +2,7 @@
 
 #include "log.hpp"
 #include <string>
-#include <set>
+#include <vector>
 
 template <class T>
 resource<T>::resource(T* res, resourceHandler* rHandler) {
@@ -16,7 +16,7 @@ resource<T>::resource(T* res, resourceHandler* rHandler) {
 template <class T>
 resource<T>::~resource() {
   if (res != nullptr) {
-    std::set<std::string> unloadResources = res->unload();
+    std::vector<std::string> unloadResources = res->unload();
     for (std::string s : unloadResources) {
       rHandler->unload(s);
     }

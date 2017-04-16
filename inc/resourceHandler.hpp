@@ -34,9 +34,11 @@ private:
 
   std::string activeCameraID;
 
+  std::string getShaderKey(std::string vert, std::string frag) { return "v" + vert + "f" + frag; }
   model* loadFeyModel(std::string filename);
   shader* loadVertexShader(std::string vertexShaderPath);
   shader* loadFragmentShader(std::string fragmentShaderPath);
+  shaderProgram* newShader(std::string vertexShader, std::string fragmentShader, std::string key);
 
 public:
   resourceHandler() {};
@@ -47,7 +49,8 @@ public:
   resource<camera> loadCamera(std::string name);
   resource<firstPersonCamera> loadFirstPersonCamera(std::string name);
   resource<trackBallCamera> loadTrackBallCamera(std::string name);
-  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader, bool defaultShader = false);
+  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader,
+					 bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
   resource<skybox> loadSkybox(std::string path, std::string extension);
 

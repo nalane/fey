@@ -11,48 +11,48 @@ skybox::~skybox() {
 void skybox::setTextures(const char* texturePaths[NUM_SKYBOX_TEXTURES]) {
   // Generate vertices
   float data[] = {
-    // Positions          
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
+    // Positions
+    50.0f, -50.0f, -50.0f,
+    -50.0f, -50.0f, -50.0f,
+    -50.0f,  50.0f, -50.0f,
+    -50.0f,  50.0f, -50.0f,
+    50.0f,  50.0f, -50.0f,
+    50.0f, -50.0f, -50.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+    -50.0f, -50.0f,  50.0f,
+    -50.0f, -50.0f, -50.0f,
+    -50.0f,  50.0f, -50.0f,
+    -50.0f,  50.0f, -50.0f,
+    -50.0f,  50.0f,  50.0f,
+    -50.0f, -50.0f,  50.0f,
 
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
+    50.0f, -50.0f, -50.0f,
+    50.0f, -50.0f,  50.0f,
+    50.0f,  50.0f,  50.0f,
+    50.0f,  50.0f,  50.0f,
+    50.0f,  50.0f, -50.0f,
+    50.0f, -50.0f, -50.0f,
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+    -50.0f, -50.0f,  50.0f,
+    -50.0f,  50.0f,  50.0f,
+    50.0f,  50.0f,  50.0f,
+    50.0f,  50.0f,  50.0f,
+    50.0f, -50.0f,  50.0f,
+    -50.0f, -50.0f,  50.0f,
 
-    -1.0f,  1.0f, -1.0f,
-    1.0f,  1.0f, -1.0f,
-    1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
+    -50.0f,  50.0f, -50.0f,
+    50.0f,  50.0f, -50.0f,
+    50.0f,  50.0f,  50.0f,
+    50.0f,  50.0f,  50.0f,
+    -50.0f,  50.0f,  50.0f,
+    -50.0f,  50.0f, -50.0f,
 
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    1.0f, -1.0f, -1.0f,
-    1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    1.0f, -1.0f,  1.0f
+    -50.0f, -50.0f, -50.0f,
+    -50.0f, -50.0f,  50.0f,
+    50.0f, -50.0f, -50.0f,
+    50.0f, -50.0f, -50.0f,
+    -50.0f, -50.0f,  50.0f,
+    50.0f, -50.0f,  50.0f
   };
   glBindVertexArray(vao);
   glGenBuffers(1, &vbo);
@@ -85,6 +85,7 @@ void skybox::setTextures(const char* texturePaths[NUM_SKYBOX_TEXTURES]) {
 
 void skybox::draw() {
   shaderProgram* prog = (shaderProgram*)(child_resources["shaderProg"]);
+  glDepthMask(GL_FALSE);
   prog->useProgram();
   glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
@@ -94,4 +95,5 @@ void skybox::draw() {
   glBindVertexArray(vao);
   glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
   glDrawArrays(GL_TRIANGLES, 0, 36);
+  glDepthMask(GL_TRUE);
 }

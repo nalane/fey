@@ -7,7 +7,7 @@
 #include <string>
 #include <mutex>
 #include <map>
-#include <set>
+#include <vector>
 
 class raw_resource {
 protected:
@@ -21,7 +21,7 @@ public:
   virtual ~raw_resource();
   
   void load();
-  std::set<std::string> unload();
+  std::vector<std::string> unload();
 
   std::string getName() { return name; }
 };
