@@ -10,7 +10,7 @@ void setDefaultAspectRatio(double aspectRatio) {
 
 // Sets a default perspective
 camera::camera(string name) : raw_resource(name) {
-  projection = glm::perspective(glm::radians(45.0), 4.0 / 3.0, 0.1, 100.0);
+  projection = glm::perspective(glm::radians(45.0), 4.0 / 3.0, 0.1, 1000.0);
   view = glm::lookAt(glm::vec3(0.0, 0.0, 0.0),
 		     glm::vec3(0.0, 0.0, 1.0),
 		     glm::vec3(0.0, 1.0, 0.0));

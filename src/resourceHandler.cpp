@@ -262,13 +262,13 @@ resource<skybox> resourceHandler::loadSkybox(std::string path, std::string exten
   if (it == resources.end()) {
     recordLog("Loading skybox " + path);
     
-    const char* skyboxTextures[NUM_SKYBOX_TEXTURES];
-    skyboxTextures[SKYBOX_RIGHT]  = (path + "/right." + extension).c_str();
-    skyboxTextures[SKYBOX_LEFT]   = (path + "/left." + extension).c_str();
-    skyboxTextures[SKYBOX_TOP]    = (path + "/top." + extension).c_str();
-    skyboxTextures[SKYBOX_BOTTOM] = (path + "/bottom." + extension).c_str();
-    skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension).c_str();
-    skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension).c_str();
+    string skyboxTextures[NUM_SKYBOX_TEXTURES];
+    skyboxTextures[SKYBOX_RIGHT]  = (path + "/right." + extension);
+    skyboxTextures[SKYBOX_LEFT]   = (path + "/left." + extension);
+    skyboxTextures[SKYBOX_TOP]    = (path + "/top." + extension);
+    skyboxTextures[SKYBOX_BOTTOM] = (path + "/bottom." + extension);
+    skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension);
+    skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension);
 
     string vertexShader = getDataFolderPath("shaders/skybox.v.glsl");
     string fragShader = getDataFolderPath("shaders/skybox.f.glsl");

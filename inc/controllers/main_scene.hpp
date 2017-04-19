@@ -7,6 +7,7 @@
 #include "firstPersonCamera.hpp"
 #include "scene.hpp"
 #include "monkey.hpp"
+#include "skybox.hpp"
 
 class main_scene : public scene {
 private:
@@ -16,6 +17,8 @@ private:
   resource<firstPersonCamera> cam;
   resource<light> mainLight;
   resource<light> staticLight;
+  resource<skybox> sky;
+  resource<shaderProgram> defaultShader;
 
   double mouseX;
   double mouseY;

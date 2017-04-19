@@ -28,13 +28,13 @@ private:
   camera* activeCamera;
   
 public:
-  skybox(std::string name) : raw_resource(name), activeCamera(nullptr) { glGenVertexArrays(1, &vao); }
+  skybox(std::string name) : raw_resource(name), activeCamera(nullptr) { }
   ~skybox();
 
   void setActiveCamera(camera* cam) { this->activeCamera = cam; }
   void setShaderProgram(shaderProgram* shaderProg) {
     child_resources["shaderProg"] = shaderProg;
   }
-  void setTextures(const char* texturePaths[NUM_SKYBOX_TEXTURES]);
+  void setTextures(std::string texturePaths[NUM_SKYBOX_TEXTURES]);
   void draw();
 };

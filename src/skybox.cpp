@@ -3,76 +3,83 @@
 
 using namespace std;
 
+#define SIZE 250.0f
+
 skybox::~skybox() {
   glDeleteVertexArrays(1, &vao);
   glDeleteTextures(1, &texID);
 }
 
-void skybox::setTextures(const char* texturePaths[NUM_SKYBOX_TEXTURES]) {
+void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
   // Generate vertices
   float data[] = {
     // Positions
-    50.0f, -50.0f, -50.0f,
-    -50.0f, -50.0f, -50.0f,
-    -50.0f,  50.0f, -50.0f,
-    -50.0f,  50.0f, -50.0f,
-    50.0f,  50.0f, -50.0f,
-    50.0f, -50.0f, -50.0f,
-
-    -50.0f,  50.0f, -50.0f,
-    -50.0f, -50.0f, -50.0f,
-    -50.0f, -50.0f,  50.0f,
-    -50.0f, -50.0f,  50.0f,
-    -50.0f,  50.0f,  50.0f,
-    -50.0f,  50.0f, -50.0f,
-
-    50.0f,  50.0f,  50.0f,
-    50.0f, -50.0f,  50.0f,
-    50.0f, -50.0f, -50.0f,
-    50.0f, -50.0f, -50.0f,
-    50.0f,  50.0f, -50.0f,
-    50.0f,  50.0f,  50.0f,
-
-    50.0f,  50.0f,  50.0f,
-    -50.0f,  50.0f,  50.0f,
-    -50.0f, -50.0f,  50.0f,
-    -50.0f, -50.0f,  50.0f,
-    50.0f, -50.0f,  50.0f,
-    50.0f,  50.0f,  50.0f,
-
-    50.0f,  50.0f,  50.0f,
-    50.0f,  50.0f, -50.0f,
-    -50.0f,  50.0f, -50.0f,
-    -50.0f,  50.0f, -50.0f,
-    -50.0f,  50.0f,  50.0f,
-    50.0f,  50.0f,  50.0f,
-
-    -50.0f, -50.0f,  50.0f,
-    -50.0f, -50.0f, -50.0f,
-    50.0f, -50.0f, -50.0f,
-    50.0f, -50.0f, -50.0f,
-    50.0f, -50.0f,  50.0f,
-    -50.0f, -50.0f, 50.0f
+	-SIZE,  SIZE, -SIZE,
+    -SIZE, -SIZE, -SIZE,
+    SIZE, -SIZE, -SIZE,
+    SIZE, -SIZE, -SIZE,
+    SIZE,  SIZE, -SIZE,
+    -SIZE,  SIZE, -SIZE,
+  
+    -SIZE, -SIZE,  SIZE,
+    -SIZE, -SIZE, -SIZE,
+    -SIZE,  SIZE, -SIZE,
+    -SIZE,  SIZE, -SIZE,
+    -SIZE,  SIZE,  SIZE,
+    -SIZE, -SIZE,  SIZE,
+  
+    SIZE, -SIZE, -SIZE,
+    SIZE, -SIZE,  SIZE,
+    SIZE,  SIZE,  SIZE,
+    SIZE,  SIZE,  SIZE,
+    SIZE,  SIZE, -SIZE,
+    SIZE, -SIZE, -SIZE,
+   
+    -SIZE, -SIZE,  SIZE,
+    -SIZE,  SIZE,  SIZE,
+    SIZE,  SIZE,  SIZE,
+    SIZE,  SIZE,  SIZE,
+    SIZE, -SIZE,  SIZE,
+    -SIZE, -SIZE,  SIZE,
+  
+    -SIZE,  SIZE, -SIZE,
+    SIZE,  SIZE, -SIZE,
+    SIZE,  SIZE,  SIZE,
+    SIZE,  SIZE,  SIZE,
+    -SIZE,  SIZE,  SIZE,
+    -SIZE,  SIZE, -SIZE,
+  
+    -SIZE, -SIZE, -SIZE,
+    -SIZE, -SIZE,  SIZE,
+    SIZE, -SIZE, -SIZE,
+    SIZE, -SIZE, -SIZE,
+    -SIZE, -SIZE,  SIZE,
+    SIZE, -SIZE,  SIZE
   };
-  glBindVertexArray(vao);
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), &data, GL_STATIC_DRAW);
+  
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
   glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   
   // Generate texture
-  glGenTextures(1, &texID);
   glActiveTexture(GL_TEXTURE0);
+  glGenTextures(1, &texID);
   glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
 
   // Load images to texture
   for (int i = 0; i < NUM_SKYBOX_TEXTURES; i++) {
     int width;
     int height;
-    unsigned char* imageData = SOIL_load_image(texturePaths[i], &width, &height, 0, SOIL_LOAD_RGB);
+	int channels;
+    unsigned char* imageData = SOIL_load_image(texturePaths[i].c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
 		 width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	delete imageData;
   }
 
   // Set drawing methods
@@ -85,14 +92,17 @@ void skybox::setTextures(const char* texturePaths[NUM_SKYBOX_TEXTURES]) {
 
 void skybox::draw() {
   shaderProgram* prog = (shaderProgram*)(child_resources["shaderProg"]);
-  glDepthMask(GL_FALSE);
   prog->useProgram();
-  glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
+  
+  glDepthMask(GL_FALSE);
+  glm::mat4 viewMatrix = activeCamera->getViewMatrix();
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
   GLint vpHandle = glGetUniformLocation(prog->getProgID(), "vpMatrix");
   glUniformMatrix4fv(vpHandle, 1, GL_FALSE, &vpMatrix[0][0]);
   
   glBindVertexArray(vao);
+  glEnableVertexAttribArray(0);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
   glDrawArrays(GL_TRIANGLES, 0, 36);
   glDepthMask(GL_TRUE);
