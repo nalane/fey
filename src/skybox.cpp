@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define SIZE 250.0f
+#define SIZE 333.3f
 
 skybox::~skybox() {
   glDeleteVertexArrays(1, &vao);
@@ -95,7 +95,7 @@ void skybox::draw() {
   prog->useProgram();
   
   glDepthMask(GL_FALSE);
-  glm::mat4 viewMatrix = activeCamera->getViewMatrix();
+  glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
   GLint vpHandle = glGetUniformLocation(prog->getProgID(), "vpMatrix");
   glUniformMatrix4fv(vpHandle, 1, GL_FALSE, &vpMatrix[0][0]);
