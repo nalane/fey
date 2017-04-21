@@ -1,15 +1,18 @@
 #include "skybox.hpp"
 #include "resourceHandler.hpp"
+#include "log.hpp"
 
 using namespace std;
 
 #define SIZE 333.3f
 
+// Remove data from GPU buffer
 skybox::~skybox() {
   glDeleteVertexArrays(1, &vao);
   glDeleteTextures(1, &texID);
 }
 
+// Create the skybox textures
 void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
   // Generate vertices
   float data[] = {
@@ -56,10 +59,13 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
     -SIZE, -SIZE,  SIZE,
     SIZE, -SIZE,  SIZE
   };
+  
+  // Generate and fill the vbo
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), &data, GL_STATIC_DRAW);
   
+  // Generate and fill the vao
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   glEnableVertexAttribArray(0);
@@ -76,7 +82,14 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
     int width;
     int height;
 	int channels;
+	
+	// Load image to memory
     unsigned char* imageData = SOIL_load_image(texturePaths[i].c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
+	if (imageData == nullptr) {
+		recordLog("WARNING: Could not load " + texturePaths[i] + "!");
+	}
+	
+	// Move image to GPU memory
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
 		 width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 	delete imageData;
@@ -91,15 +104,18 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
 }
 
 void skybox::draw() {
+	// Use the skybox shader prog
   shaderProgram* prog = (shaderProgram*)(child_resources["shaderProg"]);
   prog->useProgram();
   
-  glDepthMask(GL_FALSE);
+  // Move the view matrices to the GPU
   glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
   GLint vpHandle = glGetUniformLocation(prog->getProgID(), "vpMatrix");
   glUniformMatrix4fv(vpHandle, 1, GL_FALSE, &vpMatrix[0][0]);
   
+  // Draw the skybox
+  glDepthMask(GL_FALSE);
   glBindVertexArray(vao);
   glEnableVertexAttribArray(0);
   glActiveTexture(GL_TEXTURE0);
