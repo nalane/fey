@@ -10,7 +10,7 @@
 using namespace std;
 
 // Takes a config file as optional argument;
-// Otherwise, uses opal.cfg as the config file.
+// Otherwise, uses fey.cfg as the config file.
 // Reads in the config file and initializes the graphics backend.
 int main(int argc, char** argv) {
   const string DEFAULT_LOG_FILE = "/feyData/fey.log";

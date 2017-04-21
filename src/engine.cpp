@@ -32,6 +32,9 @@ engine::engine(string configFile) {
 
     fin >> windowWidth;
     fin >> windowHeight;
+    fin >> numAASamples;
+    fin >> hideCursor;
+    fin >> fullscreen;
     fin.ignore(1, '\n');
     getline(fin, windowTitle);
     getline(fin, dataPath);
@@ -98,20 +101,32 @@ bool engine::initGLFW() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_SAMPLES, numAASamples);
 
-  // GLFW window creation
-  window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), nullptr, nullptr);
+  // Determine if we should do it fullscreen
+  GLFWmonitor* monitor = nullptr;
+  if (fullscreen) {
+    monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+    windowWidth = videoMode->width;
+    windowHeight = videoMode->height;
+  }
+
+  // Create the window
+  window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), monitor, nullptr);
   if (!window) {
     recordLog("FATAL ERROR: Could not create a GLFW window!");
     glfwTerminate();
     return false;
   }
+
+  // Set GLFW variables
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
-
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetKeyCallback(window, key_callback);
   glfwSetCursorPosCallback(window, cursor_callback);
+  if (hideCursor)
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   return true;
 }

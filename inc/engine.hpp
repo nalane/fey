@@ -23,6 +23,9 @@ class engine {
 private:
   int windowWidth;
   int windowHeight;
+  int numAASamples;
+  bool hideCursor;
+  bool fullscreen;
   std::string windowTitle;
   std::string vertexShader;
   std::string fragmentShader;
