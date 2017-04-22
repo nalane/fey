@@ -34,7 +34,13 @@ private:
   resource<shaderProgram> shaderProg;
   
   GLFWwindow* window;
-
+  
+  btDiscreteDynamicsWorld* dynamics;
+  btDefaultCollisionConfiguration* collisionConfig;
+  btCollisionDispatcher* dispatcher;
+  btBroadphaseInterface* overlappingPairCache;
+  btSequentialImpulseConstraintSolver* solver;
+  
   scene* activeScene;
 
   bool initGame();
@@ -42,6 +48,7 @@ private:
   bool initGLEW();
   void enableGLFeatures();
   bool initGraphics();
+  bool initPhysics();
 
 public:
   engine(std::string configFile);

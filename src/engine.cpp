@@ -79,6 +79,8 @@ bool engine::initGame() {
   srand(time(nullptr));
   if (!initGraphics())
     return false;
+  if (!initPhysics())
+    return false;
 
   shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader, true);
   shaderProg.res->useProgram();
@@ -163,6 +165,19 @@ bool engine::initGraphics() {
   enableGLFeatures();
   setDefaultAspectRatio((double) windowWidth / (double) windowHeight);
   return true;
+}
+
+// Start the physics engine
+bool engine::initPhysics() {
+  collisionConfig = new btDefaultCollisionConfiguration();
+  dispatcher = new btCollisionDispatcher(collisionConfig);
+  overlappingPairCache = new btDbvtBroadphase();
+  solver = new btSequentialImpulseConstraintSolver();
+  dynamics = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
+  
+  dynamics->setGravity(btVector3(0, -10, 0));
+
+  return (dynamics != nullptr);
 }
 
 // Main drawing function
