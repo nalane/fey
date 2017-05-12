@@ -1,18 +1,16 @@
 #include "cube.hpp"
-#include "paths.hpp"
 
 using namespace std;
 
 cube::cube(resourceHandler* rHandler) : object(rHandler) {
-  addChild(new monkey(rHandler));
 }
 
 cube::~cube() {
-  removeChildren();
 }
 
 void cube::load() {
   object::load();
+  
   mesh = rHandler->loadModel("cube.fey.model");
 }
 

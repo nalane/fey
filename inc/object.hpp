@@ -23,13 +23,16 @@ protected:
   
 	GLint texHandle;
 	GLint progID;
+	
 	resource<model> mesh;
+	btCollisionShape* collider;
 	
 	resource<shaderProgram> shaderProg;
 	virtual void setShaderProg();
   
 public:
-	object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr), texHandle(-1) {};
+	object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr),
+		texHandle(-1), collider(nullptr) {};
 	virtual ~object();
 				
 	virtual void load();

@@ -4,9 +4,10 @@
 
 using namespace std;
 
-// Removes "object" from GPU
+// Removes "object" from memory
 object::~object() {
-
+	removeChildren();
+	delete collider;
 }
 
 void object::addChild(object* child) {
