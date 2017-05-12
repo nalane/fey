@@ -25,7 +25,7 @@ private:
   int numVertices;
 
 public:
-  model(std::string name);
+  model(const std::string& name);
   ~model();
 
   void addMaterial(const material& mat);

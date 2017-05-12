@@ -15,13 +15,13 @@ private:
   GLuint progID;
 
 public:
-  shaderProgram(std::string name) : progID(-1), raw_resource(name) { }
+  shaderProgram(const std::string& name) : progID(-1), raw_resource(name) { }
   ~shaderProgram();
   
   void addShader(shader* s);
   bool loadShaders();
   bool compileShaders();
   bool linkShaders();
-  void useProgram();
-  GLuint getProgID() {return progID;}
+  void useProgram() const;
+  GLuint getProgID() const { return progID; }
 };

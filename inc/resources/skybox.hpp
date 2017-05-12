@@ -28,7 +28,7 @@ private:
   camera* activeCamera;
   
 public:
-  skybox(std::string name) : raw_resource(name), activeCamera(nullptr) { }
+  skybox(const std::string& name) : raw_resource(name), activeCamera(nullptr) { }
   ~skybox();
 
   void setActiveCamera(camera* cam) { this->activeCamera = cam; }
@@ -36,5 +36,5 @@ public:
     child_resources["shaderProg"] = shaderProg;
   }
   void setTextures(std::string texturePaths[NUM_SKYBOX_TEXTURES]);
-  void draw();
+  void draw() const;
 };

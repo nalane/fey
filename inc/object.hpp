@@ -53,5 +53,5 @@ public:
 	virtual void scale(float allDimensions) {
 		scale(allDimensions, allDimensions, allDimensions);
 	}
-	virtual glm::mat4 getModelMatrix();
+	virtual glm::mat4 getModelMatrix() const;
 };

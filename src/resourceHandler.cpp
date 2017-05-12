@@ -20,7 +20,7 @@ resourceHandler::~resourceHandler() {
 }
 
 // Loads a fey model into memory and returns the data
-model* resourceHandler::loadFeyModel(string filename) {
+model* resourceHandler::loadFeyModel(const string& filename) {
   string fullPath = getLibraryFolderPath(filename);
   recordLog("Reading fey model " + fullPath + "...");
   model* m = nullptr;
@@ -155,7 +155,7 @@ model* resourceHandler::loadFeyModel(string filename) {
 }
 
 // Get the model associated with the given filename
-resource<model> resourceHandler::loadModel(string filepath) {
+resource<model> resourceHandler::loadModel(const string& filepath) {
   if (resources.find(filepath) == resources.end())
     resources[filepath] = loadFeyModel(filepath);
 
@@ -163,7 +163,7 @@ resource<model> resourceHandler::loadModel(string filepath) {
 }
 
 // Get a vertex shader
-shader* resourceHandler::loadVertexShader(string vertexShaderPath) {
+shader* resourceHandler::loadVertexShader(const string& vertexShaderPath) {
   if (resources.find(vertexShaderPath) == resources.end())
     resources[vertexShaderPath] = new shader(vertexShaderPath, GL_VERTEX_SHADER);
 
@@ -171,7 +171,7 @@ shader* resourceHandler::loadVertexShader(string vertexShaderPath) {
 }
 
 // Get a fragment shader
-shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
+shader* resourceHandler::loadFragmentShader(const string& fragmentShaderPath) {
   if (resources.find(fragmentShaderPath) == resources.end())
     resources[fragmentShaderPath] = new shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
 
@@ -179,7 +179,7 @@ shader* resourceHandler::loadFragmentShader(string fragmentShaderPath) {
 }
 
 // Create a new shader program
-shaderProgram* resourceHandler::newShader(string vertexShader, string fragmentShader, string key) {
+shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
   shaderProgram* prog = new shaderProgram(key);
   prog->addShader(loadVertexShader(vertexShader));
   prog->addShader(loadFragmentShader(fragmentShader));
@@ -190,7 +190,7 @@ shaderProgram* resourceHandler::newShader(string vertexShader, string fragmentSh
 }
 
 // Get a shader program
-resource<shaderProgram> resourceHandler::loadShaderProg(string vertexShader, string fragmentShader, bool defaultShader) {
+resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader, bool defaultShader) {
   string key = defaultShader ? SHADER_KEY : getShaderKey(vertexShader, fragmentShader);
   if (resources.find(key) == resources.end()) {
     resources[key] = newShader(vertexShader, fragmentShader, key);
@@ -210,7 +210,7 @@ resource<shaderProgram> resourceHandler::loadShaderProg() {
 }
 
 // Find the named light, if it is set.
-resource<light> resourceHandler::loadLight(string name) {
+resource<light> resourceHandler::loadLight(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading light " + name);
@@ -222,7 +222,7 @@ resource<light> resourceHandler::loadLight(string name) {
 }
 
 // Find the named camera, if it exists.
-resource<camera> resourceHandler::loadCamera(string name) {  
+resource<camera> resourceHandler::loadCamera(const string& name) {  
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -234,7 +234,7 @@ resource<camera> resourceHandler::loadCamera(string name) {
 }
 
 // Find the named fp camera, if it exists.
-resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(string name) {
+resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -246,7 +246,7 @@ resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(string name) 
 }
 
 // Find the named tb camera, if it exists
-resource<trackBallCamera> resourceHandler::loadTrackBallCamera(std::string name) {
+resource<trackBallCamera> resourceHandler::loadTrackBallCamera(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -257,7 +257,7 @@ resource<trackBallCamera> resourceHandler::loadTrackBallCamera(std::string name)
   return resource<trackBallCamera>((trackBallCamera*) resources[name], this);
 }
 
-resource<skybox> resourceHandler::loadSkybox(std::string path, std::string extension) {
+resource<skybox> resourceHandler::loadSkybox(const string& path, const string& extension) {
   map<string, raw_resource*>::iterator it = resources.find(path);
   if (it == resources.end()) {
     recordLog("Loading skybox " + path);
@@ -288,7 +288,7 @@ resource<skybox> resourceHandler::loadSkybox(std::string path, std::string exten
 }
 
 // Unload the named resource
-void resourceHandler::unload(string name) {
+void resourceHandler::unload(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
     recordLog("Unloading resource " + name);
@@ -318,7 +318,7 @@ void resourceHandler::unloadAll() {
 }
 
 // Get a list of all lights in the scene
-vector<light*> resourceHandler::getAllLights() {
+vector<light*> resourceHandler::getAllLights() const {
   vector<light*> lightList;
   for (auto p : lights) {
     lightList.push_back(p.second);
@@ -328,16 +328,16 @@ vector<light*> resourceHandler::getAllLights() {
 }
 
 // Set the active camera
-void resourceHandler::setActiveCamera(string id) {
+void resourceHandler::setActiveCamera(const string& id) {
   activeCameraID = id;
 }
 
 // Get the active camera
-camera* resourceHandler::getActiveCamera() {
+camera* resourceHandler::getActiveCamera() const {
   if (cameras.find(activeCameraID) == cameras.end()) {
     recordLog("WARNING: Could not find camera " + activeCameraID);
     return nullptr;
   }
   
-  return cameras[activeCameraID];
+  return cameras.find(activeCameraID)->second;
 }

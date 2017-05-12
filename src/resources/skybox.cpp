@@ -103,9 +103,9 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); 
 }
 
-void skybox::draw() {
+void skybox::draw() const {
 	// Use the skybox shader prog
-  shaderProgram* prog = (shaderProgram*)(child_resources["shaderProg"]);
+  shaderProgram* prog = (shaderProgram*)(child_resources.find("shaderProg")->second);
   prog->useProgram();
   
   // Move the view matrices to the GPU

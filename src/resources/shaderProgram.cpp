@@ -61,6 +61,6 @@ bool shaderProgram::linkShaders() {
 }
 
 // Tells GPU to use this program
-void shaderProgram::useProgram() {
+void shaderProgram::useProgram() const {
   glUseProgram(progID);
 }

@@ -51,7 +51,7 @@ private:
   bool initPhysics();
 
 public:
-  engine(std::string configFile);
+  engine(const std::string& configFile);
   ~engine();
 
   void draw();

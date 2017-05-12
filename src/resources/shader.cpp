@@ -5,7 +5,7 @@
 using namespace std;
 
 // Initializes class values and fills the dictionary
-shader::shader(string sourceFile, GLenum shaderType) :
+shader::shader(const string& sourceFile, GLenum shaderType) :
   sourceFile(sourceFile), shaderType(shaderType), shaderID(-1), raw_resource(sourceFile) {
   shaderDict[GL_VERTEX_SHADER] = "vertex";
   shaderDict[GL_GEOMETRY_SHADER] = "geometry";

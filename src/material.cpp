@@ -1,6 +1,6 @@
 #include "material.hpp"
 
-void material::sendToShader(GLint progID) {
+void material::sendToShader(GLint progID) const {
   GLint ambientHandle = glGetUniformLocation(progID, "mat.ambient");
   glUniform4fv(ambientHandle, 1, &ambientVals[0]);
 

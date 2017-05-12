@@ -24,7 +24,7 @@ void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 // The constructor. Uses the values found in configFile
-engine::engine(string configFile) {
+engine::engine(const string& configFile) {
   runningGame = this;
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
