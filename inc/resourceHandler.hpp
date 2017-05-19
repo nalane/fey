@@ -26,6 +26,8 @@ class skybox;
 #include "firstPersonCamera.hpp"
 #include "trackBallCamera.hpp"
 
+btDiscreteDynamicsWorld* getWorld();
+
 class resourceHandler {
 private:
   std::map<std::string, raw_resource*> resources;

@@ -23,6 +23,14 @@ void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
   runningGame->mousePosition(xpos, ypos);
 }
 
+btDiscreteDynamicsWorld* getWorld() {
+  return runningGame->getDynamicsWorld();
+}
+
+void physicsCallback(btDynamicsWorld *world, btScalar timeStep) {
+  int numManifolds = world->getDispatcher()->getNumManifolds();
+}
+
 // The constructor. Uses the values found in configFile
 engine::engine(const string& configFile) {
   runningGame = this;
@@ -176,6 +184,7 @@ bool engine::initPhysics() {
   dynamics = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
   
   dynamics->setGravity(btVector3(0, -10, 0));
+  dynamics->setInternalTickCallback(physicsCallback);
 
   return (dynamics != nullptr);
 }
@@ -194,6 +203,7 @@ void engine::draw() {
 // Run the game
 void engine::runGame() {
   if (initGame()) {
+    double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {
 	scene* nextScene = activeScene->nextScene();
@@ -203,6 +213,10 @@ void engine::runGame() {
 	activeScene->load();
 	activeScene->update();
       }
+
+      double currentTime = glfwGetTime();
+      dynamics->stepSimulation(currentTime - lastTime);
+      lastTime = currentTime;
       
       draw();
       glfwSwapBuffers(window);

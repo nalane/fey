@@ -32,6 +32,7 @@ public:
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);
   void setTexture(const std::string& source);
   void setVertices(const std::vector<glm::vec3>& vertexList);
+  const std::vector<glm::vec3>& getVertices() const { return vertices; }
   void setUVMapping(const std::vector<glm::vec2>& uvList);
   void setNormals(const std::vector<glm::vec3>& normalList);
   void setColors(const std::vector<glm::vec4>& colorList);

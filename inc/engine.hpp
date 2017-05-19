@@ -59,4 +59,6 @@ public:
   
   void keyPress(int key, int action, int mods) { activeScene->keyPress(key, action, mods); }
   void mousePosition(double xpos, double ypos) { activeScene->mousePosition(xpos, ypos); }
+
+  btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamics; }
 };

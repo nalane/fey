@@ -6,8 +6,11 @@ using namespace std;
 
 // Removes "object" from memory
 object::~object() {
-	removeChildren();
-	delete collider;
+  if (body != nullptr) {
+    getWorld()->removeRigidBody(body);
+    delete body;
+  }
+  removeChildren();
 }
 
 void object::addChild(object* child) {
@@ -24,6 +27,24 @@ void object::removeChildren() {
 void object::setShaderProg() {
   shaderProg = rHandler->loadShaderProg();
   texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
+}
+
+void object::addPhysicsRigidBody() {
+  btConvexHullShape* c = new btConvexHullShape();
+  for (glm::vec3 vert : mesh.res->getVertices())
+    c->addPoint(btVector3(vert.x, vert.y, vert.z));
+  
+  btVector3 inertia(0.0, 0.0, 0.0);
+  if (mass > 0)
+    c->calculateLocalInertia(mass, inertia);
+
+  btTransform objectTransformation;
+  objectTransformation.setFromOpenGLMatrix(&modelMatrix[0][0]);
+  modelMatrix = glm::mat4();
+  btRigidBody::btRigidBodyConstructionInfo cInfo(mass, new btDefaultMotionState(objectTransformation),
+						 c, inertia);
+  body = new btRigidBody(cInfo);
+  getWorld()->addRigidBody(body);
 }
 
 glm::mat4 object::getModelMatrix() const {
@@ -55,6 +76,13 @@ void object::update() {
 void object::draw() {
   // Get matrices
   glm::mat4 modelMatrix = getModelMatrix();
+  if (body != nullptr) {
+    glm::mat4 physicsMatrix;
+    btTransform transform;
+    body->getMotionState()->getWorldTransform(transform);
+    transform.getOpenGLMatrix(&physicsMatrix[0][0]);
+    modelMatrix = physicsMatrix * modelMatrix;
+  }
   glm::mat4 viewMatrix = rHandler->getActiveCamera()->getViewMatrix();
   glm::mat4 projectionMatrix = rHandler->getActiveCamera()->getProjectionMatrix();
   
