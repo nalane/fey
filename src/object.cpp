@@ -29,20 +29,30 @@ void object::setShaderProg() {
   texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
 }
 
-void object::addPhysicsRigidBody() {
-  btConvexHullShape* c = new btConvexHullShape();
-  for (glm::vec3 vert : mesh.res->getVertices())
-    c->addPoint(btVector3(vert.x, vert.y, vert.z));
+void object::addPhysicsRigidBody(string type) {
+  btCollisionShape* shape;
+  if (type == "hull") {
+    btConvexHullShape* c = new btConvexHullShape();
+    for (glm::vec3 vert : mesh.res->getVertices())
+      c->addPoint(btVector3(vert.x, vert.y, vert.z));
+    shape = c;
+  }
+
+  else if (type == "plane") {
+    vector<glm::vec3> vertices = mesh.res->getVertices();
+    glm::vec3 normal = cross(vertices[1] - vertices[0], vertices[2] - vertices[0]);
+    shape = new btStaticPlaneShape(btVector3(normal.x, normal.y, normal.z), 0);
+  }
   
   btVector3 inertia(0.0, 0.0, 0.0);
-  if (mass > 0)
-    c->calculateLocalInertia(mass, inertia);
+  if (mass != 0.0f)
+    shape->calculateLocalInertia(mass, inertia);
 
   btTransform objectTransformation;
   objectTransformation.setFromOpenGLMatrix(&modelMatrix[0][0]);
   modelMatrix = glm::mat4();
   btRigidBody::btRigidBodyConstructionInfo cInfo(mass, new btDefaultMotionState(objectTransformation),
-						 c, inertia);
+						 shape, inertia);
   body = new btRigidBody(cInfo);
   getWorld()->addRigidBody(body);
 }

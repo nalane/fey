@@ -12,8 +12,8 @@ cube::~cube() {
 void cube::load() {
   object::load();
   mesh = rHandler->loadModel("cube.fey.model");
-  translate(0.0, 25.0, 0.0);
-  object::addPhysicsRigidBody();
+  translate(5.0, 25.0, 5.0);
+  object::addPhysicsRigidBody("hull");
 }
 
 void cube::init() {

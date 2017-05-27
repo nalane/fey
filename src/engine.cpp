@@ -29,6 +29,16 @@ btDiscreteDynamicsWorld* getWorld() {
 
 void physicsCallback(btDynamicsWorld *world, btScalar timeStep) {
   int numManifolds = world->getDispatcher()->getNumManifolds();
+  if (numManifolds <= 0) return;
+  recordLog("Manifolds: " + to_string(numManifolds));
+  for (int i = 0; i < numManifolds; i++) {
+    btPersistentManifold* contactManifold = getWorld()->getDispatcher()->getManifoldByIndexInternal(i);
+    int numContacts = contactManifold->getNumContacts();
+    recordLog("Contacts: " + to_string(numContacts));
+    for (int j = 0; j < numContacts; j++) {
+      recordLog("Impulse: " + to_string(contactManifold->getContactPoint(j).getAppliedImpulse()));
+    }
+  }
 }
 
 // The constructor. Uses the values found in configFile

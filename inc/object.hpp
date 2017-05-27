@@ -27,7 +27,7 @@ protected:
   resource<model> mesh;
   btRigidBody* body;
   float mass;
-  void addPhysicsRigidBody();
+  void addPhysicsRigidBody(std::string type);
 	
   resource<shaderProgram> shaderProg;
   virtual void setShaderProg();
