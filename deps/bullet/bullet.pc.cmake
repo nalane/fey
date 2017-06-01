@@ -1,4 +1,3 @@
-
 Name: bullet
 Description: Bullet Continuous Collision Detection and Physics Library
 Requires:

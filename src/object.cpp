@@ -41,7 +41,7 @@ void object::addPhysicsRigidBody(string type) {
   else if (type == "plane") {
     vector<glm::vec3> vertices = mesh.res->getVertices();
     glm::vec3 normal = cross(vertices[1] - vertices[0], vertices[2] - vertices[0]);
-    shape = new btStaticPlaneShape(btVector3(normal.x, normal.y, normal.z), 0);
+    shape = new btStaticPlaneShape(btVector3(normal.x, normal.y, normal.z), 0.0f);
   }
   
   btVector3 inertia(0.0, 0.0, 0.0);
@@ -55,6 +55,10 @@ void object::addPhysicsRigidBody(string type) {
 						 shape, inertia);
   body = new btRigidBody(cInfo);
   getWorld()->addRigidBody(body);
+  if (mass != 0.0) {
+    //body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT); 
+    //body->setActivationState(DISABLE_DEACTIVATION);
+  }
 }
 
 glm::mat4 object::getModelMatrix() const {
@@ -108,7 +112,14 @@ void object::draw() {
   glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
   GLint mvpHandle = glGetUniformLocation(progID, "mvpMatrix");
   glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &mvpMatrix[0][0]);
-
+  //recordLog("MVP:");
+  for (int i = 0; i < 3; i++) {
+    string s;
+    for (int j = 0; j < 3; j++) {
+      s += (to_string(mvpMatrix[i][j]) + ", ");
+    }
+    //recordLog(s);
+  }
   // Send lights to GPU
   vector<light*> lights = rHandler->getAllLights();
   GLint numLightsHandle = glGetUniformLocation(progID, "numLights");

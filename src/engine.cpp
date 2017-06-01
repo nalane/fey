@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "bulletDebug.h"
 #include "engine.hpp"
 #include "log.hpp"
 #include "paths.hpp"
@@ -193,8 +194,9 @@ bool engine::initPhysics() {
   solver = new btSequentialImpulseConstraintSolver();
   dynamics = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
   
-  dynamics->setGravity(btVector3(0, -10, 0));
+  dynamics->setGravity(btVector3(0, -1, 0));
   dynamics->setInternalTickCallback(physicsCallback);
+  dynamics->setDebugDrawer(new bulletDebugDrawer(&rHandler));
 
   return (dynamics != nullptr);
 }
@@ -208,6 +210,7 @@ void engine::draw() {
   glClear(GL_DEPTH_BUFFER_BIT);
 
   activeScene->draw();
+  dynamics->debugDrawWorld();
 }
 
 // Run the game

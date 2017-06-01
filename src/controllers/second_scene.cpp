@@ -51,6 +51,9 @@ bool second_scene::update() {
   if (pressedKeys[GLFW_KEY_DOWN])
     cam.res->zoom(0.1);
 
+  if (pressedKeys[GLFW_KEY_RIGHT])
+    //getWorld()->stepSimulation(999);;
+
   c.update();
   
   return false;
