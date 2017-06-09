@@ -17,18 +17,18 @@ private:
   float specularIntensity;
 
 public:
-  material(glm::vec4 ambientVals, glm::vec4 diffuseVals,
-	   glm::vec4 specularVals, float specularIntensity) :
+  material(const glm::vec4& ambientVals, const glm::vec4& diffuseVals,
+	   const glm::vec4& specularVals, float specularIntensity) :
     ambientVals(ambientVals), diffuseVals(diffuseVals),
     specularVals(specularVals), specularIntensity(specularIntensity) { }
 
   material() : ambientVals(glm::vec4(0.0)), diffuseVals(glm::vec4(0.0)),
 	       specularVals(glm::vec4(0.0)), specularIntensity(0.0) { }
   
-  glm::vec4 getAmbientVals() { return ambientVals; }
-  glm::vec4 getDiffuseVals() { return diffuseVals; }
-  glm::vec4 getSpecularVals() { return specularVals; }
-  float getSpecularIntensity() { return specularIntensity; }
+  glm::vec4 getAmbientVals() const { return ambientVals; }
+  glm::vec4 getDiffuseVals() const { return diffuseVals; }
+  glm::vec4 getSpecularVals() const { return specularVals; }
+  float getSpecularIntensity() const { return specularIntensity; }
 
   void sendToShader(GLint progID);
 };

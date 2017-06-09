@@ -10,7 +10,7 @@ bool debug;
 ofstream fout;
 
 // Initializes the log file
-void initLogging(string file, bool debugFlag) {
+void initLogging(const string& file, bool debugFlag) {
   debug = debugFlag;
   logFile = file;
   fout = ofstream(logFile.c_str());
@@ -20,7 +20,7 @@ void initLogging(string file, bool debugFlag) {
 }
 
 // Records a message to the log file
-bool recordLog(string message) {
+bool recordLog(const string& message) {
   if (debug)
     cout << message << "\n";
   

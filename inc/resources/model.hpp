@@ -24,16 +24,16 @@ private:
   int numVertices;
 
 public:
-  model(std::string name);
+  model(const std::string& name);
   ~model();
 
-  void addMaterial(material mat);
+  void addMaterial(const material& mat);
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);
-  void setTexture(std::string source);
-  void setVertices(std::vector<glm::vec3> vertexList);
-  void setUVMapping(std::vector<glm::vec2> uvList);
-  void setNormals(std::vector<glm::vec3> normalList);
-  void setColors(std::vector<glm::vec4> colorList);
+  void setTexture(const std::string& source);
+  void setVertices(const std::vector<glm::vec3>& vertexList);
+  void setUVMapping(const std::vector<glm::vec2>& uvList);
+  void setNormals(const std::vector<glm::vec3>& normalList);
+  void setColors(const std::vector<glm::vec4>& colorList);
   void bindTextureToUniform(GLuint uniformID);
 
   void draw(GLint progID);

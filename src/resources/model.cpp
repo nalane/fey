@@ -4,7 +4,7 @@
 using namespace std;
 
 // Sets up the vao
-model::model(std::string name) : raw_resource(name) {
+model::model(const std::string& name) : raw_resource(name) {
   glGenVertexArrays(1, &vao);
   nonPassIndex = -2;
   elementsIndex = 0;
@@ -21,7 +21,7 @@ model::~model() {
 }
 
 // Adds a material
-void model::addMaterial (material mat) {
+void model::addMaterial (const material& mat) {
   materials.push_back(mat);
 }
 
@@ -51,7 +51,7 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
 }
 
 // Creates a texture for the GPU
-void model::setTexture(string source) {
+void model::setTexture(const string& source) {
   recordLog("Reading texture image file " + source + "...");
   GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 				       SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
@@ -61,7 +61,7 @@ void model::setTexture(string source) {
 }
 
 // Sends vertex data to the GPU
-void model::setVertices(vector<glm::vec3> vertexList) {
+void model::setVertices(const vector<glm::vec3>& vertexList) {
   numVertices = vertexList.size();
   vector<float> rawData;
   for (glm::vec3 v : vertexList) {
@@ -74,7 +74,7 @@ void model::setVertices(vector<glm::vec3> vertexList) {
 }
 
 // Finalize mapping of vertices to UV coordinates
-void model::setUVMapping(std::vector<glm::vec2> uvList) {
+void model::setUVMapping(const vector<glm::vec2>& uvList) {
   if (uvList.size() > 0) {
     vector<float> rawData;
     for (glm::vec2 coord : uvList) {
@@ -87,7 +87,7 @@ void model::setUVMapping(std::vector<glm::vec2> uvList) {
 }
 
 // Sends normal data to the GPU
-void model::setNormals(vector<glm::vec3> normalList) {
+void model::setNormals(const vector<glm::vec3>& normalList) {
   vector<float> rawData;
   for (glm::vec3 n : normalList) {
     rawData.push_back(n.x);
@@ -99,7 +99,7 @@ void model::setNormals(vector<glm::vec3> normalList) {
 }
 
 // Sends vertex color data to GPU
-void model::setColors(std::vector<glm::vec4> colorList) {
+void model::setColors(const vector<glm::vec4>& colorList) {
   vector<float> rawData;
   for (glm::vec4 c : colorList) {
     rawData.push_back(c.r);

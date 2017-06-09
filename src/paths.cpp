@@ -56,27 +56,27 @@ void setUpProgramPath() {
 }
 
 // As the config file is read in, we will set the path to the data folder
-void setDataFolder(std::string relativeData) {
-	dataPath = getFullPath(relativeData);
+void setDataFolder(const string& relativeData) {
+  dataPath = getFullPath(relativeData);
 }
 
 // Sets the library folder.
 // Assumes it is in, or at least relative to, the data folder
-void setLibraryFolder(std::string libraryInData) {
+void setLibraryFolder(const string& libraryInData) {
 	libraryPath = getDataFolderPath(libraryInData);
 }
 
 // Get the full path for a file in the program's path
-string getFullPath(string s) {
+string getFullPath(const string& s) {
   return programPath + "/" + s;
 }
 
 // Given a file path in the data folder, finds full path
-std::string getDataFolderPath(std::string s) {
+std::string getDataFolderPath(const string& s) {
 	return dataPath + "/" + s;
 }
 
 // Given a file path in the library, finds full path
-std::string getLibraryFolderPath(std::string s) {
+std::string getLibraryFolderPath(const string& s) {
 	return libraryPath + "/" + s;
 }

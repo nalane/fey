@@ -34,33 +34,36 @@ private:
 
   std::string activeCameraID;
 
-  std::string getShaderKey(std::string vert, std::string frag) { return "v" + vert + "f" + frag; }
-  model* loadFeyModel(std::string filename);
-  shader* loadVertexShader(std::string vertexShaderPath);
-  shader* loadFragmentShader(std::string fragmentShaderPath);
-  shaderProgram* newShader(std::string vertexShader, std::string fragmentShader, std::string key);
+  std::string getShaderKey(const std::string& vert, const std::string& frag) const {
+    return "v" + vert + "f" + frag;
+  }
+  
+  model* loadFeyModel(const std::string& filename);
+  shader* loadVertexShader(const std::string& vertexShaderPath);
+  shader* loadFragmentShader(const std::string& fragmentShaderPath);
+  shaderProgram* newShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& key);
 
 public:
   resourceHandler() {};
   ~resourceHandler();
 
-  resource<model> loadModel(std::string filepath);
-  resource<light> loadLight(std::string lightName);
-  resource<camera> loadCamera(std::string name);
-  resource<firstPersonCamera> loadFirstPersonCamera(std::string name);
-  resource<trackBallCamera> loadTrackBallCamera(std::string name);
-  resource<shaderProgram> loadShaderProg(std::string vertexShader, std::string fragmentShader,
+  resource<model> loadModel(const std::string& filepath);
+  resource<light> loadLight(const std::string& lightName);
+  resource<camera> loadCamera(const std::string& name);
+  resource<firstPersonCamera> loadFirstPersonCamera(const std::string& name);
+  resource<trackBallCamera> loadTrackBallCamera(const std::string& name);
+  resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader,
 					 bool defaultShader = false);
   resource<shaderProgram> loadShaderProg();
-  resource<skybox> loadSkybox(std::string path, std::string extension);
+  resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
 
-  void unload(std::string name);
+  void unload(const std::string& name);
   void unloadAll();
   
-  std::vector<light*> getAllLights();
+  std::vector<light*> getAllLights() const;
 
-  void setActiveCamera(std::string id);
-  camera* getActiveCamera();
+  void setActiveCamera(const std::string& id);
+  camera* getActiveCamera() const;
 };
 
 #include "resource.tpp"

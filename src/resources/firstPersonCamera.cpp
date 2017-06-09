@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void firstPersonCamera::move(float amount, glm::vec3 localAxis) {
+void firstPersonCamera::move(float amount, const glm::vec3& localAxis) {
   glm::vec3 viewVector = target - position;
   glm::mat3 localCoords = glm::mat3(cross(viewVector, upVector), upVector, viewVector);
   glm::vec3 diff = amount * localCoords * localAxis;

@@ -19,10 +19,10 @@ private:
   std::map<GLuint, std::string> shaderDict;
 
 public:
-  shader(std::string sourceFile, GLenum shaderType);
+  shader(const std::string& sourceFile, GLenum shaderType);
   ~shader();
 
   bool load();
   bool compile();
-  GLuint getID() {return shaderID;} ;
+  GLuint getID() const { return shaderID; }
 };

@@ -28,7 +28,7 @@ private:
   camera* activeCamera;
   
 public:
-  skybox(std::string name) : raw_resource(name), activeCamera(nullptr) { }
+  skybox(const std::string& name) : raw_resource(name), activeCamera(nullptr) { }
   ~skybox();
 
   void setActiveCamera(camera* cam) { this->activeCamera = cam; }

@@ -44,7 +44,7 @@ private:
   bool initGraphics();
 
 public:
-  engine(std::string configFile);
+  engine(const std::string& configFile);
   ~engine();
 
   void draw();

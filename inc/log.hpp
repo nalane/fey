@@ -6,6 +6,6 @@
 
 #include <string>
 
-void initLogging(std::string file, bool debugFlag);
-bool recordLog(std::string message);
+void initLogging(const std::string& file, bool debugFlag);
+bool recordLog(const std::string& message);
 void endLogging();

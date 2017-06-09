@@ -25,7 +25,7 @@ void object::setShaderProg() {
   texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
 }
 
-glm::mat4 object::getModelMatrix() {
+glm::mat4 object::getModelMatrix() const {
   if (parent == nullptr)
     return modelMatrix;
   else

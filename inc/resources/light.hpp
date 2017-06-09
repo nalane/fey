@@ -13,11 +13,11 @@ private:
   glm::vec3 color;
 
 public:
-  light(std::string name, glm::vec4 position, glm::vec3 color) :
+  light(const std::string& name, const glm::vec4& position, const glm::vec3& color) :
 	raw_resource(name), position(position), color(color) {}
 
-  void setPosition(glm::vec4 position) { this->position = position; }
-  void setColor(glm::vec3 color) { this->color = color; }
+  void setPosition(const glm::vec4& position) { this->position = position; }
+  void setColor(const glm::vec3& color) { this->color = color; }
   float* getPosition() { return &position[0]; }
   float* getColor() { return &color[0]; }
 };

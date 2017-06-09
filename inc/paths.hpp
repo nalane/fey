@@ -8,9 +8,9 @@
 #include <string>
 
 void setUpProgramPath();
-void setDataFolder(std::string relativeData);
-void setLibraryFolder(std::string libraryInData);
+void setDataFolder(const std::string& relativeData);
+void setLibraryFolder(const std::string& libraryInData);
 
-std::string getFullPath(std::string s);
-std::string getDataFolderPath(std::string s);
-std::string getLibraryFolderPath(std::string s);
+std::string getFullPath(const std::string& s);
+std::string getDataFolderPath(const std::string& s);
+std::string getLibraryFolderPath(const std::string& s);

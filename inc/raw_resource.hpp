@@ -17,11 +17,11 @@ protected:
 
   std::map<std::string, raw_resource*> child_resources;
 public:
-  raw_resource(std::string name) : refCount(0), name(name) { }
+  raw_resource(const std::string& name) : refCount(0), name(name) { }
   virtual ~raw_resource();
   
   void load();
   std::vector<std::string> unload();
 
-  std::string getName() { return name; }
+  std::string getName() const { return name; }
 };
