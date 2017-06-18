@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(fey)
 
-include_directories(deps/glew/inc)
+include_directories(deps/glad)
 include_directories(deps/glfw/include)
 include_directories(deps/glm)
 include_directories(deps/soil/inc)
@@ -14,7 +14,7 @@ include_directories(inc/resources)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
-set(LINKED_LIBRARIES glfw glew soil ${GLFW_LIBRARIES})
+set(LINKED_LIBRARIES glfw glad soil ${GLFW_LIBRARIES})
 set(DATA_DESTINATION .)
 set(COPY_DATA feyData)
 if(APPLE)

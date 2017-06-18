@@ -39,7 +39,6 @@ private:
 
   bool initGame();
   bool initGLFW();
-  bool initGLEW();
   void enableGLFeatures();
   bool initGraphics();
 

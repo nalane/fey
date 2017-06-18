@@ -128,19 +128,12 @@ bool engine::initGLFW() {
   if (hideCursor)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-  return true;
-}
-
-// Initialize extension wrangler with core extensions
-bool engine::initGLEW() {
-  glewExperimental = GL_TRUE;
-  GLenum err = glewInit();
-  if (err != GLEW_OK) {
-    string errMessage = string((const char*)glewGetErrorString(err));
-    recordLog("FATAL ERROR: GLEW did not initialize correctly: " + errMessage);
+  // Init GL extensions
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+    recordLog("GLAD couldn't load extensions");
     return false;
   }
-  
+
   return true;
 }
 
@@ -155,9 +148,6 @@ void engine::enableGLFeatures() {
 // Start the graphics system
 bool engine::initGraphics() {
   if (!initGLFW())
-    return false;
-
-  if (!initGLEW())
     return false;
 
   enableGLFeatures();
