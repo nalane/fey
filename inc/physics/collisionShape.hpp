@@ -6,7 +6,8 @@
 
 enum collisionShapeType {
   UNDEFINED,
-  BOX,
+  OBB,
+  AABB,
   PLANE,
   SPHERE
 };
@@ -16,4 +17,7 @@ private:
   collisionShapeType shapeType;
 
   virtual bool isCollide(collisionShape* second) = 0;
+
+public:
+  collisionShape(collisionShapeType shapeType) : shapeType(shapeType) { }
 };
