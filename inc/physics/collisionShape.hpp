@@ -16,8 +16,9 @@ class collisionShape {
 private:
   collisionShapeType shapeType;
 
-  virtual bool isCollide(collisionShape* second) = 0;
+  virtual bool isColliding(collisionShape* second) = 0;
 
 public:
   collisionShape(collisionShapeType shapeType) : shapeType(shapeType) { }
+  collisionShapeType getShapeType() { return shapeType; }
 };
