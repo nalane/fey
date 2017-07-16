@@ -6,6 +6,7 @@
 
 #include "collisionShape.hpp"
 #include "glHeaders.hpp"
+#include <vector>
 
 class collisionAABB : public collisionShape {
 private:
@@ -18,6 +19,7 @@ public:
     collisionShape(AABB),
     origin(origin),
     halfExtents(halfExtents) { }
+  collisionAABB(std::vector<glm::vec3> vertices);
   
   glm::vec3 getMin() const { return origin - halfExtents; }
   glm::vec3 getMax() const { return origin + halfExtents; }
