@@ -19,5 +19,6 @@ public:
   collisionSphere(glm::vec3 center, double radius) : center(center), radius(radius), collisionShape(SPHERE) { }
   collisionSphere(std::vector<glm::vec3> points);
 
-  virtual bool isColliding(collisionShape* second);
+  glm::vec3 getCenter() const { return center; }
+  double getRadius() const { return radius; }
 };

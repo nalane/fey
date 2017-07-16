@@ -26,7 +26,3 @@ bool collisionOBB::pointInBox(glm::vec3 point) {
     scaler.y >= 0.0f && scaler.y <= 1.0f &&
     scaler.z >= 0.0f && scaler.z <= 1.0f;
 }
-
-bool collisionOBB::isColliding(collisionShape* second) {
-  return false;
-}
