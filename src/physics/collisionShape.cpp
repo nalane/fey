@@ -55,7 +55,10 @@ bool collisionShape::isColliding(collisionShape* second) {
     collisionAABB* aabb = shapeType == AABB ? (collisionAABB*)this : (collisionAABB*)second;
     collisionPlane* plane = shapeType == PLANE ? (collisionPlane*)this : (collisionPlane*)second;
 
-    double pLen = fabs(glm::dot(aabb->getHalfExtents(), plane->getNormal()));
+    double pLen = 0.0;
+    for (int i = 0; i < 3; i++) {
+      pLen += ((aabb->getHalfExtents())[i] * fabs((plane->getNormal())[i]));
+    }
     double dist = glm::dot(plane->getNormal(), aabb->getCenter()) - plane->getDistance();
 
     return fabs(dist) < pLen;
