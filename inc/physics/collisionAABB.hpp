@@ -23,5 +23,6 @@ public:
   
   glm::vec3 getMin() const { return origin - halfExtents; }
   glm::vec3 getMax() const { return origin + halfExtents; }
-  glm::vec3 getCenter() const { return origin; } 
+  glm::vec3 getCenter() const { return origin; }
+  glm::vec3 getHalfExtents() const { return halfExtents; } 
 };

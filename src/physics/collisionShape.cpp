@@ -2,6 +2,7 @@
 #include "physics/collisionOBB.hpp"
 #include "physics/collisionAABB.hpp"
 #include "physics/collisionSphere.hpp"
+#include "physics/collisionPlane.hpp"
 #include "log.hpp"
 
 bool collisionShape::isColliding(collisionShape* second) {
@@ -51,7 +52,13 @@ bool collisionShape::isColliding(collisionShape* second) {
 
   // AABB-to-Plane collisions
   case AABB | PLANE: {
-    return false;
+    collisionAABB* aabb = shapeType == AABB ? (collisionAABB*)this : (collisionAABB*)second;
+    collisionPlane* plane = shapeType == PLANE ? (collisionPlane*)this : (collisionPlane*)second;
+
+    double pLen = fabs(glm::dot(aabb->getHalfExtents(), plane->getNormal()));
+    double dist = glm::dot(plane->getNormal(), aabb->getCenter()) - plane->getDistance();
+
+    return fabs(dist) < pLen;
   }
 
   // AABB-to-Sphere collisions
@@ -75,12 +82,19 @@ bool collisionShape::isColliding(collisionShape* second) {
 
   // Plane-to-Plane collisions
   case PLANE: {
-    return false;
+    collisionPlane* lhs = (collisionPlane*) this;
+    collisionPlane* rhs = (collisionPlane*) second;
+
+    return lhs->getNormal() != rhs->getNormal() || lhs->getDistance() == rhs->getDistance();
   }
 
   // Plane-to-Sphere collisions
   case PLANE | SPHERE: {
-    return false;
+    collisionPlane* plane = shapeType == PLANE ? (collisionPlane*)this : (collisionPlane*)second;
+    collisionSphere* sphere = shapeType == SPHERE ? (collisionSphere*)this : (collisionSphere*)second;
+
+    double distanceFromPlane = glm::dot(plane->getNormal(), sphere->getCenter()) - plane->getDistance();
+    return fabs(distanceFromPlane) <= sphere->getRadius();
   }
     
   // Sphere-to-Sphere collisions
