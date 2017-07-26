@@ -15,14 +15,8 @@ collisionOBB::collisionOBB(vector<glm::vec3> vertices) : collisionShape(OBB) {
 	max[i] = v[i];
     }
   }
-
-  coordinates = translate(min) * scale(max - min);
 }
 
 bool collisionOBB::pointInBox(glm::vec3 point) {
-  glm::vec4 scaler = inverse(coordinates) * glm::vec4(point, 1.0f);
-  return
-    scaler.x >= 0.0f && scaler.x <= 1.0f &&
-    scaler.y >= 0.0f && scaler.y <= 1.0f &&
-    scaler.z >= 0.0f && scaler.z <= 1.0f;
+  return false;
 }

@@ -62,6 +62,7 @@ void model::setTexture(const string& source) {
 
 // Sends vertex data to the GPU
 void model::setVertices(const vector<glm::vec3>& vertexList) {
+  vertices = vertexList;
   numVertices = vertexList.size();
   vector<float> rawData;
   for (glm::vec3 v : vertexList) {

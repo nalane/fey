@@ -7,6 +7,7 @@
 #include "resourceHandler.hpp"
 #include "shaderProgram.hpp"
 #include "model.hpp"
+#include "physics/collisionShape.hpp"
 
 #include <vector>
 #include <string>
@@ -15,7 +16,7 @@ class object {
 protected: 
   glm::mat4 modelMatrix;
   resourceHandler* rHandler;
-	
+  
   std::vector<object*> children;
   object* parent;
   void addChild(object* child);
@@ -24,12 +25,13 @@ protected:
   GLint texHandle;
   GLint progID;
   resource<model> mesh;
+  collisionShape* collider;
 	
   resource<shaderProgram> shaderProg;
   virtual void setShaderProg();
   
 public:
-  object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr), texHandle(-1) {};
+  object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr), texHandle(-1), collider(nullptr) { }
   virtual ~object();
 				
   virtual void load();
@@ -39,6 +41,7 @@ public:
 
   virtual void translate(float x, float y, float z) {
     modelMatrix = glm::translate(glm::vec3(x, y, z)) * modelMatrix;
+    collider->translate(x, y, z);
   }
   
   virtual void rotate(float degrees, float xAxis, float yAxis, float zAxis) {
@@ -53,5 +56,7 @@ public:
   virtual void scale(float allDimensions) {
     scale(allDimensions, allDimensions, allDimensions);
   }
+  
   virtual glm::mat4 getModelMatrix() const;
+  bool collidesWith(const object& second);
 };

@@ -25,4 +25,6 @@ public:
 
   glm::vec3 getNormal() { return normal; }
   double getDistance() { return distance; }
+
+  virtual void translate(glm::vec3 diff) { distance += glm::dot(diff, normal); }
 };

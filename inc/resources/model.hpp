@@ -18,6 +18,7 @@ private:
   std::map<int, GLuint> vbos;
   std::vector<GLuint> texIDs;
   std::vector<material> materials;
+  std::vector<glm::vec3> vertices;
   int nonPassIndex;
   int elementsIndex;
   int elementsSize;
@@ -37,4 +38,6 @@ public:
   void bindTextureToUniform(GLuint uniformID);
 
   void draw(GLint progID);
+
+  std::vector<glm::vec3> getVertices() const { return vertices; }
 };

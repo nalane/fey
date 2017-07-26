@@ -6,7 +6,7 @@ using namespace std;
 
 // Removes "object" from GPU
 object::~object() {
-
+  removeChildren();
 }
 
 void object::addChild(object* child) {
@@ -88,4 +88,11 @@ void object::draw() {
   // Draw children
   for (object* o : children)
     o->draw();
+}
+
+bool object::collidesWith(const object& second) {
+  if (collider == nullptr || second.collider == nullptr)
+    return false;
+  
+  return collider->isColliding(second.collider);
 }

@@ -1,5 +1,6 @@
 #include "plane.hpp"
 #include "paths.hpp"
+#include "physics/collisionPlane.hpp"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ void plane::load() {
 
 void plane::init() {
   object::init();
+  collider = new collisionPlane(glm::vec3(0, 1, 0), 0);
 }
 
 void plane::update() {

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-collisionAABB::collisionAABB(vector<glm::vec3> vertices) : collisionShape(AABB) {
+collisionAABB::collisionAABB(const vector<glm::vec3>& vertices) : collisionShape(AABB) {
   glm::vec3 min = vertices[0];
   glm::vec3 max = vertices[0];
 

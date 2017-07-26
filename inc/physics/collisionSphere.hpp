@@ -21,4 +21,6 @@ public:
 
   glm::vec3 getCenter() const { return center; }
   double getRadius() const { return radius; }
+
+  virtual void translate(glm::vec3 diff) { center += diff; }
 };
