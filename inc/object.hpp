@@ -58,5 +58,5 @@ public:
   }
   
   virtual glm::mat4 getModelMatrix() const;
-  bool collidesWith(const object& second);
+  bool collidesWith(object* second);
 };

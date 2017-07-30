@@ -11,8 +11,6 @@
 
 class second_scene : public scene {
 private:
-  cube c;
-  plane p;
   resource<skybox> sky;
   resource<light> staticLight;
   resource<trackBallCamera> cam;
@@ -23,13 +21,15 @@ private:
   double mouseY;
   
 public:
-  second_scene(resourceHandler* rHandler) : scene(rHandler), loggedMouseLocation(false),
-					    c(cube(rHandler)), p(plane(rHandler)) { }
+  second_scene(resourceHandler* rHandler) : scene(rHandler), loggedMouseLocation(false) {
+    objects["c"] = new cube(rHandler);
+    objects["p"] = new plane(rHandler);
+  }
   ~second_scene();
 
-  void mousePosition(double xPos, double yPos);
-  void load();
-  bool update();
-  void draw();
-  scene* nextScene();
+  virtual void mousePosition(double xPos, double yPos);
+  virtual void load();
+  virtual bool update();
+  virtual void draw();
+  virtual scene* nextScene();
 };

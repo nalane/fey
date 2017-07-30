@@ -20,11 +20,7 @@ void second_scene::mousePosition(double xPos, double yPos) {
 }
 
 void second_scene::load() {
-  c.load();
-  p.load();
-  
-  c.init();
-  p.init();
+  loadObjects();
   
   cam = rHandler->loadTrackBallCamera("tCam");
   cam.res->zoom(5.0);
@@ -51,9 +47,9 @@ bool second_scene::update() {
   if (pressedKeys[GLFW_KEY_DOWN])
     cam.res->zoom(0.1);
 
-  c.update();
+  updateObjects();
 
-  if (c.collidesWith(p)) {
+  if (objects["c"]->collidesWith(objects["p"])) {
     recordLog("Cube colliding with plane!");
   }
   
@@ -62,8 +58,7 @@ bool second_scene::update() {
 
 void second_scene::draw() {
   defaultShader.res->useProgram();
-  c.draw();
-  p.draw();
+  drawObjects();
   sky.res->draw();
 }
 

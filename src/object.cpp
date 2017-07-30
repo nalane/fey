@@ -90,9 +90,9 @@ void object::draw() {
     o->draw();
 }
 
-bool object::collidesWith(const object& second) {
-  if (collider == nullptr || second.collider == nullptr)
+bool object::collidesWith(object* second) {
+  if (collider == nullptr || second->collider == nullptr)
     return false;
   
-  return collider->isColliding(second.collider);
+  return collider->isColliding(second->collider);
 }

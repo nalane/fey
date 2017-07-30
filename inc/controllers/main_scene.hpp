@@ -13,7 +13,6 @@ class main_scene : public scene {
 private:
   float rad;
 
-  monkey suz;
   resource<firstPersonCamera> cam;
   resource<light> mainLight;
   resource<light> staticLight;
@@ -27,13 +26,14 @@ private:
   
 public:
   main_scene(resourceHandler* rHandler) : scene(rHandler), rad(0.0),
-					  suz(monkey(rHandler)),
-					  loggedMouseLocation(false), mouseX(-1), mouseY(-1) { }
+					  loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
+              objects["suz"] = new monkey(rHandler);
+            }
   ~main_scene();
 
-  void mousePosition(double xPos, double yPos);
-  void load();
-  bool update();
-  void draw();
-  scene* nextScene();
+  virtual void mousePosition(double xPos, double yPos);
+  virtual void load();
+  virtual bool update();
+  virtual void draw();
+  virtual scene* nextScene();
 };

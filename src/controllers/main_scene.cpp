@@ -23,8 +23,7 @@ void main_scene::mousePosition(double xPos, double yPos) {
 }
 
 void main_scene::load() {
-  suz.load();
-  suz.init();
+  loadObjects();
 
   cam = rHandler->loadFirstPersonCamera("mainCam");
   cam.res->setPosition(glm::vec3(3.0, 3.0, 3.0));
@@ -64,14 +63,15 @@ bool main_scene::update() {
   rad += 0.01;
   mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 2.0, 1.5 * cos(rad), 1.0));
   
-  suz.update();
+  updateObjects();
   
   return false;
 }
 
 void main_scene::draw() {
 	defaultShader.res->useProgram();
-  suz.draw();
+  drawObjects();
+  
   sky.res->draw();
 }
 
