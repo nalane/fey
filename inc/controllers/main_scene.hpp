@@ -24,10 +24,10 @@ private:
   bool loggedMouseLocation;
   
 public:
-  main_scene(resourceHandler* rHandler) : scene(rHandler), rad(0.0),
-					  loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
-              objects["suz"] = new monkey(rHandler);
-            }
+  main_scene() : scene(), rad(0.0),
+		 loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
+    objects["suz"] = new monkey();
+  }
   ~main_scene();
 
   virtual void mousePosition(double xPos, double yPos);

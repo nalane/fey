@@ -1,11 +1,6 @@
 #pragma once
 
 #include "object.hpp"
-#include "model.hpp"
-#include "resourceHandler.hpp"
-#include "shaderProgram.hpp"
-#include "glHeaders.hpp"
-#include "resource.hpp"
 
 #include <string>
 
@@ -13,7 +8,7 @@ class plane : public object {
 private:
   
 public:
-  plane(resourceHandler* rHandler);
+  plane();
   ~plane();
   
   void load();

@@ -1,9 +1,9 @@
 #include "monkey.hpp"
-#include "paths.hpp"
+#include "resourceHandler.hpp"
 
 using namespace std;
 
-monkey::monkey(resourceHandler* rHandler) : object(rHandler) {
+monkey::monkey() : object() {
 }
 
 monkey::~monkey() {
@@ -12,7 +12,7 @@ monkey::~monkey() {
 
 void monkey::load() {
   object::load();
-  mesh = rHandler->loadModel("monkey.fey.model");
+  mesh = loadModel("monkey.fey.model");
   rotate(-90, 1, 0, 0);
   scale(1.3);
 }

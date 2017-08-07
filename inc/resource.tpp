@@ -1,13 +1,13 @@
 #pragma once
 
 #include "log.hpp"
+#include "resourceHandler.hpp"
 #include <string>
 #include <vector>
 
 template <class T>
-resource<T>::resource(T* res, resourceHandler* rHandler) {
+resource<T>::resource(T* res) {
   this->res = res;
-  this->rHandler = rHandler;
   if (res != nullptr) {
     res->load();
   }
@@ -16,7 +16,6 @@ resource<T>::resource(T* res, resourceHandler* rHandler) {
 template <class T>
 resource<T>::resource(const resource& rhs) {
   res = rhs.res;
-  rHandler = rhs.rHandler;
   if (res != nullptr) {
     res->load();
   }
@@ -26,7 +25,6 @@ template <class T>
 void resource<T>::operator = (const resource<T>& rhs) {
   unload();
   res = rhs.res;
-  rHandler = rhs.rHandler;
   if (res != nullptr) {
     res->load();
   }
@@ -43,7 +41,7 @@ void resource<T>::unload() {
     // Get the list of resources to unload, and unload them
     std::vector<std::string> unloadResources = res->unload();
     for (std::string s : unloadResources) {
-      rHandler->unload(s);
+      rhUnload(s);
     }
   }
 }

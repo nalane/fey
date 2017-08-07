@@ -1,10 +1,11 @@
 #include "cube.hpp"
+#include "resourceHandler.hpp"
 #include "paths.hpp"
 #include "physics/collisionAABB.hpp"
 
 using namespace std;
 
-cube::cube(resourceHandler* rHandler) : object(rHandler) {
+cube::cube() : object() {
 }
 
 cube::~cube() {
@@ -12,7 +13,7 @@ cube::~cube() {
 
 void cube::load() {
   object::load();
-  mesh = rHandler->loadModel("cube.fey.model");
+  mesh = loadModel("cube.fey.model");
   collider = new collisionAABB(mesh.res->getVertices());
 }
 

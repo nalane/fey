@@ -4,10 +4,7 @@
  * Contains a material
  */
 
-class material;
-
 #include "glHeaders.hpp"
-#include "resourceHandler.hpp"
 
 class material {
 private:

@@ -20,9 +20,9 @@ private:
   double mouseY;
   
 public:
-  second_scene(resourceHandler* rHandler) : scene(rHandler), loggedMouseLocation(false) {
-    objects["c"] = new cube(rHandler);
-    objects["p"] = new plane(rHandler);
+  second_scene() : scene(), loggedMouseLocation(false) {
+    objects["c"] = new cube();
+    objects["p"] = new plane();
   }
   ~second_scene();
 

@@ -23,9 +23,6 @@ string windowTitle;
 string vertexShader;
 string fragmentShader;
 
-// Resource handling
-resourceHandler rHandler;
-
 // Rendering
 GLFWwindow* window;
 scene* activeScene;
@@ -88,6 +85,8 @@ void endEngine() {
 
   delete activeScene;
   activeScene = nullptr;
+
+  endResourceHandler();
 }
 
 // GLFW Initialization
@@ -162,9 +161,9 @@ bool initGame() {
   if (!initGraphics())
     return false;
 
-  rHandler.setDefaultShaderProg(vertexShader, fragmentShader);
+  setDefaultShaderProg(vertexShader, fragmentShader);
 
-  activeScene = new main_scene(&rHandler);
+  activeScene = new main_scene();
   activeScene->load();
 
   return true;

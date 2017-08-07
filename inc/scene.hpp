@@ -18,14 +18,13 @@
 
 class scene {
 protected:
-  resourceHandler* rHandler;
   resource<shaderProgram> defaultShader;
   std::vector<bool> pressedKeys;
   std::map<std::string, object*> objects;
   
 public:
-  scene(resourceHandler* rHandler) : rHandler(rHandler), pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
-    defaultShader = rHandler->loadShaderProg();
+  scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
+    loadShaderProg();
   }
   
   virtual ~scene() {

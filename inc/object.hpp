@@ -4,10 +4,10 @@
  * A generic game object.
  */
 
-#include "resourceHandler.hpp"
 #include "shaderProgram.hpp"
 #include "model.hpp"
 #include "physics/collisionShape.hpp"
+#include "resource.hpp"
 
 #include <vector>
 #include <string>
@@ -15,7 +15,6 @@
 class object {
 protected: 
   glm::mat4 modelMatrix;
-  resourceHandler* rHandler;
   
   std::vector<object*> children;
   object* parent;
@@ -31,7 +30,7 @@ protected:
   virtual void setShaderProg();
   
 public:
-  object(resourceHandler* rHandler) : rHandler(rHandler), parent(nullptr), texHandle(-1), collider(nullptr) { }
+  object() : parent(nullptr), texHandle(-1), collider(nullptr) { }
   virtual ~object();
 				
   virtual void load();

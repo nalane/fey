@@ -4,19 +4,16 @@
  * Resource wrapper.
  */
 
-class resourceHandler;
-
 template <class T>
 class resource {
 private:
-  resourceHandler* rHandler;
   void unload();
   
 public:
   T* res;
 
-  resource() : rHandler(nullptr), res(nullptr) {}
-  resource(T* res, resourceHandler* rHandler);
+  resource() : res(nullptr) {}
+  resource(T* res);
   resource(const resource<T>& rhs);
 
   void operator = (const resource<T>& rhs);
@@ -24,4 +21,4 @@ public:
   ~resource();
 };
 
-#include "resourceHandler.hpp"
+#include "resource.tpp"
