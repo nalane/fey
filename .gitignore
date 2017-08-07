@@ -22,6 +22,9 @@ install_manifest.txt
 *.elf
 *~
 
+### Python ###
+*.pyc
+
 # Precompiled Headers
 *.gch
 *.pch

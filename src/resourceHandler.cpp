@@ -14,6 +14,8 @@
 using namespace std;
 
 const string SHADER_KEY = "___MAIN_SHADER_KEY___";
+string defaultVertexShader;
+string defaultFragmentShader;
 
 resourceHandler::~resourceHandler() {
   unloadAll();
@@ -189,9 +191,14 @@ shaderProgram* resourceHandler::newShader(const string& vertexShader, const stri
   return prog;
 }
 
+void resourceHandler::setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader) {
+  defaultVertexShader = vertexShader;
+  defaultFragmentShader = fragmentShader;
+}
+
 // Get a shader program
-resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader, bool defaultShader) {
-  string key = defaultShader ? SHADER_KEY : getShaderKey(vertexShader, fragmentShader);
+resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader) {
+  string key = getShaderKey(vertexShader, fragmentShader);
   if (resources.find(key) == resources.end()) {
     resources[key] = newShader(vertexShader, fragmentShader, key);
   }
@@ -202,7 +209,7 @@ resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShad
 // Find the default shader program, if it is set
 resource<shaderProgram> resourceHandler::loadShaderProg() {
   if (resources.find(SHADER_KEY) == resources.end()) {
-    recordLog("ERROR: Could not find the main shader. Are you sure it loaded?");
+    resources[SHADER_KEY] = newShader(defaultVertexShader, defaultFragmentShader, SHADER_KEY);
     return resource<shaderProgram>(nullptr, this);
   }
 

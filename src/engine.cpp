@@ -9,23 +9,38 @@
 #include "engine.hpp"
 #include "log.hpp"
 #include "paths.hpp"
-#include "second_scene.hpp"
+#include "main_scene.hpp"
 
 using namespace std;
 
-// GLFW Key press call back can't be a method.
-engine* runningGame = nullptr;
+// Values from config file
+int windowWidth;
+int windowHeight;
+int numAASamples;
+bool hideCursor;
+bool fullscreen;
+string windowTitle;
+string vertexShader;
+string fragmentShader;
+
+// Resource handling
+resourceHandler rHandler;
+
+// Rendering
+GLFWwindow* window;
+scene* activeScene;
+
+// GLFW Key press callbacks
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  runningGame->keyPress(key, action, mods);
+  activeScene->keyPress(key, action, mods);
 }
 
 void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
-  runningGame->mousePosition(xpos, ypos);
+  activeScene->mousePosition(xpos, ypos);
 }
 
-// The constructor. Uses the values found in configFile
-engine::engine(const string& configFile) {
-  runningGame = this;
+// Load the engine. Uses the values found in configFile
+void engineLoad(const string& configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
     string dataPath, libraryPath;
@@ -67,38 +82,24 @@ engine::engine(const string& configFile) {
 }
 
 // Destroys the game and all pointers used
-engine::~engine() {
+void endEngine() {
   glfwTerminate();
+  window = nullptr;
 
   delete activeScene;
   activeScene = nullptr;
 }
 
-// Prepares the game to run
-bool engine::initGame() {
-  srand(time(nullptr));
-  if (!initGraphics())
-    return false;
-
-  shaderProg = rHandler.loadShaderProg(vertexShader, fragmentShader, true);
-  shaderProg.res->useProgram();
-
-  activeScene = new main_scene(&rHandler);
-  activeScene->load();
-
-  return true;
-}
-
 // GLFW Initialization
-bool engine::initGLFW() {
+bool initGLFW() {
   if (!glfwInit()) {
     recordLog("FATAL ERROR: Could not initialize GLFW!");
     return false;
   }
 
   // Force use of OpenGL core
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_SAMPLES, numAASamples);
@@ -138,7 +139,7 @@ bool engine::initGLFW() {
 }
 
 // Enable features of openGL
-void engine::enableGLFeatures() {
+void enableGLFeatures() {
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glFrontFace(GL_CCW);
@@ -146,7 +147,7 @@ void engine::enableGLFeatures() {
 }
 
 // Start the graphics system
-bool engine::initGraphics() {
+bool initGraphics() {
   if (!initGLFW())
     return false;
 
@@ -155,8 +156,22 @@ bool engine::initGraphics() {
   return true;
 }
 
+// Prepares the game to run
+bool initGame() {
+  srand(time(nullptr));
+  if (!initGraphics())
+    return false;
+
+  rHandler.setDefaultShaderProg(vertexShader, fragmentShader);
+
+  activeScene = new main_scene(&rHandler);
+  activeScene->load();
+
+  return true;
+}
+
 // Main drawing function
-void engine::draw() {
+void draw() {
   double currentTime = glfwGetTime();
   
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
@@ -167,7 +182,7 @@ void engine::draw() {
 }
 
 // Run the game
-void engine::runGame() {
+void runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {
@@ -186,6 +201,6 @@ void engine::runGame() {
   }
 
   else {
-    cerr << "A fatal error occurred. Check the log for more details.<" << endl;
+    cerr << "A fatal error occurred. Check the log for more details." << endl;
   }
 }

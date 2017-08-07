@@ -47,15 +47,18 @@ public:
   resourceHandler() {};
   ~resourceHandler();
 
+  
+  void setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
+  resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
+  resource<shaderProgram> loadShaderProg();
+  
   resource<model> loadModel(const std::string& filepath);
   resource<light> loadLight(const std::string& lightName);
+  resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
+  
   resource<camera> loadCamera(const std::string& name);
   resource<firstPersonCamera> loadFirstPersonCamera(const std::string& name);
   resource<trackBallCamera> loadTrackBallCamera(const std::string& name);
-  resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader,
-					 bool defaultShader = false);
-  resource<shaderProgram> loadShaderProg();
-  resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
 
   void unload(const std::string& name);
   void unloadAll();

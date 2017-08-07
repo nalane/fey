@@ -69,7 +69,7 @@ bool main_scene::update() {
 }
 
 void main_scene::draw() {
-	defaultShader.res->useProgram();
+  defaultShader.res->useProgram();
   drawObjects();
   
   sky.res->draw();

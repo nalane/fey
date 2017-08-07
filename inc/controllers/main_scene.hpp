@@ -17,7 +17,6 @@ private:
   resource<light> mainLight;
   resource<light> staticLight;
   resource<skybox> sky;
-  resource<shaderProgram> defaultShader;
 
   double mouseX;
   double mouseY;
