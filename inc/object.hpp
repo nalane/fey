@@ -6,7 +6,7 @@
 
 #include "shaderProgram.hpp"
 #include "model.hpp"
-#include "physics/collisionShape.hpp"
+#include "collisionShape.hpp"
 #include "resource.hpp"
 
 #include <vector>

@@ -1,6 +1,6 @@
 #include "plane.hpp"
 #include "paths.hpp"
-#include "physics/collisionPlane.hpp"
+#include "collisionPlane.hpp"
 
 using namespace std;
 

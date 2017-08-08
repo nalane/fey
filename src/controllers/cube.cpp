@@ -1,7 +1,7 @@
 #include "cube.hpp"
 #include "resourceHandler.hpp"
 #include "paths.hpp"
-#include "physics/collisionAABB.hpp"
+#include "collisionAABB.hpp"
 
 using namespace std;
 

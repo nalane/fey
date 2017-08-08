@@ -10,6 +10,8 @@ add_subdirectory(deps)
 include_directories(inc)
 include_directories(inc/controllers)
 include_directories(inc/resources)
+include_directories(inc/physics)
+include_directories(inc/physics/colliders)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
