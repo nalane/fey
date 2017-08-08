@@ -8,10 +8,11 @@
 #include "model.hpp"
 #include "collisionShape.hpp"
 #include "resource.hpp"
+#include "rigidBody.hpp"
 
 #include <vector>
 
-class object {
+class object : public rigidBody {
 protected: 
   glm::mat4 modelMatrix;
   
@@ -23,13 +24,12 @@ protected:
   GLint texHandle;
   GLint progID;
   resource<model> mesh;
-  collisionShape* collider;
 	
   resource<shaderProgram> shaderProg;
   virtual void setShaderProg();
   
 public:
-  object() : parent(nullptr), texHandle(-1), collider(nullptr) { }
+  object() : parent(nullptr), texHandle(-1), rigidBody() { }
   virtual ~object();
 				
   virtual void load();
@@ -37,11 +37,7 @@ public:
   virtual void update();
   virtual void draw();
 
-  virtual void translate(float x, float y, float z) {
-    modelMatrix = glm::translate(glm::vec3(x, y, z)) * modelMatrix;
-    collider->translate(x, y, z);
-  }
-  
+  virtual void translate(float x, float y, float z);
   virtual void rotate(float degrees, float xAxis, float yAxis, float zAxis) {
     modelMatrix = glm::rotate(glm::radians(degrees),
 			      glm::vec3(xAxis, yAxis, zAxis)) * modelMatrix;

@@ -20,11 +20,11 @@ void cube::load() {
 void cube::init() {
   object::init();
   translate(0, 2, 0);
+  velocity = glm::vec3(0, -0.1, 0);
 }
 
 void cube::update() {
   object::update();
-  translate(0, -0.01, 0);
 }
 
 void cube::draw() {

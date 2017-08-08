@@ -46,6 +46,7 @@ void object::init() {
 }
 
 void object::update() {
+  updatePhysics(0.1);
   for (object* o : children)
     o->update();
 }
@@ -88,6 +89,12 @@ void object::draw() {
   // Draw children
   for (object* o : children)
     o->draw();
+}
+
+void object::translate(float x, float y, float z) {
+  modelMatrix = glm::translate(glm::vec3(x, y, z)) * modelMatrix;
+  if (collider != nullptr)
+    collider->translate(x, y, z);
 }
 
 bool object::collidesWith(object* second) {
