@@ -6,12 +6,7 @@
 
 #include "resourceHandler.hpp"
 #include "object.hpp"
-#include "light.hpp"
-#include "camera.hpp"
-#include "firstPersonCamera.hpp"
-#include "paths.hpp"
 
-#include <unordered_map>
 #include <string>
 #include <vector>
 #include <map>

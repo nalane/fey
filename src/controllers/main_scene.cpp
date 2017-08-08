@@ -1,6 +1,6 @@
 #include "main_scene.hpp"
 #include "second_scene.hpp"
-#include <iostream>
+#include "paths.hpp"
 
 using namespace std;
 

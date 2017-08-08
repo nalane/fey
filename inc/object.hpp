@@ -10,7 +10,6 @@
 #include "resource.hpp"
 
 #include <vector>
-#include <string>
 
 class object {
 protected: 
