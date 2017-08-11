@@ -13,31 +13,19 @@
 
 using namespace std;
 
-// Values from config file
-int windowWidth;
-int windowHeight;
-int numAASamples;
-bool hideCursor;
-bool fullscreen;
-string windowTitle;
-string vertexShader;
-string fragmentShader;
-
-// Rendering
-GLFWwindow* window;
-scene* activeScene;
-
 // GLFW Key press callbacks
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  activeScene->keyPress(key, action, mods);
+  engine::getInstance()->getActiveScene()->keyPress(key, action, mods);
 }
 
 void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
-  activeScene->mousePosition(xpos, ypos);
+  engine::getInstance()->getActiveScene()->mousePosition(xpos, ypos);
 }
 
+engine* engine::instance;
+
 // Load the engine. Uses the values found in configFile
-void engineLoad(const string& configFile) {
+engine::engine(const string& configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
     string dataPath, libraryPath;
@@ -79,7 +67,7 @@ void engineLoad(const string& configFile) {
 }
 
 // Destroys the game and all pointers used
-void endEngine() {
+engine::~engine() {
   glfwTerminate();
   window = nullptr;
 
@@ -89,8 +77,23 @@ void endEngine() {
   endResourceHandler();
 }
 
+// Create an instance of the engine
+void engine::createInstance(const string& configFile) {
+  instance = new engine(configFile);
+}
+
+// Return the instance of the engine
+engine* engine::getInstance() {
+  return instance;
+}
+
+// Delete the instance
+void engine::endInstance() {
+  delete instance;
+}
+
 // GLFW Initialization
-bool initGLFW() {
+bool engine::initGLFW() {
   if (!glfwInit()) {
     recordLog("FATAL ERROR: Could not initialize GLFW!");
     return false;
@@ -138,7 +141,7 @@ bool initGLFW() {
 }
 
 // Enable features of openGL
-void enableGLFeatures() {
+void engine::enableGLFeatures() {
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glFrontFace(GL_CCW);
@@ -146,7 +149,7 @@ void enableGLFeatures() {
 }
 
 // Start the graphics system
-bool initGraphics() {
+bool engine::initGraphics() {
   if (!initGLFW())
     return false;
 
@@ -156,7 +159,7 @@ bool initGraphics() {
 }
 
 // Prepares the game to run
-bool initGame() {
+bool engine::initGame() {
   srand(time(nullptr));
   if (!initGraphics())
     return false;
@@ -170,7 +173,7 @@ bool initGame() {
 }
 
 // Main drawing function
-void draw() {
+void engine::draw() {
   double currentTime = glfwGetTime();
   
   GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
@@ -181,7 +184,7 @@ void draw() {
 }
 
 // Run the game
-void runGame() {
+void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
       if(activeScene->update()) {

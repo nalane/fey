@@ -32,11 +32,11 @@ int main(int argc, char** argv) {
   initLogging(logPath, debug);
   
   // Start up the engine and run the game
-  engineLoad(configPath);
-  runGame();
+  engine::createInstance(configPath);
+  engine::getInstance()->runGame();
 
   // Clean up and exit
-  endEngine();
+  engine::endInstance();
   endLogging();
   return EXIT_SUCCESS;
 }
