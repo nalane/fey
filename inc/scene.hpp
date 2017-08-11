@@ -19,7 +19,7 @@ protected:
   
 public:
   scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
-    loadShaderProg();
+    resourceHandler::getInstance()->loadShaderProg();
   }
   
   virtual ~scene() {

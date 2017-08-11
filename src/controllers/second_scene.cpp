@@ -1,6 +1,7 @@
 #include "second_scene.hpp"
 #include "main_scene.hpp"
 #include "paths.hpp"
+#include "log.hpp"
 
 using namespace std;
 
@@ -23,19 +24,19 @@ void second_scene::mousePosition(double xPos, double yPos) {
 void second_scene::load() {
   loadObjects();
   
-  cam = loadTrackBallCamera("tCam");
+  cam = resourceHandler::getInstance()->loadTrackBallCamera("tCam");
   cam.res->zoom(5.0);
   cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
   cam.res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
-  setActiveCamera("tCam");
+  resourceHandler::getInstance()->setActiveCamera("tCam");
   
-  staticLight = loadLight("static");
+  staticLight = resourceHandler::getInstance()->loadLight("static");
   staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
   staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
-  sky = loadSkybox(getLibraryFolderPath("skybox/"), "tga");
+  sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox/"), "tga");
 
-  defaultShader = loadShaderProg();
+  defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
 bool second_scene::update() {

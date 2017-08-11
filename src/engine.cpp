@@ -26,6 +26,7 @@ engine* engine::instance;
 
 // Load the engine. Uses the values found in configFile
 engine::engine(const string& configFile) {
+  resourceHandler::createInstance();
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
     string dataPath, libraryPath;
@@ -74,7 +75,7 @@ engine::~engine() {
   delete activeScene;
   activeScene = nullptr;
 
-  endResourceHandler();
+  resourceHandler::endInstance();
 }
 
 // Create an instance of the engine
@@ -164,7 +165,7 @@ bool engine::initGame() {
   if (!initGraphics())
     return false;
 
-  setDefaultShaderProg(vertexShader, fragmentShader);
+  resourceHandler::getInstance()->setDefaultShaderProg(vertexShader, fragmentShader);
 
   activeScene = new main_scene();
   activeScene->load();

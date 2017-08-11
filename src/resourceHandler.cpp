@@ -13,23 +13,30 @@
 
 using namespace std;
 
-// Default shaders
-string defaultVertexShader;
-string defaultFragmentShader;
+// Singleton
+resourceHandler* resourceHandler::instance;
 
-// Resource maps
-map<string, raw_resource*> resources;
-map<string, camera*> cameras;
-map<string, light*> lights;
+resourceHandler::~resourceHandler() {
+  unloadAll();
+}
 
-string activeCameraID;
+// Create singleton instance
+void resourceHandler::createInstance() {
+  instance = new resourceHandler();
+}
 
-void endResourceHandler() {
-  rhUnloadAll();
+// Get singleton instance
+resourceHandler* resourceHandler::getInstance() {
+  return instance;
+}
+
+// Delete singleton instance
+void resourceHandler::endInstance() {
+  delete instance;
 }
 
 // Loads a fey model into memory and returns the data
-model* loadFeyModel(const string& filename) {
+model* resourceHandler::loadFeyModel(const string& filename) {
   string fullPath = getLibraryFolderPath(filename);
   recordLog("Reading fey model " + fullPath + "...");
   model* m = nullptr;
@@ -163,7 +170,7 @@ model* loadFeyModel(const string& filename) {
 }
 
 // Get the model associated with the given filename
-resource<model> loadModel(const string& filepath) {
+resource<model> resourceHandler::loadModel(const string& filepath) {
   if (resources.find(filepath) == resources.end())
     resources[filepath] = loadFeyModel(filepath);
 
@@ -171,7 +178,7 @@ resource<model> loadModel(const string& filepath) {
 }
 
 // Get a vertex shader
-shader* loadVertexShader(const string& vertexShaderPath) {
+shader* resourceHandler::loadVertexShader(const string& vertexShaderPath) {
   if (resources.find(vertexShaderPath) == resources.end())
     resources[vertexShaderPath] = new shader(vertexShaderPath, GL_VERTEX_SHADER);
 
@@ -179,7 +186,7 @@ shader* loadVertexShader(const string& vertexShaderPath) {
 }
 
 // Get a fragment shader
-shader* loadFragmentShader(const string& fragmentShaderPath) {
+shader* resourceHandler::loadFragmentShader(const string& fragmentShaderPath) {
   if (resources.find(fragmentShaderPath) == resources.end())
     resources[fragmentShaderPath] = new shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
 
@@ -187,7 +194,7 @@ shader* loadFragmentShader(const string& fragmentShaderPath) {
 }
 
 // Create a new shader program
-shaderProgram* newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
+shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
   shaderProgram* prog = new shaderProgram(key);
   prog->addShader(loadVertexShader(vertexShader));
   prog->addShader(loadFragmentShader(fragmentShader));
@@ -197,17 +204,17 @@ shaderProgram* newShader(const string& vertexShader, const string& fragmentShade
   return prog;
 }
 
-void setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader) {
+void resourceHandler::setDefaultShaderProg(const string& vertexShader, const string& fragmentShader) {
   defaultVertexShader = vertexShader;
   defaultFragmentShader = fragmentShader;
 }
 
-string getShaderKey(const std::string& vert, const std::string& frag) {
+string resourceHandler::getShaderKey(const string& vert, const string& frag) {
   return "v" + vert + "f" + frag;
 }
 
 // Get a shader program
-resource<shaderProgram> loadShaderProg(const string& vertexShader, const string& fragmentShader) {
+resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader) {
   string key = getShaderKey(vertexShader, fragmentShader);
   if (resources.find(key) == resources.end()) {
     resources[key] = newShader(vertexShader, fragmentShader, key);
@@ -217,12 +224,12 @@ resource<shaderProgram> loadShaderProg(const string& vertexShader, const string&
 }
 
 // Find the default shader program, if it is set
-resource<shaderProgram> loadShaderProg() {
+resource<shaderProgram> resourceHandler::loadShaderProg() {
   return loadShaderProg(defaultVertexShader, defaultFragmentShader);
 }
 
 // Find the named light, if it is set.
-resource<light> loadLight(const string& name) {
+resource<light> resourceHandler::loadLight(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading light " + name);
@@ -234,7 +241,7 @@ resource<light> loadLight(const string& name) {
 }
 
 // Find the named camera, if it exists.
-resource<camera> loadCamera(const string& name) {  
+resource<camera> resourceHandler::loadCamera(const string& name) {  
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -246,7 +253,7 @@ resource<camera> loadCamera(const string& name) {
 }
 
 // Find the named fp camera, if it exists.
-resource<firstPersonCamera> loadFirstPersonCamera(const string& name) {
+resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -258,7 +265,7 @@ resource<firstPersonCamera> loadFirstPersonCamera(const string& name) {
 }
 
 // Find the named tb camera, if it exists
-resource<trackBallCamera> loadTrackBallCamera(const string& name) {
+resource<trackBallCamera> resourceHandler::loadTrackBallCamera(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it == resources.end()) {
     recordLog("Loading camera " + name);
@@ -269,7 +276,7 @@ resource<trackBallCamera> loadTrackBallCamera(const string& name) {
   return resource<trackBallCamera>((trackBallCamera*) resources[name]);
 }
 
-resource<skybox> loadSkybox(const string& path, const string& extension) {
+resource<skybox> resourceHandler::loadSkybox(const string& path, const string& extension) {
   map<string, raw_resource*>::iterator it = resources.find(path);
   if (it == resources.end()) {
     recordLog("Loading skybox " + path);
@@ -300,7 +307,7 @@ resource<skybox> loadSkybox(const string& path, const string& extension) {
 }
 
 // Unload the named resource
-void rhUnload(const string& name) {
+void resourceHandler::unload(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
     recordLog("Unloading resource " + name);
@@ -315,7 +322,7 @@ void rhUnload(const string& name) {
 }
 
 // Remove all resources
-void rhUnloadAll() {
+void resourceHandler::unloadAll() {
   for (auto p : resources) 
     delete p.second;
   resources.clear();
@@ -330,7 +337,7 @@ void rhUnloadAll() {
 }
 
 // Get a list of all lights in the scene
-vector<light*> getAllLights() {
+vector<light*> resourceHandler::getAllLights() {
   vector<light*> lightList;
   for (auto p : lights) {
     lightList.push_back(p.second);
@@ -340,12 +347,12 @@ vector<light*> getAllLights() {
 }
 
 // Set the active camera
-void setActiveCamera(const string& id) {
+void resourceHandler::setActiveCamera(const string& id) {
   activeCameraID = id;
 }
 
 // Get the active camera
-camera* getActiveCamera() {
+camera* resourceHandler::getActiveCamera() {
   if (cameras.find(activeCameraID) == cameras.end()) {
     recordLog("WARNING: Could not find camera " + activeCameraID);
     return nullptr;

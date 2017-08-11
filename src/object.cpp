@@ -21,7 +21,7 @@ void object::removeChildren() {
 }
 
 void object::setShaderProg() {
-  shaderProg = loadShaderProg();
+  shaderProg = resourceHandler::getInstance()->loadShaderProg();
   texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
 }
 
@@ -55,8 +55,8 @@ void object::update() {
 void object::draw() {
   // Get matrices
   glm::mat4 modelMatrix = getModelMatrix();
-  glm::mat4 viewMatrix = getActiveCamera()->getViewMatrix();
-  glm::mat4 projectionMatrix = getActiveCamera()->getProjectionMatrix();
+  glm::mat4 viewMatrix = resourceHandler::getInstance()->getActiveCamera()->getViewMatrix();
+  glm::mat4 projectionMatrix = resourceHandler::getInstance()->getActiveCamera()->getProjectionMatrix();
   
   // Send view matrix to GPU
   GLint viewHandle = glGetUniformLocation(progID, "viewMatrix");
@@ -72,7 +72,7 @@ void object::draw() {
   glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &mvpMatrix[0][0]);
 
   // Send lights to GPU
-  vector<light*> lights = getAllLights();
+  vector<light*> lights = resourceHandler::getInstance()->getAllLights();
   GLint numLightsHandle = glGetUniformLocation(progID, "numLights");
   glUniform1i(numLightsHandle, lights.size());
   for (int i = 0; i < lights.size(); i++) {

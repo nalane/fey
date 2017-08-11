@@ -41,7 +41,7 @@ void resource<T>::unload() {
     // Get the list of resources to unload, and unload them
     std::vector<std::string> unloadResources = res->unload();
     for (std::string s : unloadResources) {
-      rhUnload(s);
+      resourceHandler::getInstance()->unload(s);
     }
   }
 }

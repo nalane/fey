@@ -13,7 +13,7 @@ plane::~plane() {
 
 void plane::load() {
   object::load();
-  mesh = loadModel("plane.fey.model");
+  mesh = resourceHandler::getInstance()->loadModel("plane.fey.model");
   rotate(-90.0, 1.0, 0.0, 0.0);
   scale(10.0);
 }

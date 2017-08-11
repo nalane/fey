@@ -25,23 +25,23 @@ void main_scene::mousePosition(double xPos, double yPos) {
 void main_scene::load() {
   loadObjects();
 
-  cam = loadFirstPersonCamera("mainCam");
+  cam = resourceHandler::getInstance()->loadFirstPersonCamera("mainCam");
   cam.res->setPosition(glm::vec3(3.0, 3.0, 3.0));
   cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
   cam.res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
-  setActiveCamera("mainCam");
+  resourceHandler::getInstance()->setActiveCamera("mainCam");
   
-  mainLight = loadLight("main");
+  mainLight = resourceHandler::getInstance()->loadLight("main");
   mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 0.0, 1.5 * cos(rad), 1.0));
   mainLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
-  staticLight = loadLight("static");
+  staticLight = resourceHandler::getInstance()->loadLight("static");
   staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
   staticLight.res->setColor(glm::vec3(0.7, 0.7, 0.7));
   
-  sky = loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
+  sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
   
-  defaultShader = loadShaderProg();
+  defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
 bool main_scene::update() {

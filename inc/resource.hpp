@@ -12,7 +12,7 @@ private:
 public:
   T* res;
 
-  resource() : res(nullptr) {}
+  resource() : res(nullptr) { }
   resource(T* res);
   resource(const resource<T>& rhs);
 
@@ -21,4 +21,6 @@ public:
   ~resource();
 };
 
+#ifndef NO_RESOURCE_TEMPLATE
 #include "resource.tpp"
+#endif
