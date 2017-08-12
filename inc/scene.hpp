@@ -6,6 +6,7 @@
 
 #include "resourceHandler.hpp"
 #include "object.hpp"
+#include "glHeaders.hpp"
 
 #include <string>
 #include <vector>
@@ -16,9 +17,23 @@ protected:
   resource<shaderProgram> defaultShader;
   std::vector<bool> pressedKeys;
   std::map<std::string, object*> objects;
+
+  // Physics world maintains the physical state of all objects in the scene
+  class physicsWorld {
+  private:
+    scene* owner;
+    double time;
+    
+  public:
+    physicsWorld(scene* owner) : time(glfwGetTime()), owner(owner) { }
+    
+    void update();
+  };
+
+  physicsWorld world;
   
 public:
-  scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
+  scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)), world(physicsWorld(this)) {
     resourceHandler::getInstance()->loadShaderProg();
   }
   
@@ -43,6 +58,7 @@ public:
   }
 
   virtual void updateObjects() {
+    world.update();
     for (auto p : objects) {
       p.second->update();
     }

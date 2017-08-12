@@ -46,7 +46,6 @@ void object::init() {
 }
 
 void object::update() {
-  updatePhysics(0.1);
   for (object* o : children)
     o->update();
 }

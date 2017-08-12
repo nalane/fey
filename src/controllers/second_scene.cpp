@@ -50,10 +50,6 @@ bool second_scene::update() {
     cam.res->zoom(0.1);
 
   updateObjects();
-
-  if (objects["c"]->collidesWith(objects["p"])) {
-    recordLog("Cube colliding with plane!");
-  }
   
   return false;
 }

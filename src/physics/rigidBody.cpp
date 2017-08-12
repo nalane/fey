@@ -15,7 +15,7 @@ void rigidBody::addForce(glm::vec3 force) {
 
 void rigidBody::updatePhysics(float duration) {
   if (hasFiniteMass()) {
-    glm::vec3 acc = (1 / inverseMass) * totForce;
+    glm::vec3 acc = inverseMass * totForce;
     velocity += duration * acc;
   }
   
