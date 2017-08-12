@@ -14,11 +14,15 @@ void rigidBody::addForce(glm::vec3 force) {
 }
 
 void rigidBody::updatePhysics(float duration) {
+  const float EPSILON = 0.1;
   if (hasFiniteMass()) {
     glm::vec3 acc = inverseMass * totForce;
-    velocity += duration * acc;
+    if (glm::length(acc) >= EPSILON)
+      velocity += duration * acc;
   }
-  
-  glm::vec3 deltaPos = duration * velocity;
-  translate(deltaPos.x, deltaPos.y, deltaPos.z);
+
+  if (glm::length(velocity) >= EPSILON) {
+    glm::vec3 deltaPos = duration * velocity;
+    translate(deltaPos.x, deltaPos.y, deltaPos.z);
+  }
 }

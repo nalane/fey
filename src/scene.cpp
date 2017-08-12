@@ -17,10 +17,11 @@ void scene::physicsWorld::update() {
   time = newTime;
   
   // Clear all forces and add all fundamentals
+  const float GRAVITY_ACC = -3.0;
   for (auto p : owner->objects) {
     p.second->clearForce();
     if (p.second->hasFiniteMass()) {
-      p.second->addForce(glm::vec3(0.0, -3 * p.second->getMass(), 0.0));
+      p.second->addForce(glm::vec3(0.0, GRAVITY_ACC * p.second->getMass(), 0.0));
     }
   }
 
@@ -45,7 +46,13 @@ void scene::physicsWorld::update() {
 	// Calculate forces
 	for (int i = 0; i < numActors; i++) {
 	  glm::vec3 diffP = glm::vec3(0.0, 0.0, 0.0) - actors[i]->getMomentum();
-	  actors[i]->addForce((float)(1 / duration) * diffP);
+	  glm::vec3 minForce = glm::vec3(0, -GRAVITY_ACC * actors[i]->getMass(), 0);
+	  glm::vec3 impulse = (float)(1 / duration) * diffP;
+	  for (int i = 0; i < 3; i++) 
+	    if (impulse[i] < minForce[i])
+	      impulse[i] = minForce[i];
+	  
+	  actors[i]->addForce(impulse);
 	}
       }
     }
