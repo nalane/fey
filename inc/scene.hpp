@@ -21,12 +21,16 @@ protected:
   // Physics world maintains the physical state of all objects in the scene
   class physicsWorld {
   private:
+    static constexpr float GRAVITY_ACC = -3.0;
+    
     scene* owner;
     double time;
     
   public:
     physicsWorld(scene* owner) : time(glfwGetTime()), owner(owner) { }
-    
+
+    void clearForces();
+    void collisionForces(rigidBody* a, rigidBody* b, double duration);
     void update();
   };
 
