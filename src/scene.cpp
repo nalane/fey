@@ -36,9 +36,9 @@ void scene::physicsWorld::collisionForces(rigidBody* a, rigidBody* b, double dur
       glm::vec3 minForce = glm::vec3(0, -GRAVITY_ACC * actors[i]->getMass(), 0);
       glm::vec3 impulse = (float)(1 / duration) * diffP;
       for (int i = 0; i < 3; i++) 
-	if (impulse[i] < minForce[i])
-	  impulse[i] = minForce[i];
-	  
+  if (impulse[i] < minForce[i])
+    impulse[i] = minForce[i];
+    
       actors[i]->addForce(impulse);
     }
   }
