@@ -35,6 +35,7 @@ void physicsCallback(btDynamicsWorld *world, btScalar timeStep) {
   for (int i = 0; i < numManifolds; i++) {
     btPersistentManifold* contactManifold = getWorld()->getDispatcher()->getManifoldByIndexInternal(i);
     int numContacts = contactManifold->getNumContacts();
+    if (numContacts <= 0) continue;
     recordLog("Contacts: " + to_string(numContacts));
     for (int j = 0; j < numContacts; j++) {
       recordLog("Impulse: " + to_string(contactManifold->getContactPoint(j).getAppliedImpulse()));
@@ -218,19 +219,22 @@ void engine::runGame() {
   if (initGame()) {
     double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
-      if(activeScene->update()) {
-	scene* nextScene = activeScene->nextScene();
-	delete activeScene;
-	
-	activeScene = nextScene;
-	activeScene->load();
-	activeScene->update();
-      }
-
+      // Update physics
       double currentTime = glfwGetTime();
       dynamics->stepSimulation(currentTime - lastTime);
       lastTime = currentTime;
-      
+
+      // Update and switch scenes if necessary
+      if(activeScene->update()) {
+        scene* nextScene = activeScene->nextScene();
+        delete activeScene;
+
+        activeScene = nextScene;
+        activeScene->load();
+        activeScene->update();
+      }
+
+      // Perform drawing
       draw();
       glfwSwapBuffers(window);
       glfwPollEvents();

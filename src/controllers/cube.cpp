@@ -12,7 +12,7 @@ cube::~cube() {
 void cube::load() {
   object::load();
   mesh = rHandler->loadModel("cube.fey.model");
-  translate(0, 25.0, 0);
+  translate(0, 5.0, 0);
   object::addPhysicsRigidBody("hull");
 }
 

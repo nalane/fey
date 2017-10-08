@@ -44,7 +44,7 @@ void object::addPhysicsRigidBody(string type) {
     shape = new btStaticPlaneShape(btVector3(normal.x, normal.y, normal.z), 0.0f);
   }
   
-  btVector3 inertia(0.0, 0.0, 0.0);
+  btVector3 inertia;
   if (mass != 0.0f)
     shape->calculateLocalInertia(mass, inertia);
 
