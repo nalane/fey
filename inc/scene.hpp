@@ -7,6 +7,7 @@
 #include "resourceHandler.hpp"
 #include "object.hpp"
 #include "glHeaders.hpp"
+#include "physicsWorld.hpp"
 
 #include <string>
 #include <vector>
@@ -19,25 +20,10 @@ protected:
   std::map<std::string, object*> objects;
 
   // Physics world maintains the physical state of all objects in the scene
-  class physicsWorld {
-  private:
-    static constexpr float GRAVITY_ACC = -3.0;
-    
-    scene* owner;
-    double time;
-    
-  public:
-    physicsWorld(scene* owner) : time(glfwGetTime()), owner(owner) { }
-
-    void clearForces();
-    void collisionForces(rigidBody* a, rigidBody* b, double duration);
-    void update();
-  };
-
   physicsWorld world;
   
 public:
-  scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)), world(physicsWorld(this)) {
+  scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
     resourceHandler::getInstance()->loadShaderProg();
   }
   
@@ -61,12 +47,7 @@ public:
     }
   }
 
-  virtual void updateObjects() {
-    world.update();
-    for (auto p : objects) {
-      p.second->update();
-    }
-  }
+  virtual void updateObjects();
 
   virtual void drawObjects() {
     for (auto p : objects) {

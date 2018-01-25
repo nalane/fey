@@ -1,10 +1,10 @@
 #include "rigidBody.hpp"
 
-bool rigidBody::hasFiniteMass() {
+bool rigidBody::hasFiniteMass() const {
   return inverseMass != 0.0;
 }
 
-double rigidBody::getMass() {
+double rigidBody::getMass() const {
   return 1 / inverseMass;
 }
 
