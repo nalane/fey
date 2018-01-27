@@ -11,21 +11,24 @@
 
 class main_scene : public scene {
 private:
+  // Measure rotation
   float rad;
 
+  // Resources used in this scene
   resource<firstPersonCamera> cam;
   resource<light> mainLight;
   resource<light> staticLight;
   resource<skybox> sky;
 
+  // Mouse position
   double mouseX;
   double mouseY;
-
   bool loggedMouseLocation;
   
 public:
+  // Default constructor sets up scene objects
   main_scene() : scene(), rad(0.0),
-		 loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
+                 loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
     objects["suz"] = new monkey();
   }
   ~main_scene();

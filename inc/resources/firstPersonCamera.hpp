@@ -14,6 +14,7 @@ public:
 		    float fieldOfView, float aspectRatio = defaultAspectRatio, float nearClip = 0.1, float farClip = 100.0) :
     camera(name, pos, target, upVector, fieldOfView, aspectRatio, nearClip, farClip) { }
 
-  void move(float amount, const glm::vec3& localAxis);
-  void rotate(float degrees, glm::vec3 axis);
+  // Move distance units along a vector relative to the camera's current orientation
+  void move(float distance, const glm::vec3& relativeDirection);
+  void rotate(float degrees, const glm::vec3& axis);
 };

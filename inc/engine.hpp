@@ -42,7 +42,7 @@ public:
   static engine* getInstance();
   static void endInstance();
 
-  scene* getActiveScene() { return activeScene; } 
+  scene* getActiveScene() const { return activeScene; } 
   
   void runGame();
 };

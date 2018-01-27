@@ -10,6 +10,7 @@ private:
   void unload();
   
 public:
+  // Pointer to actual resource data
   T* res;
 
   resource() : res(nullptr) { }

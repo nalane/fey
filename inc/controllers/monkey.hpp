@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * A gently rotating model of Suzanne for main_scene
+ */
+
 #include "object.hpp"
 
 #include <string>

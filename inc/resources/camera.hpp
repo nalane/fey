@@ -7,6 +7,7 @@
 #include "glHeaders.hpp"
 #include "raw_resource.hpp"
 
+// Default aspect ratio set by engine based on monitor
 extern double defaultAspectRatio;
 void setDefaultAspectRatio(double aspectRatio);
 

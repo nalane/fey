@@ -33,6 +33,7 @@ public:
     }
   };
 
+  // Generic scene interface
   void keyPress(int key, int action, int mods);
   virtual void mousePosition(double xPos, double yPos) = 0;
   virtual scene* nextScene() = 0;

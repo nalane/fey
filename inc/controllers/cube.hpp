@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * A textured cube for second_scene
+ */
+
 #include "object.hpp"
 
 #include <string>

@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * A generic plane for the second_scene
+ */
+
 #include "object.hpp"
 
 #include <string>

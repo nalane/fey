@@ -12,10 +12,12 @@ protected:
   glm::vec3 velocity;
   glm::vec3 rotation;
   glm::vec3 totForce;
+
   float inverseMass;
   float linearDamping;
-  bool isAwake;
+
   collisionShape* collider;
+  bool isAwake;
 
 public:
   rigidBody(float inverseMass = 0.0, float linearDamping = 0.999) : inverseMass(inverseMass), linearDamping(linearDamping), collider(nullptr) { }

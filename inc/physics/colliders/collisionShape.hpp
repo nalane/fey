@@ -21,7 +21,7 @@ private:
 public:
   collisionShape(collisionShapeType shapeType) : shapeType(shapeType) { }
   
-  collisionShapeType getShapeType() { return shapeType; }
+  collisionShapeType getShapeType() const { return shapeType; }
 
   bool isColliding(collisionShape* second);
 

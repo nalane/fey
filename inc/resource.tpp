@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+// Constructor with input resource data
 template <class T>
 resource<T>::resource(T* res) {
   this->res = res;
@@ -13,6 +14,7 @@ resource<T>::resource(T* res) {
   }
 }
 
+// Copy constructor
 template <class T>
 resource<T>::resource(const resource& rhs) {
   res = rhs.res;
@@ -21,6 +23,7 @@ resource<T>::resource(const resource& rhs) {
   }
 }
 
+// Equals operator
 template <class T>
 void resource<T>::operator = (const resource<T>& rhs) {
   unload();
