@@ -14,7 +14,7 @@ void rigidBody::addForce(glm::vec3 force) {
 }
 
 void rigidBody::updatePhysics(float duration) {
-  const float EPSILON = 0.1;
+  const float EPSILON = 0.2f;
   if (hasFiniteMass()) {
     glm::vec3 acc = inverseMass * totForce;
     if (glm::length(acc) >= EPSILON)
