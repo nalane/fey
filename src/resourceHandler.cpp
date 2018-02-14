@@ -101,14 +101,14 @@ model* resourceHandler::loadFeyModel(const string& filename) {
       fin >> numUVCoords;
 			
       for (int j = 0; j < numUVCoords; j++) {
-	int uvIdx;
-	float u, v;
+	      int uvIdx;
+	      float u, v;
 				
-	fin >> uvIdx;
-	fin >> u;
-	fin >> v;
-			
-	uvCoords.push_back(glm::vec2(u, v));
+	      fin >> uvIdx;
+	      fin >> u;
+        fin >> v;
+
+        uvCoords.push_back(glm::vec2(u, v));
       }
 		
       m->setTexture(getLibraryFolderPath(filename));
@@ -133,23 +133,23 @@ model* resourceHandler::loadFeyModel(const string& filename) {
 
       fin >> uvIndex;
       if (uvCoords.size() > 0) {
-	uvMapping.push_back(uvCoords[uvIndex]);
+        uvMapping.push_back(uvCoords[uvIndex]);
       }
 
       if (version.substr(0, 1) != "v") {
-	face[i % 3] = vertexList[index];
-	if (i % 3 == 2) {
-	  glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
-	  normals.push_back(normal);
-	  normals.push_back(normal);
-	  normals.push_back(normal);
-	}
+        face[i % 3] = vertexList[index];
+        if (i % 3 == 2) {
+          glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
+          normals.push_back(normal);
+          normals.push_back(normal);
+          normals.push_back(normal);
+        }
       }
 
       else {
-	glm::vec3 normal;
-	fin >> normal.x >> normal.y >> normal.z;
-	normals.push_back(normal);
+        glm::vec3 normal;
+        fin >> normal.x >> normal.y >> normal.z;
+        normals.push_back(normal);
       }
     }
 
@@ -304,6 +304,16 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
   }
 
   return resource<skybox>((skybox*) resources[path]);
+}
+
+resource<texture> resourceHandler::loadTexture(const string& filepath) {
+  map<string, raw_resource*>::iterator it = resources.find(filepath);
+  if (it == resources.end()) {
+    recordLog("Loading texture " + filepath);
+    resources[filepath] = new texture(filepath);
+  }
+
+  return resource<texture>((texture*) resources[filepath]);
 }
 
 // Unload the named resource

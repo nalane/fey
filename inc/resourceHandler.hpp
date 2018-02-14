@@ -19,6 +19,7 @@
 #include "light.hpp"
 #include "firstPersonCamera.hpp"
 #include "trackBallCamera.hpp"
+#include "texture.hpp"
 
 class resourceHandler {
 private:
@@ -62,6 +63,7 @@ public:
 
   // Miscellaneous
   resource<model> loadModel(const std::string& filepath);
+  resource<texture> loadTexture(const std::string& filepath);
   resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
 
   // Interact with lights
