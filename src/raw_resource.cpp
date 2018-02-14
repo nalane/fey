@@ -12,8 +12,9 @@ void raw_resource::load() {
   refCount++;
   locker.unlock();
 
-  for (auto p : child_resources)
-    p.second->load();
+  for (auto bins : child_resources)
+    for (auto p : bins.second)
+      p.second->load();
 }
 
 vector<string> raw_resource::unload() {
@@ -26,11 +27,15 @@ vector<string> raw_resource::unload() {
   if (refCount <= 0)
     unloadResources.push_back(name);
 
-  for (auto p : child_resources) {
-    vector<string> childUnloads = p.second->unload();
-    for (string r : unloadResources)
-      childUnloads.push_back(r);
-    unloadResources = childUnloads;
+  for (auto bins : child_resources) {
+    for (auto p : bins.second) {
+      vector<string> childUnloads = p.second->unload();
+
+      // Children must be unloaded first
+      for (string r : unloadResources)
+        childUnloads.push_back(r);
+      unloadResources = childUnloads;
+    }
   }
   
   return unloadResources;

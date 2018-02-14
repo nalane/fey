@@ -15,7 +15,9 @@ protected:
   std::string name; // Name in rHandler
   std::mutex locker;
 
-  std::map<std::string, raw_resource*> child_resources;
+  // First level of map is type of child resource
+  // Second level is name
+  std::map<std::string, std::map<std::string, raw_resource*>> child_resources;
 
 public:
   raw_resource(const std::string& name) : refCount(0), name(name) { }

@@ -33,7 +33,7 @@ public:
 
   void setActiveCamera(camera* cam) { this->activeCamera = cam; }
   void setShaderProgram(shaderProgram* shaderProg) {
-    child_resources["shaderProg"] = shaderProg;
+    child_resources["shaderProgs"]["skybox"] = shaderProg;
   }
   void setTextures(std::string texturePaths[NUM_SKYBOX_TEXTURES]);
   void draw();

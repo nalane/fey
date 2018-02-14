@@ -105,7 +105,7 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
 
 void skybox::draw() {
 	// Use the skybox shader prog
-  shaderProgram* prog = (shaderProgram*)(child_resources["shaderProg"]);
+  shaderProgram* prog = (shaderProgram*)(child_resources["shaderProgs"]["skybox"]);
   prog->useProgram();
   
   // Move the view matrices to the GPU
