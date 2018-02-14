@@ -15,9 +15,6 @@ model::~model() {
   glDeleteVertexArrays(1, &vao);
   for (pair<int, GLuint> p : vbos)
     glDeleteBuffers(1, &(p.second));
-  
-  for (GLuint id : texIDs)
-    glDeleteTextures(1, &id);
 }
 
 // Adds a material
@@ -51,13 +48,8 @@ void model::addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, in
 }
 
 // Creates a texture for the GPU
-void model::setTexture(const string& source) {
-  recordLog("Reading texture image file " + source + "...");
-  GLuint newID = SOIL_load_OGL_texture(source.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
-				       SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-  recordLog("Successfully read texture image file " + source + "!");
-  
-  texIDs.push_back(newID);
+void model::setTexture(texture* tex) {
+  child_resources["textures"][tex->getName()] = tex;
 }
 
 // Sends vertex data to the GPU
@@ -122,10 +114,11 @@ void model::bindTextureToUniform(GLuint uniformID) {
 void model::draw(GLint progID) {
   glBindVertexArray(vao);
   
-  for(int i = 0; i < texIDs.size(); i++) {
-    GLuint id = texIDs[i];
-    glActiveTexture(GL_TEXTURE0 + i);
-    glBindTexture(GL_TEXTURE_2D, id);  
+  int index = 0;
+  for(auto p : child_resources["textures"]) {
+    texture* tex = (texture*)(p.second);
+    tex->draw(index);
+    index++;
   }
 
   if (materials.size() > 0) {

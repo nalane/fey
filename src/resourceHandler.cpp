@@ -111,7 +111,14 @@ model* resourceHandler::loadFeyModel(const string& filename) {
         uvCoords.push_back(glm::vec2(u, v));
       }
 		
-      m->setTexture(getLibraryFolderPath(filename));
+      // Load texture without wrapping in resource
+      filename = getLibraryFolderPath(filename);
+      map<string, raw_resource*>::iterator it = resources.find(filename);
+      if (it == resources.end()) {
+        recordLog("Loading texture " + filename);
+        resources[filename] = new texture(filename);
+      }
+      m->setTexture((texture*)resources[filename]);
     }
 
     // Number of vertices in final model

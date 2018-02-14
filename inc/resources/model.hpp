@@ -11,12 +11,12 @@
 #include "glHeaders.hpp"
 #include "raw_resource.hpp"
 #include "material.hpp"
+#include "texture.hpp"
 
 class model : public raw_resource {
 private:
   GLuint vao;
   std::map<int, GLuint> vbos;
-  std::vector<GLuint> texIDs;
   std::vector<material> materials;
   std::vector<glm::vec3> vertices;
   int nonPassIndex;
@@ -30,7 +30,7 @@ public:
 
   void addMaterial(const material& mat);
   void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);
-  void setTexture(const std::string& source);
+  void setTexture(texture* tex);
   void setVertices(const std::vector<glm::vec3>& vertexList);
   void setUVMapping(const std::vector<glm::vec2>& uvList);
   void setNormals(const std::vector<glm::vec3>& normalList);
