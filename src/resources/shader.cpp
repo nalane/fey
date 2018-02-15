@@ -59,6 +59,7 @@ bool shader::compile() {
     
     recordLog("Compiling " + shaderDict[shaderType] + " shader failed with the following message:\n" + message);
     delete[] message;
+    
     return false;
   }
   else {

@@ -25,22 +25,27 @@ void main_scene::mousePosition(double xPos, double yPos) {
 void main_scene::load() {
   loadObjects();
 
+  // Set up camera
   cam = resourceHandler::getInstance()->loadFirstPersonCamera("mainCam");
   cam.res->setPosition(glm::vec3(3.0, 3.0, 3.0));
   cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
   cam.res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
   resourceHandler::getInstance()->setActiveCamera("mainCam");
   
+  // Set up main light
   mainLight = resourceHandler::getInstance()->loadLight("main");
   mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 0.0, 1.5 * cos(rad), 1.0));
   mainLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
 
+  // Set up secondary light
   staticLight = resourceHandler::getInstance()->loadLight("static");
   staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
   staticLight.res->setColor(glm::vec3(0.7, 0.7, 0.7));
   
+  // Set up sky box
   sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
   
+  // Set up default shader
   defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
@@ -60,6 +65,7 @@ bool main_scene::update() {
   if (pressedKeys[GLFW_KEY_RIGHT])
     cam.res->move(0.1, glm::vec3(1.0, 0.0, 0.0));
 
+  // Move main light
   rad += 0.01;
   mainLight.res->setPosition(glm::vec4(1.5 * sin(rad), 2.0, 1.5 * cos(rad), 1.0));
   

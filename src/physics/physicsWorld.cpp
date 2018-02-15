@@ -19,9 +19,9 @@ void physicsWorld::collisionForces(rigidBody* a, rigidBody* b, double duration) 
     rigidBody* actors[2];
     int numActors = 0;
     if (a->hasFiniteMass()) 
-		actors[numActors++] = a;
+		  actors[numActors++] = a;
     if (b->hasFiniteMass()) 
-		actors[numActors++] = b;
+		  actors[numActors++] = b;
 
     // Calculate forces
     for (int i = 0; i < numActors; i++) {
@@ -32,7 +32,7 @@ void physicsWorld::collisionForces(rigidBody* a, rigidBody* b, double duration) 
 			if (impulse[j] < minForce[j])
 				impulse[j] = minForce[j];
 	
-		actors[i]->addForce(impulse);
+		  actors[i]->addForce(impulse);
     }
   }
 }

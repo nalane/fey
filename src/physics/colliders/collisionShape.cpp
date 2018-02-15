@@ -47,6 +47,7 @@ bool collisionShape::isColliding(collisionShape* second) {
     bool colliding = true;
     for (int i = 0; i < 3; i++)
       colliding = colliding && (lhsMin[i] <= rhsMax[i] && lhsMax[i] >= rhsMin[i]);
+      
     return colliding;
   }
 
@@ -75,9 +76,9 @@ bool collisionShape::isColliding(collisionShape* second) {
     glm::vec3 closestPoint = sphere->getCenter();
     for (int i = 0; i < 3; i++) {
       if (closestPoint[i] > aabbMax[i])
-	closestPoint[i] = aabbMax[i];
+	      closestPoint[i] = aabbMax[i];
       else if (closestPoint[i] < aabbMin[i])
-	closestPoint[i] = aabbMin[i];
+	      closestPoint[i] = aabbMin[i];
     }
 
     return distance(closestPoint, sphere->getCenter()) <= sphere->getRadius();
@@ -105,6 +106,7 @@ bool collisionShape::isColliding(collisionShape* second) {
     collisionSphere* lhs = (collisionSphere*)this;
     collisionSphere* rhs = (collisionSphere*)second;
     double radiusSum = lhs->getRadius() + rhs->getRadius();
+    
     return distance(lhs->getCenter(), rhs->getCenter()) <= radiusSum;
   }
     

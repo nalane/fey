@@ -52,6 +52,7 @@ bool shaderProgram::linkShaders() {
     
     recordLog("Linking shader program failed with the following message:\n" + string(message));
     delete[] message;
+    
     return false;
   }
   else {

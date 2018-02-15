@@ -40,8 +40,8 @@ model* resourceHandler::loadFeyModel(const string& filename) {
   string fullPath = getLibraryFolderPath(filename);
   recordLog("Reading fey model " + fullPath + "...");
   model* m = nullptr;
-  ifstream fin(fullPath.c_str());
 
+  ifstream fin(fullPath.c_str());
   if (fin.is_open()) {
     m = new model(filename);
 

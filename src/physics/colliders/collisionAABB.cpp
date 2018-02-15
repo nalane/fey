@@ -2,7 +2,7 @@
 
 using namespace std;
 
-collisionAABB::collisionAABB(const vector<glm::vec3>& vertices) : collisionShape(AABB) {
+collisionAABB::collisionAABB(const vector<glm::vec3> &vertices) : collisionShape(AABB) {
   glm::vec3 min = vertices[0];
   glm::vec3 max = vertices[0];
 
@@ -10,9 +10,9 @@ collisionAABB::collisionAABB(const vector<glm::vec3>& vertices) : collisionShape
   for (int i = 1; i < vertices.size(); i++) {
     for (int j = 0; j < 3; j++) {
       if (vertices[i][j] > max[j])
-	max[j] = vertices[i][j];
+        max[j] = vertices[i][j];
       if (vertices[i][j] < min[j])
-	min[j] = vertices[i][j];
+        min[j] = vertices[i][j];
     }
   }
 

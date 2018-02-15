@@ -15,7 +15,7 @@ private:
 
 public:
   material(const glm::vec4& ambientVals, const glm::vec4& diffuseVals,
-	   const glm::vec4& specularVals, float specularIntensity) :
+	  const glm::vec4& specularVals, float specularIntensity) :
     ambientVals(ambientVals), diffuseVals(diffuseVals),
     specularVals(specularVals), specularIntensity(specularIntensity) { }
 

@@ -22,34 +22,42 @@ void setUpProgramPath() {
   const int DIR_LENGTH = 1024;
   char* tmp = new char[DIR_LENGTH];
   
-  #ifdef _WIN32
+#ifdef _WIN32
   GetCurrentDirectory(DIR_LENGTH, tmp);
+
+  // Switch back slashes to forward slashes
   for (int i = strlen(tmp); i >= 0; i--) {
     if (tmp[i] == '\\') {
       tmp[i] = '/';
     }
   }
-  #elif __linux__
+
+#elif __linux__
   int numBytes = readlink("/proc/self/exe", tmp, DIR_LENGTH);
   if (numBytes < 0)
     numBytes = 0;
   
+  // Remove the prog name from string
   for (int i = numBytes - 1; i >= 0; i--) {
     if (tmp[i] == '/') {
       tmp[i] = '\0';
       break;
     }
   }
-  #elif __APPLE__
+
+#elif __APPLE__
   unsigned int size = DIR_LENGTH;
   _NSGetExecutablePath(tmp, &size);
+
+  // Remove the prog name from string
   for (int i = strlen(tmp) - 1; i >= 0; i--) {
     if (tmp[i] == '/') {
       tmp[i] = '\0';
       break;
     }
   }
-  #endif
+  
+#endif
 
   programPath = tmp;
   delete[] tmp;

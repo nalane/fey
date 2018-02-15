@@ -34,6 +34,7 @@ vector<string> raw_resource::unload() {
       // Children must be unloaded first
       for (string r : unloadResources)
         childUnloads.push_back(r);
+        
       unloadResources = childUnloads;
     }
   }

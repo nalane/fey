@@ -81,18 +81,18 @@ void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
   for (int i = 0; i < NUM_SKYBOX_TEXTURES; i++) {
     int width;
     int height;
-	int channels;
+	  int channels;
 	
-	// Load image to memory
+	  // Load image to memory
     unsigned char* imageData = SOIL_load_image(texturePaths[i].c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
-	if (imageData == nullptr) {
-		recordLog("WARNING: Could not load " + texturePaths[i] + "!");
-	}
+	  if (imageData == nullptr) {
+		  recordLog("WARNING: Could not load " + texturePaths[i] + "!");
+	  }
 	
-	// Move image to GPU memory
+	  // Move image to GPU memory
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
-		 width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-	delete imageData;
+		             width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	  delete imageData;
   }
 
   // Set drawing methods

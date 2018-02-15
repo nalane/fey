@@ -10,10 +10,13 @@ void scene::keyPress(int key, int action, int mods) {
 }
 
 void scene::updateObjects() {
+  // Get all rigidbodies in scene
 	vector<rigidBody*> rigidBodies;
-    for (auto p : objects) {
+  for (auto p : objects) {
 		p.second->update();
 		rigidBodies.push_back(p.second);
-    }
-	world.update(rigidBodies);
   }
+
+  // Update physics
+	world.update(rigidBodies);
+}
