@@ -32,7 +32,7 @@ protected:
   
 public:
   scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
-    resourceHandler::getInstance()->loadShaderProg();
+    defaultShader = resourceHandler::getInstance()->loadShaderProg();
   }
   
   virtual ~scene();
