@@ -1,6 +1,7 @@
 #include "skybox.hpp"
 #include "resourceHandler.hpp"
 #include "log.hpp"
+#include "scene.hpp"
 
 using namespace std;
 
@@ -109,6 +110,7 @@ void skybox::draw() {
   prog->useProgram();
   
   // Move the view matrices to the GPU
+  camera* activeCamera = scene::getActiveScene()->getActiveCamera();
   glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
   GLint vpHandle = glGetUniformLocation(prog->getProgID(), "vpMatrix");

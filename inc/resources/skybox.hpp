@@ -24,14 +24,11 @@ private:
   GLuint texID;
   GLuint vao;
   GLuint vbo;
-
-  camera* activeCamera;
   
 public:
-  skybox(const std::string& name) : raw_resource(name), activeCamera(nullptr) { }
+  skybox(const std::string& name) : raw_resource(name) { }
   ~skybox();
 
-  void setActiveCamera(camera* cam) { this->activeCamera = cam; }
   void setShaderProgram(shaderProgram* shaderProg) {
     child_resources["shaderProgs"]["skybox"] = shaderProg;
   }

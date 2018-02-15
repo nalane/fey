@@ -13,8 +13,6 @@ class second_scene : public scene {
 private:
   // Resources
   resource<skybox> sky;
-  resource<light> staticLight;
-  resource<trackBallCamera> cam;
 
   // Mouse details
   bool loggedMouseLocation;

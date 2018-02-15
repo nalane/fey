@@ -26,7 +26,6 @@ private:
 
   // Rendering
   GLFWwindow* window;
-  scene* activeScene;
 
   bool initGLFW();
   void enableGLFeatures();
@@ -41,8 +40,6 @@ public:
   static void createInstance(const std::string& configFile);
   static engine* getInstance();
   static void endInstance();
-
-  scene* getActiveScene() const { return activeScene; } 
   
   void runGame();
 };

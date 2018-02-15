@@ -2,6 +2,7 @@
 #include "main_scene.hpp"
 #include "paths.hpp"
 #include "log.hpp"
+#include "trackBallCamera.hpp"
 
 using namespace std;
 
@@ -13,7 +14,8 @@ void second_scene::mousePosition(double xPos, double yPos) {
     double diffX = xPos - mouseX;
     double diffY = yPos - mouseY;
 
-    cam.res->pan(diffX / 25, -diffY / 25);
+    trackBallCamera* cam = (trackBallCamera*)(cameras["cam"]);
+    cam->pan(diffX / 25, -diffY / 25);
   }
 
   mouseX = xPos;
@@ -24,17 +26,18 @@ void second_scene::mousePosition(double xPos, double yPos) {
 void second_scene::load() {
   loadObjects();
   
-  // Set up main light
-  cam = resourceHandler::getInstance()->loadTrackBallCamera("tCam");
-  cam.res->zoom(5.0);
-  cam.res->setTarget(glm::vec3(0.0, 0.0, 0.0));
-  cam.res->setUpVector(glm::vec3(0.0, 1.0, 0.0));
-  resourceHandler::getInstance()->setActiveCamera("tCam");
+  // Set up main camera
+  trackBallCamera* cam = new trackBallCamera();
+  cam->zoom(5.0);
+  cam->setTarget(glm::vec3(0.0, 0.0, 0.0));
+  cam->setUpVector(glm::vec3(0.0, 1.0, 0.0));
+  cameras["cam"] = cam;
+  setActiveCamera("cam");
   
   // Set up second light
-  staticLight = resourceHandler::getInstance()->loadLight("static");
-  staticLight.res->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
-  staticLight.res->setColor(glm::vec3(1.0, 1.0, 1.0));
+  lights["staticLight"] = new light();
+  lights["staticLight"]->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
+  lights["staticLight"]->setColor(glm::vec3(1.0, 1.0, 1.0));
 
   // Set up sky box
   sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox/"), "tga");
@@ -44,14 +47,16 @@ void second_scene::load() {
 }
 
 bool second_scene::update() {
+  trackBallCamera* cam = (trackBallCamera*)(cameras["cam"]);
+
   if (pressedKeys[GLFW_KEY_SPACE])
     return true;
 
   if (pressedKeys[GLFW_KEY_UP])
-    cam.res->zoom(-0.1);
+    cam->zoom(-0.1);
 
   if (pressedKeys[GLFW_KEY_DOWN])
-    cam.res->zoom(0.1);
+    cam->zoom(0.1);
 
   updateObjects();
   

@@ -13,12 +13,8 @@
 
 #include "shader.hpp"
 #include "shaderProgram.hpp"
-#include "camera.hpp"
 #include "model.hpp"
 #include "skybox.hpp"
-#include "light.hpp"
-#include "firstPersonCamera.hpp"
-#include "trackBallCamera.hpp"
 #include "texture.hpp"
 
 class resourceHandler {
@@ -30,13 +26,8 @@ private:
   std::string defaultVertexShader;
   std::string defaultFragmentShader;
 
-  // Resource maps
+  // Resource map
   std::map<std::string, raw_resource*> resources;
-  std::map<std::string, camera*> cameras;
-  std::map<std::string, light*> lights;
-
-  // Active camera
-  std::string activeCameraID;
 
   model* loadFeyModel(const std::string& filename);
   shader* loadVertexShader(const std::string& vertexShaderPath);
@@ -65,18 +56,6 @@ public:
   resource<model> loadModel(const std::string& filepath);
   resource<texture> loadTexture(const std::string& filepath);
   resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
-
-  // Interact with lights
-  resource<light> loadLight(const std::string& lightName);
-  std::vector<light*> getAllLights();
-
-  // Cameras
-  resource<camera> loadCamera(const std::string& name);
-  resource<firstPersonCamera> loadFirstPersonCamera(const std::string& name);
-  resource<trackBallCamera> loadTrackBallCamera(const std::string& name);
-
-  void setActiveCamera(const std::string& id);
-  camera* getActiveCamera();
 };
 
 #include "resource.tpp"

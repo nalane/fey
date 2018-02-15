@@ -15,9 +15,6 @@ private:
   float rad;
 
   // Resources used in this scene
-  resource<firstPersonCamera> cam;
-  resource<light> mainLight;
-  resource<light> staticLight;
   resource<skybox> sky;
 
   // Mouse position

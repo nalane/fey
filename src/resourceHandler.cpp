@@ -235,54 +235,6 @@ resource<shaderProgram> resourceHandler::loadShaderProg() {
   return loadShaderProg(defaultVertexShader, defaultFragmentShader);
 }
 
-// Find the named light, if it is set.
-resource<light> resourceHandler::loadLight(const string& name) {
-  map<string, raw_resource*>::iterator it = resources.find(name);
-  if (it == resources.end()) {
-    recordLog("Loading light " + name);
-    resources[name] = new light(name, glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
-    lights[name] = (light*) resources[name];
-  }
-	
-  return resource<light>((light*) resources[name]);
-}
-
-// Find the named camera, if it exists.
-resource<camera> resourceHandler::loadCamera(const string& name) {  
-  map<string, raw_resource*>::iterator it = resources.find(name);
-  if (it == resources.end()) {
-    recordLog("Loading camera " + name);
-    resources[name] = new camera(name);
-    cameras[name] = (camera*) resources[name];
-  }
-
-  return resource<camera>((camera*) resources[name]);
-}
-
-// Find the named fp camera, if it exists.
-resource<firstPersonCamera> resourceHandler::loadFirstPersonCamera(const string& name) {
-  map<string, raw_resource*>::iterator it = resources.find(name);
-  if (it == resources.end()) {
-    recordLog("Loading camera " + name);
-    resources[name] = new firstPersonCamera(name);
-    cameras[name] = (camera*) resources[name];
-  }
-
-  return resource<firstPersonCamera>((firstPersonCamera*) resources[name]);
-}
-
-// Find the named tb camera, if it exists
-resource<trackBallCamera> resourceHandler::loadTrackBallCamera(const string& name) {
-  map<string, raw_resource*>::iterator it = resources.find(name);
-  if (it == resources.end()) {
-    recordLog("Loading camera " + name);
-    resources[name] = new trackBallCamera(name);
-    cameras[name] = (camera*) resources[name];
-  }
-
-  return resource<trackBallCamera>((trackBallCamera*) resources[name]);
-}
-
 resource<skybox> resourceHandler::loadSkybox(const string& path, const string& extension) {
   map<string, raw_resource*>::iterator it = resources.find(path);
   if (it == resources.end()) {
@@ -306,7 +258,6 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     skybox* newSkybox = new skybox(path);
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures(skyboxTextures);
-    newSkybox->setActiveCamera(cameras[activeCameraID]);
     resources[path] = newSkybox;
   }
 
@@ -330,8 +281,6 @@ void resourceHandler::unload(const string& name) {
     recordLog("Unloading resource " + name);
     delete it->second;
     resources.erase(it);
-    lights.erase(name);
-    cameras.erase(name);
   }
   else {
     recordLog("WARNING: Could not find resource " + name + " for unloading.");
@@ -343,37 +292,4 @@ void resourceHandler::unloadAll() {
   for (auto p : resources) 
     delete p.second;
   resources.clear();
-
-  for (auto p : cameras)
-    delete p.second;
-  cameras.clear();
-  
-  for (auto p : lights)
-    delete p.second;
-  lights.clear();
-}
-
-// Get a list of all lights in the scene
-vector<light*> resourceHandler::getAllLights() {
-  vector<light*> lightList;
-  for (auto p : lights) {
-    lightList.push_back(p.second);
-  }
-
-  return lightList;
-}
-
-// Set the active camera
-void resourceHandler::setActiveCamera(const string& id) {
-  activeCameraID = id;
-}
-
-// Get the active camera
-camera* resourceHandler::getActiveCamera() {
-  if (cameras.find(activeCameraID) == cameras.end()) {
-    recordLog("WARNING: Could not find camera " + activeCameraID);
-    return nullptr;
-  }
-  
-  return cameras.at(activeCameraID);
 }

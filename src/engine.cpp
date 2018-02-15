@@ -15,11 +15,11 @@ using namespace std;
 
 // GLFW Key press callbacks
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  engine::getInstance()->getActiveScene()->keyPress(key, action, mods);
+  scene::getActiveScene()->keyPress(key, action, mods);
 }
 
 void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
-  engine::getInstance()->getActiveScene()->mousePosition(xpos, ypos);
+  scene::getActiveScene()->mousePosition(xpos, ypos);
 }
 
 engine* engine::instance;
@@ -72,8 +72,7 @@ engine::~engine() {
   glfwTerminate();
   window = nullptr;
 
-  delete activeScene;
-  activeScene = nullptr;
+  scene::endActiveScene();
 
   resourceHandler::endInstance();
 }
@@ -167,8 +166,8 @@ bool engine::initGame() {
 
   resourceHandler::getInstance()->setDefaultShaderProg(vertexShader, fragmentShader);
 
-  activeScene = new main_scene();
-  activeScene->load();
+  scene::setActiveScene(new main_scene());
+  scene::getActiveScene()->load();
 
   return true;
 }
@@ -181,20 +180,20 @@ void engine::draw() {
   glClearBufferfv(GL_COLOR, 0, color);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  activeScene->draw();
+  scene::getActiveScene()->draw();
 }
 
 // Run the game
 void engine::runGame() {
   if (initGame()) {
     while (!glfwWindowShouldClose(window)) {
-      if(activeScene->update()) {
-	      scene* nextScene = activeScene->nextScene();
-	      delete activeScene;
+      if(scene::getActiveScene()->update()) {
+	      scene* nextScene = scene::getActiveScene()->nextScene();
+	      scene::endActiveScene();
 	
-	      activeScene = nextScene;
-	      activeScene->load();
-	      activeScene->update();
+        scene::setActiveScene(nextScene);
+        nextScene->load();
+        nextScene->update();
       }
       
       draw();
