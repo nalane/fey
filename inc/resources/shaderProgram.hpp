@@ -11,7 +11,6 @@
 
 class shaderProgram : public raw_resource {
 private:
-  std::vector<shader*> shaders;
   GLuint progID;
 
 public:

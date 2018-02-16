@@ -10,13 +10,14 @@ shaderProgram::~shaderProgram() {
 
 // Adds a shader to the program
 void shaderProgram::addShader(shader* s) {
-  shaders.push_back(s);
+  child_resources["shaders"][s->getName()] = s;
 }
 
 // Load all shaders into main memory
 bool shaderProgram::loadShaders() {
   bool loaded = true;
-  for (shader* s : shaders) {
+  for (auto p : child_resources["shaders"]) {
+    shader* s = (shader*)(p.second);
     loaded &= s->load();
   }
 
@@ -26,7 +27,8 @@ bool shaderProgram::loadShaders() {
 // Compile all shaders into GPU memory
 bool shaderProgram::compileShaders() {
   bool compiled = true;
-  for (shader* s : shaders) {
+  for (auto p : child_resources["shaders"]) {
+    shader* s = (shader*)(p.second);
     compiled &= s->compile();
   }
 
@@ -36,7 +38,8 @@ bool shaderProgram::compileShaders() {
 // Link shaders into a full program in GPU
 bool shaderProgram::linkShaders() {
   progID = glCreateProgram();
-  for (shader* s : shaders) {
+  for (auto p : child_resources["shaders"]) {
+    shader* s = (shader*)(p.second);
     glAttachShader(progID, s->getID());
   }
   glLinkProgram(progID);

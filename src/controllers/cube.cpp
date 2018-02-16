@@ -6,7 +6,7 @@
 using namespace std;
 
 cube::cube() : object() {
-  inverseMass = 0.01;
+  inverseMass = 0.01f;
 }
 
 cube::~cube() {
