@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.7)
 project(fey)
 
 include_directories(deps/glad)
@@ -7,6 +7,9 @@ include_directories(deps/glm)
 include_directories(deps/soil/inc)
 add_subdirectory(deps)
 
+find_package(Vulkan REQUIRED)
+
+include_directories(${Vulkan_INCLUDE_DIR})
 include_directories(inc)
 include_directories(inc/controllers)
 include_directories(inc/resources)
@@ -17,7 +20,7 @@ include_directories(inc/physics/colliders)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})
 
-set(LINKED_LIBRARIES glfw glad soil ${GLFW_LIBRARIES})
+set(LINKED_LIBRARIES glfw glad soil ${GLFW_LIBRARIES} ${Vulkan_LIBRARY})
 set(DATA_DESTINATION .)
 set(COPY_DATA feyData)
 
