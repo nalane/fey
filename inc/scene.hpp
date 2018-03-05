@@ -14,6 +14,11 @@
 #include <vector>
 #include <map>
 
+enum UpdateResult {
+  CHANGE_SCENE,
+  NO_CHANGE
+};
+
 class scene {
 private:
   static scene* activeScene;
@@ -47,7 +52,7 @@ public:
   virtual void mousePosition(double xPos, double yPos) = 0;
   virtual scene* nextScene() = 0;
   virtual void load() = 0;
-  virtual bool update() = 0;
+  virtual UpdateResult update() = 0;
   virtual void draw() = 0;
 
   void setActiveCamera(const std::string& id);

@@ -5,7 +5,6 @@
  */
 
 #include "glHeaders.hpp"
-#include "raw_resource.hpp"
 
 // Default aspect ratio set by engine based on monitor
 extern double defaultAspectRatio;
@@ -33,5 +32,9 @@ public:
   void setUpVector(const glm::vec3& upVector) { this->upVector = upVector; resetView(); }
   
   glm::mat4 getViewMatrix() const { return view; }
-  glm::mat4 getProjectionMatrix() const { return projection; }
+  glm::mat4 getProjectionMatrix() const {
+    glm::mat4 projRet = projection; 
+    projRet [1][1] *= -1;
+    return projRet; 
+  }
 };

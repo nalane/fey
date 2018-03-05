@@ -16,10 +16,6 @@ using namespace std;
 // Singleton
 resourceHandler* resourceHandler::instance;
 
-resourceHandler::~resourceHandler() {
-  unloadAll();
-}
-
 // Create singleton instance
 void resourceHandler::createInstance() {
   instance = new resourceHandler();
@@ -35,6 +31,10 @@ void resourceHandler::endInstance() {
   delete instance;
 }
 
+resourceHandler::~resourceHandler() {
+  unloadAll();
+}
+
 // Loads a fey model into memory and returns the data
 model* resourceHandler::loadFeyModel(const string& filename) {
   string fullPath = getLibraryFolderPath(filename);
@@ -44,6 +44,7 @@ model* resourceHandler::loadFeyModel(const string& filename) {
   ifstream fin(fullPath.c_str());
   if (fin.is_open()) {
     m = new model(filename);
+    
 
     // Get version number and number of materials
     string version = "";
@@ -116,7 +117,10 @@ model* resourceHandler::loadFeyModel(const string& filename) {
       map<string, raw_resource*>::iterator it = resources.find(filename);
       if (it == resources.end()) {
         recordLog("Loading texture " + filename);
-        resources[filename] = new texture(filename);
+
+        texture* newTexture = new texture(filename, {filename});
+        newTexture->loadTexture();
+        resources[filename] = newTexture;
       }
       m->setTexture((texture*)resources[filename]);
     }
@@ -178,53 +182,51 @@ model* resourceHandler::loadFeyModel(const string& filename) {
 
 // Get the model associated with the given filename
 resource<model> resourceHandler::loadModel(const string& filepath) {
-  if (resources.find(filepath) == resources.end())
-    resources[filepath] = loadFeyModel(filepath);
+  if (resources.find(filepath) == resources.end()) {
+    model* newModel = loadFeyModel(filepath);
+
+    // Add shader child
+    string shaderKey = getShaderKey(defaultVertexShader, defaultFragmentShader);
+    if (resources.find(shaderKey) == resources.end()) {
+      resources[shaderKey] = newShader<modelVertex>(defaultVertexShader, defaultFragmentShader, shaderKey);
+    }   
+    newModel->setShaderProgram((shaderProgram*)resources[shaderKey]);
+
+    // Bind model data to GPU
+    newModel->bindVertices();
+    newModel->bindDescriptors();
+
+    resources[filepath] = newModel;
+  }
 
   return resource<model>((model*) resources[filepath]);
-}
-
-// Get a vertex shader
-shader* resourceHandler::loadVertexShader(const string& vertexShaderPath) {
-  if (resources.find(vertexShaderPath) == resources.end())
-    resources[vertexShaderPath] = new shader(vertexShaderPath, GL_VERTEX_SHADER);
-
-  return (shader*) resources[vertexShaderPath];
-}
-
-// Get a fragment shader
-shader* resourceHandler::loadFragmentShader(const string& fragmentShaderPath) {
-  if (resources.find(fragmentShaderPath) == resources.end())
-    resources[fragmentShaderPath] = new shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-
-  return (shader*) resources[fragmentShaderPath];
-}
-
-// Create a new shader program
-shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
-  shaderProgram* prog = new shaderProgram(key);
-  prog->addShader(loadVertexShader(vertexShader));
-  prog->addShader(loadFragmentShader(fragmentShader));
-  prog->loadShaders();
-  prog->compileShaders();
-  prog->linkShaders();
-  return prog;
-}
-
-void resourceHandler::setDefaultShaderProg(const string& vertexShader, const string& fragmentShader) {
-  defaultVertexShader = vertexShader;
-  defaultFragmentShader = fragmentShader;
 }
 
 string resourceHandler::getShaderKey(const string& vert, const string& frag) {
   return "v" + vert + "f" + frag;
 }
 
+// Create a new shader program
+template <typename T>
+shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
+  map<string, string> shaderFiles;
+  shaderFiles["vertex"] = vertexShader + ".spv";
+  shaderFiles["fragment"] = fragmentShader + ".spv";
+
+  shaderProgram* prog = new shaderProgram(key, shaderFiles);
+  prog->setVertexAttributes<T>();
+  prog->loadShaders();
+  return prog;
+}
+
 // Get a shader program
+template <typename T>
 resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader) {
   string key = getShaderKey(vertexShader, fragmentShader);
   if (resources.find(key) == resources.end()) {
-    resources[key] = newShader(vertexShader, fragmentShader, key);
+    shaderProgram* shader = newShader<T>(vertexShader, fragmentShader, key);
+    resources[key] = shader;
+    shaders[key] = shader;
   }
 
   return resource<shaderProgram>((shaderProgram*) resources[key]);
@@ -232,7 +234,26 @@ resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShad
 
 // Find the default shader program, if it is set
 resource<shaderProgram> resourceHandler::loadShaderProg() {
-  return loadShaderProg(defaultVertexShader, defaultFragmentShader);
+  return loadShaderProg<modelVertex>(defaultVertexShader, defaultFragmentShader);
+}
+
+void resourceHandler::setDefaultShaderProg(const string& vertexShader, const string& fragmentShader) {
+  defaultVertexShader = vertexShader;
+  defaultFragmentShader = fragmentShader;
+}
+
+// Unload shaders when recreating swapchain
+void resourceHandler::unloadShaders() {
+  for (auto p : shaders) {
+    p.second->unloadShaders();
+  }
+}
+
+// Reload shaders for recreating swapchain
+void resourceHandler::reloadShaders() {
+  for (auto p : shaders) {
+    p.second->loadShaders();
+  }
 }
 
 resource<skybox> resourceHandler::loadSkybox(const string& path, const string& extension) {
@@ -240,44 +261,87 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
   if (it == resources.end()) {
     recordLog("Loading skybox " + path);
     
-    string skyboxTextures[NUM_SKYBOX_TEXTURES];
+    // Get the textures
+    /*
+    vector<string> skyboxTextures(NUM_SKYBOX_TEXTURES);
     skyboxTextures[SKYBOX_RIGHT]  = (path + "/right." + extension);
     skyboxTextures[SKYBOX_LEFT]   = (path + "/left." + extension);
     skyboxTextures[SKYBOX_TOP]    = (path + "/top." + extension);
     skyboxTextures[SKYBOX_BOTTOM] = (path + "/bottom." + extension);
     skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension);
     skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension);
+    */
 
-    string vertexShader = getDataFolderPath("shaders/skybox.v.glsl");
-    string fragShader = getDataFolderPath("shaders/skybox.f.glsl");
+    set<string> skyboxTextures;
+    skyboxTextures.insert(path + "/right." + extension);
+    skyboxTextures.insert(path + "/left." + extension);
+    skyboxTextures.insert(path + "/top." + extension);
+    skyboxTextures.insert(path + "/bottom." + extension);
+    skyboxTextures.insert(path + "/back." + extension);
+    skyboxTextures.insert(path + "/front." + extension);
+
+    // Create textures key from filepath list
+    string key = "";
+    for (string s : skyboxTextures) {
+      key += s;
+    }
+
+    // Find or create texture
+    if (resources.find(key) == resources.end()) {
+      recordLog("Loading texture " + key);
+    
+      texture* newTexture = new texture(key, skyboxTextures);
+      newTexture->loadTexture();
+      resources[key] = newTexture; 
+    }
+
+    // Get shader
+    string vertexShader = getDataFolderPath("shaders/skybox/skybox.vert");
+    string fragShader = getDataFolderPath("shaders/skybox/skybox.frag");
     string shaderKey = getShaderKey(vertexShader, fragShader);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader(vertexShader, fragShader, shaderKey);
+      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey);
     }
 
     skybox* newSkybox = new skybox(path);
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
-    newSkybox->setTextures(skyboxTextures);
+    newSkybox->setTextures((texture*)resources[key]);
     resources[path] = newSkybox;
   }
 
   return resource<skybox>((skybox*) resources[path]);
 }
 
-resource<texture> resourceHandler::loadTexture(const string& filepath) {
-  map<string, raw_resource*>::iterator it = resources.find(filepath);
-  if (it == resources.end()) {
-    recordLog("Loading texture " + filepath);
-    resources[filepath] = new texture(filepath);
+resource<texture> resourceHandler::loadTexture(const set<string>& filepaths) {
+  // Create key from filepath list
+  string key = "";
+  for (string s : filepaths) {
+    key += s;
   }
 
-  return resource<texture>((texture*) resources[filepath]);
+  map<string, raw_resource*>::iterator it = resources.find(key);
+  if (it == resources.end()) {
+    recordLog("Loading texture " + key);
+    
+    texture* newTexture = new texture(key, filepaths);
+    newTexture->loadTexture();
+    resources[key] = newTexture;
+  }
+
+  return resource<texture>((texture*) resources[key]);
 }
 
 // Unload the named resource
 void resourceHandler::unload(const string& name) {
   map<string, raw_resource*>::iterator it = resources.find(name);
   if (it != resources.end()) {
+    // Delete from shaders map, if it exists there.
+    map<string, shaderProgram*>::iterator shaderIt = shaders.find(name);
+    if (shaderIt != shaders.end()) {
+      shaders.erase(shaderIt);
+    }
+
+    // Delete resource
     recordLog("Unloading resource " + name);
     delete it->second;
     resources.erase(it);
@@ -289,6 +353,7 @@ void resourceHandler::unload(const string& name) {
 
 // Remove all resources
 void resourceHandler::unloadAll() {
+  shaders.clear();
   for (auto p : resources) 
     delete p.second;
   resources.clear();

@@ -5,17 +5,29 @@
  */
 
 #include <string>
+#include <set>
 
 #include "raw_resource.hpp"
 #include "glHeaders.hpp"
 
 class texture : public raw_resource {
 private:
-    GLuint texID;
+    VkImage textureImage;
+    VkDeviceMemory textureImageMemory;
+
+    VkImageView textureImageView;
+    VkSampler textureSampler;
+
+    std::set<std::string> files;
 
 public:
-    texture(const std::string& name);
+    texture(const std::string& name, std::set<std::string> files) : raw_resource(name), files(files) { }
     ~texture();
 
-    void draw(GLuint index);
+    bool loadTexture();
+
+    VkSampler getSampler() { return textureSampler; }
+    VkImageView getImageView() { return textureImageView; }
+
+    //void draw(GLuint index);
 };

@@ -8,6 +8,8 @@
 #include "shaderProgram.hpp"
 #include "glHeaders.hpp"
 #include "camera.hpp"
+#include "skyboxVertex.hpp"
+#include "texture.hpp"
 
 #include <string>
 
@@ -21,17 +23,32 @@
 
 class skybox : public raw_resource {
 private:
-  GLuint texID;
-  GLuint vao;
-  GLuint vbo;
+  std::vector<skyboxVertex> vertices;
+
+  VkDescriptorPool descriptorPool;
+  VkDescriptorSet descriptorSet;
+
+  VkBuffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
+  VkBuffer uniformBuffer;
+  VkDeviceMemory uniformBufferMemory;
+  
+  bool verticesLoaded;
+  bool descriptorsLoaded;
   
 public:
-  skybox(const std::string& name) : raw_resource(name) { }
+  skybox(const std::string& name);
   ~skybox();
 
   void setShaderProgram(shaderProgram* shaderProg) {
     child_resources["shaderProgs"]["skybox"] = shaderProg;
   }
-  void setTextures(std::string texturePaths[NUM_SKYBOX_TEXTURES]);
+  void setTextures(texture* tex) {
+    child_resources["textures"]["skybox"] = tex;
+  }
+
+  void bindVertices();
+  void bindDescriptors();
+
   void draw();
 };

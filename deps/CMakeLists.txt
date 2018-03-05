@@ -2,6 +2,7 @@ include_directories(glad/glad)
 include_directories(glfw/include)
 include_directories(glm)
 include_directories(soil/inc)
+include_directories(stb)
 
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build the GLFW example programs")
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build the GLFW test programs")

@@ -51,11 +51,11 @@ void main_scene::load() {
   defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
-bool main_scene::update() {
+UpdateResult main_scene::update() {
   firstPersonCamera* cam = (firstPersonCamera*)(cameras["mainCam"]);
 
   if (pressedKeys[GLFW_KEY_SPACE])
-    return true;
+    return CHANGE_SCENE;
 
   if (pressedKeys[GLFW_KEY_UP])
     cam->move(0.1, glm::vec3(0.0, 0.0, 1.0));
@@ -75,11 +75,10 @@ bool main_scene::update() {
   
   updateObjects();
   
-  return false;
+  return NO_CHANGE;
 }
 
 void main_scene::draw() {
-  defaultShader.res->useProgram();
   drawObjects();
   
   sky.res->draw();

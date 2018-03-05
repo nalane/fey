@@ -2,126 +2,154 @@
 #include "resourceHandler.hpp"
 #include "log.hpp"
 #include "scene.hpp"
+#include "engine.hpp"
+#include "skyboxUniforms.hpp"
 
 using namespace std;
 
 #define SIZE 333.3f
 
-// Remove data from GPU buffer
-skybox::~skybox() {
-  glDeleteVertexArrays(1, &vao);
-  glDeleteTextures(1, &texID);
+skybox::skybox(const string& name) : raw_resource(name), verticesLoaded(false), descriptorsLoaded(false) {
+  // Generate vertices
+  vertices = {
+    // Positions
+	  {{-SIZE,  SIZE, -SIZE, 1.0f}},
+    {{-SIZE, -SIZE, -SIZE, 1.0f}},
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+    {{SIZE,  SIZE, -SIZE, 1.0f}},
+    {{-SIZE,  SIZE, -SIZE, 1.0f}},
+  
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+    {{-SIZE, -SIZE, -SIZE, 1.0f}},
+    {{-SIZE,  SIZE, -SIZE, 1.0f}},
+    {{-SIZE,  SIZE, -SIZE, 1.0f}},
+    {{-SIZE,  SIZE,  SIZE, 1.0f}},
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+  
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+    {{SIZE, -SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE, -SIZE, 1.0f}},
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+   
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+    {{-SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE, -SIZE,  SIZE, 1.0f}},
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+  
+    {{-SIZE,  SIZE, -SIZE, 1.0f}},
+    {{SIZE,  SIZE, -SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{SIZE,  SIZE,  SIZE, 1.0f}},
+    {{-SIZE,  SIZE,  SIZE, 1.0f}},
+    {{-SIZE,  SIZE, -SIZE, 1.0f}},
+  
+    {{-SIZE, -SIZE, -SIZE, 1.0f}},
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+    {{SIZE, -SIZE, -SIZE, 1.0f}},
+    {{-SIZE, -SIZE,  SIZE, 1.0f}},
+    {{SIZE, -SIZE,  SIZE, 1.0f}},
+  };
 }
 
-// Create the skybox textures
-void skybox::setTextures(string texturePaths[NUM_SKYBOX_TEXTURES]) {
-  // Generate vertices
-  float data[] = {
-    // Positions
-	-SIZE,  SIZE, -SIZE,
-    -SIZE, -SIZE, -SIZE,
-    SIZE, -SIZE, -SIZE,
-    SIZE, -SIZE, -SIZE,
-    SIZE,  SIZE, -SIZE,
-    -SIZE,  SIZE, -SIZE,
-  
-    -SIZE, -SIZE,  SIZE,
-    -SIZE, -SIZE, -SIZE,
-    -SIZE,  SIZE, -SIZE,
-    -SIZE,  SIZE, -SIZE,
-    -SIZE,  SIZE,  SIZE,
-    -SIZE, -SIZE,  SIZE,
-  
-    SIZE, -SIZE, -SIZE,
-    SIZE, -SIZE,  SIZE,
-    SIZE,  SIZE,  SIZE,
-    SIZE,  SIZE,  SIZE,
-    SIZE,  SIZE, -SIZE,
-    SIZE, -SIZE, -SIZE,
-   
-    -SIZE, -SIZE,  SIZE,
-    -SIZE,  SIZE,  SIZE,
-    SIZE,  SIZE,  SIZE,
-    SIZE,  SIZE,  SIZE,
-    SIZE, -SIZE,  SIZE,
-    -SIZE, -SIZE,  SIZE,
-  
-    -SIZE,  SIZE, -SIZE,
-    SIZE,  SIZE, -SIZE,
-    SIZE,  SIZE,  SIZE,
-    SIZE,  SIZE,  SIZE,
-    -SIZE,  SIZE,  SIZE,
-    -SIZE,  SIZE, -SIZE,
-  
-    -SIZE, -SIZE, -SIZE,
-    -SIZE, -SIZE,  SIZE,
-    SIZE, -SIZE, -SIZE,
-    SIZE, -SIZE, -SIZE,
-    -SIZE, -SIZE,  SIZE,
-    SIZE, -SIZE,  SIZE
-  };
-  
-  // Generate and fill the vbo
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), &data, GL_STATIC_DRAW);
-  
-  // Generate and fill the vao
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  
-  // Generate texture
-  glActiveTexture(GL_TEXTURE0);
-  glGenTextures(1, &texID);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+// Remove data from GPU buffer
+skybox::~skybox() {
+  VkDevice device = engine::getInstance()->getDevice();
 
-  // Load images to texture
-  for (int i = 0; i < NUM_SKYBOX_TEXTURES; i++) {
-    int width;
-    int height;
-	  int channels;
-	
-	  // Load image to memory
-    unsigned char* imageData = SOIL_load_image(texturePaths[i].c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
-	  if (imageData == nullptr) {
-		  recordLog("WARNING: Could not load " + texturePaths[i] + "!");
-	  }
-	
-	  // Move image to GPU memory
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
-		             width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-	  delete imageData;
-  }
+  vkFreeMemory(device, uniformBufferMemory, nullptr);
+  vkDestroyBuffer(device, uniformBuffer, nullptr);
 
-  // Set drawing methods
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); 
+  vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+
+  vkFreeMemory(device, vertexBufferMemory, nullptr);
+  vkDestroyBuffer(device, vertexBuffer, nullptr);
+}
+
+// Bind the vertices
+void skybox::bindVertices() {
+  verticesLoaded = engine::getInstance()->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+}
+
+// Bind the uniform descriptors
+void skybox::bindDescriptors() {
+  VkDevice device = engine::getInstance()->getDevice();
+
+  VkDeviceSize bufferSize = sizeof(modelUniforms);
+  engine::getInstance()->createVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+
+  texture* tex = (texture*)child_resources["textures"]["skybox"];
+  shaderProgram* prog = (shaderProgram*)child_resources["shaderProgs"]["skybox"];
+  descriptorsLoaded = prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
+
+  VkDescriptorBufferInfo bufferInfo = {};
+  bufferInfo.buffer = uniformBuffer;
+  bufferInfo.offset = 0;
+  bufferInfo.range = sizeof(skyboxUniforms);
+
+  VkDescriptorImageInfo imageInfo = {};
+  imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+  imageInfo.imageView = tex->getImageView();
+  imageInfo.sampler = tex->getSampler();
+
+  vector<VkWriteDescriptorSet> descriptorWrites(2);
+  descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites[0].dstSet = descriptorSet;
+  descriptorWrites[0].dstBinding = 0;
+  descriptorWrites[0].dstArrayElement = 0;
+  descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorWrites[0].descriptorCount = 1;
+  descriptorWrites[0].pBufferInfo = &bufferInfo;
+  descriptorWrites[0].pImageInfo = nullptr;
+  descriptorWrites[0].pTexelBufferView = nullptr;
+
+  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites[1].dstSet = descriptorSet;
+  descriptorWrites[1].dstBinding = 1;
+  descriptorWrites[1].dstArrayElement = 0;
+  descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  descriptorWrites[1].descriptorCount = 1;
+  descriptorWrites[1].pImageInfo = &imageInfo;
+
+  vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0 , nullptr);
 }
 
 void skybox::draw() {
+  // Make sure that model vertices were sent to GPU
+  if (!verticesLoaded) {
+    bindVertices();
+  }
+
+  // Make sure that the uniform descriptors have been sent to the GPU
+  if (!descriptorsLoaded) {
+    bindDescriptors();
+  }
+
 	// Use the skybox shader prog
   shaderProgram* prog = (shaderProgram*)(child_resources["shaderProgs"]["skybox"]);
-  prog->useProgram();
+  VkCommandBuffer activeBuffer = engine::getInstance()->getActiveCommandBuffer();
+  vkCmdBindPipeline(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
+  vkCmdBindDescriptorSets(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
   
   // Move the view matrices to the GPU
   camera* activeCamera = scene::getActiveScene()->getActiveCamera();
   glm::mat4 viewMatrix = glm::mat4(glm::mat3(activeCamera->getViewMatrix()));
   glm::mat4 vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
-  GLint vpHandle = glGetUniformLocation(prog->getProgID(), "vpMatrix");
-  glUniformMatrix4fv(vpHandle, 1, GL_FALSE, &vpMatrix[0][0]);
+
+  // Get uniforms
+  skyboxUniforms uniforms = {};
+  uniforms.vpMatrix = vpMatrix;
+
+  // Send uniforms to GPU
+  engine::getInstance()->bindUniforms(uniforms, uniformBuffer, uniformBufferMemory);
   
-  // Draw the skybox
-  glDepthMask(GL_FALSE);
-  glBindVertexArray(vao);
-  glEnableVertexAttribArray(0);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-  glDepthMask(GL_TRUE);
+  // Give draw commands
+  VkBuffer vertexBuffers[] = {vertexBuffer};
+  VkDeviceSize offsets[] = {0};
+  vkCmdBindVertexBuffers(activeBuffer, 0, 1, vertexBuffers, offsets);
+  vkCmdDraw(activeBuffer, vertices.size(), 1, 0, 0);
 }

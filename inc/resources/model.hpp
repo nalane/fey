@@ -12,32 +12,51 @@
 #include "raw_resource.hpp"
 #include "material.hpp"
 #include "texture.hpp"
+#include "modelVertex.hpp"
+#include "modelUniforms.hpp"
+#include "shaderProgram.hpp"
 
 class model : public raw_resource {
 private:
-  GLuint vao;
-  std::map<int, GLuint> vbos;
   std::vector<material> materials;
-  std::vector<glm::vec3> vertices;
-  int nonPassIndex;
-  int elementsIndex;
-  int elementsSize;
+  std::vector<modelVertex> vertices;
   int numVertices;
+
+  VkDescriptorPool descriptorPool;
+  VkDescriptorSet descriptorSet;
+
+  VkBuffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
+  VkBuffer uniformBuffer;
+  VkDeviceMemory uniformBufferMemory;
+
+  bool verticesLoaded;
+  bool descriptorsLoaded;
 
 public:
   model(const std::string& name);
   ~model();
 
   void addMaterial(const material& mat);
-  void addData(GLenum target, GLsizeiptr size, void* data, GLenum usage, int shaderLocation = -1, int itemSize = 4);
   void setTexture(texture* tex);
   void setVertices(const std::vector<glm::vec3>& vertexList);
   void setUVMapping(const std::vector<glm::vec2>& uvList);
   void setNormals(const std::vector<glm::vec3>& normalList);
-  void setColors(const std::vector<glm::vec4>& colorList);
-  void bindTextureToUniform(GLuint uniformID);
+  void setShaderProgram(shaderProgram* shaderProg) {
+    child_resources["shaderProgs"]["default"] = shaderProg;
+  }
 
-  void draw(GLint progID);
+  void bindDescriptors();
+  void bindVertices();
 
-  std::vector<glm::vec3> getVertices() const { return vertices; }
+  void draw(modelUniforms uniforms);
+
+  std::vector<modelVertex> getVertices() const { return vertices; }
+  std::vector<glm::vec3> getVertexPositions() const;
+  material getMaterial() const { 
+    // For now, shader only supports 1 material
+    if (materials.size() > 0)
+      return materials[0];
+    return material(); 
+  }
 };

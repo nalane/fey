@@ -23,7 +23,6 @@ void object::removeChildren() {
 
 void object::setShaderProg() {
   shaderProg = resourceHandler::getInstance()->loadShaderProg();
-  texHandle = glGetUniformLocation(shaderProg.res->getProgID(), "texSampler");
 }
 
 glm::mat4 object::getModelMatrix() const {
@@ -35,7 +34,6 @@ glm::mat4 object::getModelMatrix() const {
 
 void object::load() {
   this->setShaderProg();
-  progID = shaderProg.res->getProgID();
   
   for (object* o : children)
     o->load();
@@ -58,33 +56,22 @@ void object::draw() {
   glm::mat4 viewMatrix = scene::getActiveScene()->getActiveCamera()->getViewMatrix();
   glm::mat4 projectionMatrix = scene::getActiveScene()->getActiveCamera()->getProjectionMatrix();
   
-  // Send view matrix to GPU
-  GLint viewHandle = glGetUniformLocation(progID, "viewMatrix");
-  glUniformMatrix4fv(viewHandle, 1, GL_FALSE, &viewMatrix[0][0]);
-  
-  // Send model matrix to GPU
-  GLint modelHandle = glGetUniformLocation(progID, "modelMatrix");
-  glUniformMatrix4fv(modelHandle, 1, GL_FALSE, &modelMatrix[0][0]);
-  
-  // Send MVP matrix to GPU
-  glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
-  GLint mvpHandle = glGetUniformLocation(progID, "mvpMatrix");
-  glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &mvpMatrix[0][0]);
-
-  // Send lights to GPU
+  // Get lights
   vector<light*> lights = scene::getActiveScene()->getAllLights();
-  GLint numLightsHandle = glGetUniformLocation(progID, "numLights");
-  glUniform1i(numLightsHandle, lights.size());
-  for (int i = 0; i < lights.size(); i++) {
-    GLint lightHandle = glGetUniformLocation(progID, ("lights[" + to_string(i) + "].position").c_str());
-    glUniform4fv(lightHandle, 1, lights[i]->getPosition());
 
-    lightHandle = glGetUniformLocation(progID, ("lights[" + to_string(i) + "].color").c_str());
-    glUniform3fv(lightHandle, 1, lights[i]->getColor());
+  // Gather data for uniforms
+  modelUniforms uniforms = {};
+  uniforms.modelMatrix = modelMatrix;
+  uniforms.viewMatrix = viewMatrix;
+  uniforms.mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+  uniforms.mat = mesh.res->getMaterial();
+  uniforms.numLights = lights.size();
+  for (int i = 0; i < lights.size(); i++) {
+    uniforms.lights[i] = *lights[0];
   }
   
-  mesh.res->bindTextureToUniform(texHandle);
-  mesh.res->draw(progID);
+  // Draw model
+  mesh.res->draw(uniforms);
   
   // Draw children
   for (object* o : children)

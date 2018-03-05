@@ -26,6 +26,4 @@ public:
   glm::vec4 getDiffuseVals() const { return diffuseVals; }
   glm::vec4 getSpecularVals() const { return specularVals; }
   float getSpecularIntensity() const { return specularIntensity; }
-
-  void sendToShader(GLint progID);
 };

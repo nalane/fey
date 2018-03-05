@@ -18,8 +18,8 @@ sub processTemplate() {
     open(my $templateFH, "<", $template) || die $!;
     open(my $destFH, ">", $dest) || die $!;
     while (my $line = <$templateFH>) {
-	$line =~ s/\@name\@/${name}/g;
-	print $destFH $line;
+	    $line =~ s/\@name\@/${name}/g;
+	    print $destFH $line;
     }
 
     close $templateFH;

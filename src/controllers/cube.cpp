@@ -15,7 +15,7 @@ cube::~cube() {
 void cube::load() {
   object::load();
   mesh = resourceHandler::getInstance()->loadModel("cube.fey.model");
-  collider = new collisionAABB(mesh.res->getVertices());
+  collider = new collisionAABB(mesh.res->getVertexPositions());
 }
 
 void cube::init() {

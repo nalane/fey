@@ -2,25 +2,46 @@
 
 /*
  * Class contains and loads the shader program
+ *  TODO: Make this class an abstract one that model and skybox inherit from
  */
 
+#include <map>
 #include <vector>
 
 #include "raw_resource.hpp"
-#include "shader.hpp"
+#include "glHeaders.hpp"
 
 class shaderProgram : public raw_resource {
 private:
-  GLuint progID;
+  std::map<std::string, std::string> shaderPaths;
+
+  VkVertexInputBindingDescription bindingDescription;
+  std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+
+  VkDescriptorSetLayout descriptorSetLayout;
+
+  VkPipelineLayout pipelineLayout;
+  VkPipeline graphicsPipeline;
 
 public:
-  shaderProgram(const std::string& name) : progID(-1), raw_resource(name) { }
+  shaderProgram(const std::string& name, const std::map<std::string, std::string>& shaderPaths) : raw_resource(name), shaderPaths(shaderPaths) { }
   ~shaderProgram();
   
-  void addShader(shader* s);
+  template <typename T>
+  void setVertexAttributes();
+  bool setDescriptorSetLayout();
+
+  bool createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet);
+
   bool loadShaders();
-  bool compileShaders();
-  bool linkShaders();
-  void useProgram();
-  GLuint getProgID() const { return progID; }
+  void unloadShaders();
+
+  VkPipeline getPipeline() { return graphicsPipeline; }
+  VkPipelineLayout getPipelineLayout() { return pipelineLayout; }
 };
+
+template <typename T>
+void shaderProgram::setVertexAttributes() {
+  bindingDescription = T::getBindingDescription();
+  attributeDescriptions = T::getAttributeDescriptions();
+}

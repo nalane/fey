@@ -21,8 +21,6 @@ protected:
   void removeChildren();
 
   // Data required for drawing
-  GLint texHandle;
-  GLint progID;
   glm::mat4 modelMatrix;
   resource<model> mesh;
 
@@ -31,7 +29,7 @@ protected:
   virtual void setShaderProg();
 
 public:
-  object() : parent(nullptr), texHandle(-1), rigidBody() { }
+  object() : parent(nullptr), rigidBody() { }
   virtual ~object();
 
   // Standard interfact for all objects

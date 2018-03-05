@@ -46,11 +46,11 @@ void second_scene::load() {
   defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
-bool second_scene::update() {
+UpdateResult second_scene::update() {
   trackBallCamera* cam = (trackBallCamera*)(cameras["cam"]);
 
   if (pressedKeys[GLFW_KEY_SPACE])
-    return true;
+    return CHANGE_SCENE;
 
   if (pressedKeys[GLFW_KEY_UP])
     cam->zoom(-0.1);
@@ -60,11 +60,10 @@ bool second_scene::update() {
 
   updateObjects();
   
-  return false;
+  return NO_CHANGE;
 }
 
 void second_scene::draw() {
-  defaultShader.res->useProgram();
   drawObjects();
   sky.res->draw();
 }

@@ -29,7 +29,7 @@ public:
 
   virtual void mousePosition(double xPos, double yPos);
   virtual void load();
-  virtual bool update();
+  virtual UpdateResult update();
   virtual void draw();
   virtual scene* nextScene();
 };

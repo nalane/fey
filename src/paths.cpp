@@ -23,12 +23,19 @@ void setUpProgramPath() {
   char* tmp = new char[DIR_LENGTH];
   
 #ifdef _WIN32
-  GetCurrentDirectory(DIR_LENGTH, tmp);
+  GetModuleFileName(nullptr, tmp, DIR_LENGTH - 1);
 
   // Switch back slashes to forward slashes
+  bool removedProgName = false;
   for (int i = strlen(tmp); i >= 0; i--) {
     if (tmp[i] == '\\') {
-      tmp[i] = '/';
+      if (!removedProgName) {
+        tmp[i] = '\0';
+        removedProgName = true;
+      }
+      else {
+        tmp[i] = '/';
+      }
     }
   }
 

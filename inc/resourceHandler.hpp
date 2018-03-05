@@ -11,7 +11,6 @@
 #include "resource.hpp"
 #undef NO_RESOURCE_TEMPLATE
 
-#include "shader.hpp"
 #include "shaderProgram.hpp"
 #include "model.hpp"
 #include "skybox.hpp"
@@ -28,10 +27,10 @@ private:
 
   // Resource map
   std::map<std::string, raw_resource*> resources;
+  std::map<std::string, shaderProgram*> shaders;
 
   model* loadFeyModel(const std::string& filename);
-  shader* loadVertexShader(const std::string& vertexShaderPath);
-  shader* loadFragmentShader(const std::string& fragmentShaderPath);
+  template <typename T>
   shaderProgram* newShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& key);
   std::string getShaderKey(const std::string& vert, const std::string& frag);
   
@@ -48,13 +47,16 @@ public:
   void unloadAll();
 
   // Shader interaction
-  void setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
+  template <typename T>
   resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
   resource<shaderProgram> loadShaderProg();
+  void setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
+  void unloadShaders();
+  void reloadShaders();
 
   // Miscellaneous
   resource<model> loadModel(const std::string& filepath);
-  resource<texture> loadTexture(const std::string& filepath);
+  resource<texture> loadTexture(const std::set<std::string>& filepaths);
   resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
 };
 
