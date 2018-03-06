@@ -3,7 +3,7 @@
 #include "light.hpp"
 #include "material.hpp"
 
-#define MAX_LIGHTS 50
+#define MAX_LIGHTS 5
 
 struct modelUniforms {
   // Vertex shader uniforms
@@ -13,6 +13,6 @@ struct modelUniforms {
 
   // Fragmaent shader uniforms
   material mat;
-  int numLights;
+  glm::vec4 numLights;
   light lights[MAX_LIGHTS];
 };

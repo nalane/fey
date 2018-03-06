@@ -15,7 +15,7 @@ private:
   float rad;
 
   // Resources used in this scene
-  //resource<skybox> sky;
+  resource<skybox> sky;
 
   // Mouse position
   double mouseX;

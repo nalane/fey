@@ -1,19 +1,19 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 50
+#define MAX_LIGHTS 5
 
 // Color specs of a material
 struct material {
   vec4 ambient;
   vec4 diffuse;
   vec4 specular;
-  float specularIntensity;
+  vec4 specularIntensity;
 };
 
 struct light {
   vec4 position;
-  vec3 color;
+  vec4 color;
 };
 
 layout (location = 0) in vec4 position;
@@ -28,7 +28,7 @@ layout (binding = 0) uniform DefaultUniforms {
 
   // Fragmaent shader uniforms
   material mat;
-  int numLights;
+  vec4 numLights;
   light lights[MAX_LIGHTS];
 } uniforms;
 

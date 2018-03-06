@@ -79,7 +79,9 @@ void model::bindDescriptors() {
   VkDevice device = engine::getInstance()->getDevice();
 
   VkDeviceSize bufferSize = sizeof(modelUniforms);
-  engine::getInstance()->createVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+  engine::getInstance()->createVulkanBuffer(bufferSize,
+    VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    uniformBuffer, uniformBufferMemory);
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(modelUniforms), 0, &mapping);
 
   // One day we will likely allow multiple textures, but for now, just use one.
@@ -144,7 +146,6 @@ void model::draw(modelUniforms uniforms) {
 
   // Send uniforms to GPU
   memcpy(mapping, &uniforms, sizeof(uniforms));
-  //engine::getInstance()->bindUniforms(uniforms, uniformBuffer, uniformBufferMemory);
 
   // Give draw commands
   VkBuffer vertexBuffers[] = {vertexBuffer};

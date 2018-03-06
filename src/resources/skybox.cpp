@@ -81,7 +81,9 @@ void skybox::bindDescriptors() {
   VkDevice device = engine::getInstance()->getDevice();
 
   VkDeviceSize bufferSize = sizeof(skyboxUniforms);
-  engine::getInstance()->createVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+  engine::getInstance()->createVulkanBuffer(bufferSize,
+    VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    uniformBuffer, uniformBufferMemory);
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(skyboxUniforms), 0, &mapping);
 
   texture* tex = (texture*)child_resources["textures"]["skybox"];
@@ -148,7 +150,6 @@ void skybox::draw() {
 
   // Send uniforms to GPU
   memcpy(mapping, &uniforms, sizeof(uniforms));
-  //engine::getInstance()->bindUniforms(uniforms, uniformBuffer, uniformBufferMemory);
   
   // Give draw commands
   VkBuffer vertexBuffers[] = {vertexBuffer};

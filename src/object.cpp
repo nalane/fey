@@ -65,7 +65,7 @@ void object::draw() {
   uniforms.viewMatrix = viewMatrix;
   uniforms.mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
   uniforms.mat = mesh.res->getMaterial();
-  uniforms.numLights = lights.size();
+  uniforms.numLights = glm::vec4(lights.size());
   for (int i = 0; i < lights.size(); i++) {
     uniforms.lights[i] = *lights[0];
   }
