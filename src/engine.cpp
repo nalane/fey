@@ -103,9 +103,8 @@ engine::engine(const string& configFile) : device(VK_NULL_HANDLE), activeBufferI
 // Destroys the game and all pointers used
 engine::~engine() {
   scene::endActiveScene();
-  resourceHandler::endInstance();
-
   cleanupSwapChain();
+  resourceHandler::endInstance();
 
   vkDestroySemaphore(device, renderFinished, nullptr);
   vkDestroySemaphore(device, imageAvailable, nullptr);  
@@ -590,7 +589,7 @@ bool engine::initVulkanImageViews() {
 
   for (int i = 0; i < swapChainImages.size(); i++) {
     VkImageView imageView;
-    createImageView(swapChainImages[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, imageView);
+    createImageView(swapChainImages[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, 1, imageView);
     swapChainImageViews[i] = imageView;
   }
 
@@ -678,7 +677,7 @@ bool engine::initVulkanCommandPool() {
   VkCommandPoolCreateInfo poolInfo = {};
   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   poolInfo.queueFamilyIndex = queueIndices.graphicsFamily;
-  poolInfo.flags = 0;
+  poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
   VkResult result = vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool);
   if (result != VK_SUCCESS) {
@@ -788,7 +787,7 @@ bool engine::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 
   result = vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to allocate vertex buffer memory");
+    recordLog("ERROR: Failed to allocate buffer memory");
     return false;
   }
   vkBindBufferMemory(device, buffer, bufferMemory, 0);  
@@ -944,6 +943,7 @@ void engine::draw() {
   double currentTime = glfwGetTime();
   
   for (int i = 0; i < commandBuffers.size(); i++) {
+    activeBufferIndex = i;
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
@@ -962,13 +962,10 @@ void engine::draw() {
     renderPassInfo.pClearValues = &clearColor;
 
     vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-  }
+    scene::getActiveScene()->draw();
+    vkCmdEndRenderPass(commandBuffers[i]);
 
-  scene::getActiveScene()->draw();
-
-  for (auto buffer : commandBuffers) {
-    vkCmdEndRenderPass(buffer);
-    VkResult result = vkEndCommandBuffer(buffer);
+    VkResult result = vkEndCommandBuffer(commandBuffers[i]);
     if (result != VK_SUCCESS) {
       recordLog("FATAL ERROR: Failed to record command buffer!");
       return;
@@ -986,8 +983,8 @@ void engine::draw() {
   }
 
   VkSemaphore waitSemaphores[] = {imageAvailable};
-  VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   VkSemaphore signalSemaphores[] = {renderFinished};
+  VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   VkSubmitInfo submitInfo = {};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submitInfo.waitSemaphoreCount = 1;
@@ -1071,7 +1068,7 @@ void engine::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-bool engine::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageView& imageView) {
+bool engine::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, uint32_t numLayers, VkImageView& imageView) {
   VkImageViewCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   createInfo.image = image;
@@ -1081,7 +1078,7 @@ bool engine::createImageView(VkImage image, VkImageViewType viewType, VkFormat f
   createInfo.subresourceRange.baseMipLevel = 0;
   createInfo.subresourceRange.levelCount = 1;
   createInfo.subresourceRange.baseArrayLayer = 0;
-  createInfo.subresourceRange.layerCount = 1;
+  createInfo.subresourceRange.layerCount = numLayers;
 
   VkResult result = vkCreateImageView(device, &createInfo, nullptr, &imageView);
   if (result != VK_SUCCESS) {
@@ -1162,8 +1159,12 @@ void engine::runGame() {
       nextScene->update();
     }
       
-    vkDeviceWaitIdle(device);
     draw();
+    VkResult result = vkDeviceWaitIdle(device);
+    if (result == VK_ERROR_DEVICE_LOST) {
+      recordLog("FATAL ERROR: Device lost probably due to timeout");
+      return;
+    }
     glfwSwapBuffers(window); // TODO: remove?
     glfwPollEvents();
   }

@@ -22,7 +22,7 @@ void initLogging(const string& file, bool debugFlag) {
 // Records a message to the log file
 bool recordLog(const string& message) {
   if (debug)
-    cout << message << "\n";
+    cout << message << endl;
   
   if (fout.is_open()) {
     fout << message << "\n";

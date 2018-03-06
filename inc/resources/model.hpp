@@ -33,6 +33,8 @@ private:
   bool verticesLoaded;
   bool descriptorsLoaded;
 
+  void* mapping = nullptr;
+
 public:
   model(const std::string& name);
   ~model();

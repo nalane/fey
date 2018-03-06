@@ -15,6 +15,7 @@ model::model(const std::string& name) : raw_resource(name) {
 model::~model() {
   VkDevice device = engine::getInstance()->getDevice();
 
+  vkUnmapMemory(device, uniformBufferMemory);
   vkFreeMemory(device, uniformBufferMemory, nullptr);
   vkDestroyBuffer(device, uniformBuffer, nullptr);
 
@@ -34,7 +35,7 @@ void model::setTexture(texture* tex) {
   child_resources["textures"][tex->getName()] = tex;
 }
 
-// Sends vertex data to the GPU
+// Gather vertex data
 void model::setVertices(const vector<glm::vec3>& vertexList) {
   vertices.resize(vertexList.size());
   for (int i = 0; i < vertexList.size(); i++) {
@@ -59,7 +60,7 @@ void model::setUVMapping(const vector<glm::vec2>& uvList) {
   }
 }
 
-// Sends normal data to the GPU
+// Gather normals
 void model::setNormals(const vector<glm::vec3>& normalList) {
   if (numVertices != normalList.size()) {
     recordLog("ERROR: Number of vertices does not equal number of normal vectors");
@@ -79,6 +80,7 @@ void model::bindDescriptors() {
 
   VkDeviceSize bufferSize = sizeof(modelUniforms);
   engine::getInstance()->createVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+  vkMapMemory(device, uniformBufferMemory, 0, sizeof(modelUniforms), 0, &mapping);
 
   // One day we will likely allow multiple textures, but for now, just use one.
   texture* tex = (texture*)(child_resources["textures"].begin()->second);
@@ -141,14 +143,8 @@ void model::draw(modelUniforms uniforms) {
   vkCmdBindDescriptorSets(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
 
   // Send uniforms to GPU
-  engine::getInstance()->bindUniforms(uniforms, uniformBuffer, uniformBufferMemory);
-
-  // Load textures into GPU
-  int index = 0;
-  for(auto p : child_resources["textures"]) {
-    texture* tex = (texture*)(p.second);
-    index++;
-  }
+  memcpy(mapping, &uniforms, sizeof(uniforms));
+  //engine::getInstance()->bindUniforms(uniforms, uniformBuffer, uniformBufferMemory);
 
   // Give draw commands
   VkBuffer vertexBuffers[] = {vertexBuffer};

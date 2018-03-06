@@ -85,8 +85,8 @@ bool texture::loadTexture() {
     vkDestroyBuffer(device, stagingBuffer, nullptr);
 
     // Create image view
-    VkImageViewType viewType = files.size() > 1 ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D;
-    engine::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, textureImageView);
+    VkImageViewType viewType = files.size() == 6 ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D;
+    engine::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, files.size(), textureImageView);
 
     // Create sampler
     VkSamplerCreateInfo samplerInfo = {};
@@ -112,6 +112,8 @@ bool texture::loadTexture() {
         recordLog("ERROR: Could not create texture sampler");
         return false;
     }
+
+    return true;
 }
 
 /*

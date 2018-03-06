@@ -119,15 +119,15 @@ public:
 
   template <typename T>
   bool bindVertices(std::vector<T> vertices, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory);
-  template <typename T>
-  bool bindUniforms(T uniforms, VkBuffer& uniformBuffer, VkDeviceMemory& uniformBufferMemory);
+  //template <typename T>
+  //bool bindUniforms(T uniforms, VkBuffer& uniformBuffer, VkDeviceMemory& uniformBufferMemory);
   bool createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
   // Executing single time commands
   VkCommandBuffer beginSingleTimeCommands();
   void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-  bool createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageView& imageView);
+  bool createImageView(VkImage image, VkImageViewType viewType, VkFormat format, uint32_t numLayers, VkImageView& imageView);
   bool createVulkanImage(uint32_t width, uint32_t height, uint32_t layers, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
   void copyBufferToImage(VkBuffer buffer, VkImage image, std::vector<VkBufferImageCopy> bufferCopies);
   void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -165,15 +165,17 @@ bool engine::bindVertices(std::vector<T> vertices, VkBuffer& vertexBuffer, VkDev
   return true;
 }
 
+/*
 template <typename T>
 bool engine::bindUniforms(T uniforms, VkBuffer& uniformBuffer, VkDeviceMemory& uniformBufferMemory) {
-  VkDeviceSize bufferSize = sizeof(T);
+  VkDeviceSize bufferSize = sizeof(uniforms);
   createVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
 
   void* data;
-  vkMapMemory(device, uniformBufferMemory, 0, sizeof(uniforms), 0, &data);
+  VkResult result = vkMapMemory(device, uniformBufferMemory, 0, sizeof(uniforms), 0, &data);
   memcpy(data, &uniforms, sizeof(uniforms));
   vkUnmapMemory(device, uniformBufferMemory);
 
   return true;
 }
+*/

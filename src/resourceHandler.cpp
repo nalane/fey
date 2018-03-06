@@ -119,8 +119,13 @@ model* resourceHandler::loadFeyModel(const string& filename) {
         recordLog("Loading texture " + filename);
 
         texture* newTexture = new texture(filename, {filename});
-        newTexture->loadTexture();
-        resources[filename] = newTexture;
+        if (newTexture->loadTexture()) {
+          resources[filename] = newTexture;
+          recordLog("Successfully read in texture " + filename);
+        }
+        else {
+          recordLog("ERROR: Could not read in texture " + filename);
+        }
       }
       m->setTexture((texture*)resources[filename]);
     }
@@ -209,13 +214,19 @@ string resourceHandler::getShaderKey(const string& vert, const string& frag) {
 // Create a new shader program
 template <typename T>
 shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
+  recordLog("Loading shader " + key);
   map<string, string> shaderFiles;
   shaderFiles["vertex"] = vertexShader + ".spv";
   shaderFiles["fragment"] = fragmentShader + ".spv";
 
   shaderProgram* prog = new shaderProgram(key, shaderFiles);
   prog->setVertexAttributes<T>();
-  prog->loadShaders();
+  if (!prog->loadShaders()) {
+    recordLog("ERROR: Could not read in shader " + key);
+    return nullptr;
+  }
+
+  recordLog("Successfully read in shader " + key);
   return prog;
 }
 
@@ -291,7 +302,14 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
       recordLog("Loading texture " + key);
     
       texture* newTexture = new texture(key, skyboxTextures);
-      newTexture->loadTexture();
+      if (newTexture->loadTexture()) {
+        resources[key] = newTexture;
+        recordLog("Successfully read in texture " + key);
+      }
+      else {
+        recordLog("ERROR: Could not read in texture " + key);
+      }
+
       resources[key] = newTexture; 
     }
 
@@ -307,6 +325,8 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures((texture*)resources[key]);
     resources[path] = newSkybox;
+
+    recordLog("Successfully read in skybox " + path);
   }
 
   return resource<skybox>((skybox*) resources[path]);

@@ -35,6 +35,7 @@ private:
   
   bool verticesLoaded;
   bool descriptorsLoaded;
+  void* mapping = nullptr;
   
 public:
   skybox(const std::string& name);

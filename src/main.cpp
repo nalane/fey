@@ -22,7 +22,11 @@ int main(int argc, char** argv) {
   string configPath = getFullPath(DEFAULT_CONFIG_FILE);
 
   // Enable debugging, if desired
+#ifdef NDEBUG
   bool debug = false;
+#else
+  bool debug = true;
+#endif
   for (int i = 1; i < argc; i++) {
     if (string(argv[i]) == "-d")
       debug = true;
