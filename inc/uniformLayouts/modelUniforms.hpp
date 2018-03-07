@@ -4,8 +4,9 @@
 #include "material.hpp"
 
 #define MAX_LIGHTS 5
+#define ALIGNMENT 16
 
-struct modelUniforms {
+struct alignas(ALIGNMENT) modelUniforms {
   // Vertex shader uniforms
   glm::mat4 modelMatrix;
   glm::mat4 viewMatrix;
@@ -13,6 +14,6 @@ struct modelUniforms {
 
   // Fragmaent shader uniforms
   material mat;
-  glm::vec4 numLights;
+  int numLights;
   light lights[MAX_LIGHTS];
 };

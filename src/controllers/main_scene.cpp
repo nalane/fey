@@ -37,12 +37,12 @@ void main_scene::load() {
   // Set up main light
   lights["mainLight"] = new light();
   lights["mainLight"]->setPosition(glm::vec4(1.5 * sin(rad), 0.0, 1.5 * cos(rad), 1.0));
-  lights["mainLight"]->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+  lights["mainLight"]->setColor(glm::vec3(1.0, 1.0, 1.0));
 
   // Set up secondary light
   lights["staticLight"] = new light();
   lights["staticLight"]->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
-  lights["staticLight"]->setColor(glm::vec4(0.7, 0.7, 0.7, 1.0));
+  lights["staticLight"]->setColor(glm::vec3(0.7, 0.7, 0.7));
   
   // Set up sky box
   sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");

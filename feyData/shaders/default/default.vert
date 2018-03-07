@@ -8,12 +8,12 @@ struct material {
   vec4 ambient;
   vec4 diffuse;
   vec4 specular;
-  vec4 specularIntensity;
+  float specularIntensity;
 };
 
 struct light {
   vec4 position;
-  vec4 color;
+  vec3 color;
 };
 
 layout (location = 0) in vec4 position;
@@ -28,7 +28,7 @@ layout (binding = 0) uniform DefaultUniforms {
 
   // Fragmaent shader uniforms
   material mat;
-  vec4 numLights;
+  int numLights;
   light lights[MAX_LIGHTS];
 } uniforms;
 

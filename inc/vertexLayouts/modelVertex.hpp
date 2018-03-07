@@ -3,7 +3,9 @@
 #include "glHeaders.hpp"
 #include <vector>
 
-struct modelVertex {
+#define ALIGNMENT 16
+
+struct alignas(ALIGNMENT) modelVertex {
     glm::vec4 position;
     glm::vec2 vertexUV;
     glm::vec4 normal;

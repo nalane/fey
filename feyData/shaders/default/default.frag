@@ -8,12 +8,12 @@ struct material {
   vec4 ambient;
   vec4 diffuse;
   vec4 specular;
-	vec4 specularIntensity;
+	float specularIntensity;
 };
 
 struct light {
   vec4 position;
-  vec4 color;
+  vec3 color;
 };
 
 layout (location = 0) in vec2 fragUV;
@@ -28,7 +28,7 @@ layout (binding = 0) uniform DefaultUniforms {
 
   // Fragmaent shader uniforms
   material mat;
-  vec4 numLights;
+  int numLights;
   light lights[MAX_LIGHTS];
 } uniforms;
 
@@ -43,7 +43,7 @@ void main(void) {
 
   // Total light color
   vec3 light_color = vec3(0.0);  
-  for (int i = 0; i < uniforms.numLights.x; i++) {
+  for (int i = 0; i < uniforms.numLights; i++) {
 	  // Calculate vectors
     vec3 lightVector = normalize((uniforms.lights[i].position - fragView).xyz);
     vec3 halfVector = normalize(normalize(uniforms.viewMatrix * vec4(lightVector, 1.0)).xyz
@@ -52,7 +52,7 @@ void main(void) {
 	  // Calculate diffuse and specular
     vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0)
 						             * tex_color * uniforms.lights[i].color.rgb;
-    vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), uniforms.mat.specularIntensity.x)
+    vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), uniforms.mat.specularIntensity)
                           * uniforms.mat.specular.rgb * uniforms.lights[i].color.rgb;
 
     light_color += (diffuseResult);

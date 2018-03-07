@@ -3,7 +3,9 @@
 #include "glHeaders.hpp"
 #include <vector>
 
-struct skyboxVertex {
+#define ALIGNMENT 16
+
+struct alignas(ALIGNMENT) skyboxVertex {
     glm::vec4 position;
 
     static VkVertexInputBindingDescription getBindingDescription() {
