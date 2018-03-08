@@ -273,16 +273,6 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     recordLog("Loading skybox " + path);
     
     // Get the textures
-    /*
-    vector<string> skyboxTextures(NUM_SKYBOX_TEXTURES);
-    skyboxTextures[SKYBOX_RIGHT]  = (path + "/right." + extension);
-    skyboxTextures[SKYBOX_LEFT]   = (path + "/left." + extension);
-    skyboxTextures[SKYBOX_TOP]    = (path + "/top." + extension);
-    skyboxTextures[SKYBOX_BOTTOM] = (path + "/bottom." + extension);
-    skyboxTextures[SKYBOX_BACK]   = (path + "/back." + extension);
-    skyboxTextures[SKYBOX_FRONT]  = (path + "/front." + extension);
-    */
-
     set<string> skyboxTextures;
     skyboxTextures.insert(path + "/right." + extension);
     skyboxTextures.insert(path + "/left." + extension);
@@ -324,6 +314,8 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     skybox* newSkybox = new skybox(path);
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures((texture*)resources[key]);
+    newSkybox->bindVertices();
+    newSkybox->bindDescriptors();
     resources[path] = newSkybox;
 
     recordLog("Successfully read in skybox " + path);

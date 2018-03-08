@@ -1,6 +1,6 @@
 #include "log.hpp"
 #include "model.hpp"
-#include "engine.hpp"
+#include "graphics.hpp"
 
 using namespace std;
 
@@ -13,7 +13,7 @@ model::model(const std::string& name) : raw_resource(name) {
 
 // Removes all vbos and the vao
 model::~model() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   vkUnmapMemory(device, uniformBufferMemory);
   vkFreeMemory(device, uniformBufferMemory, nullptr);
@@ -76,10 +76,10 @@ void model::setNormals(const vector<glm::vec3>& normalList) {
 
 // Bind the uniform descriptors
 void model::bindDescriptors() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   VkDeviceSize bufferSize = sizeof(modelUniforms);
-  engine::getInstance()->createVulkanBuffer(bufferSize,
+  graphics::getInstance()->createVulkanBuffer(bufferSize,
     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
     uniformBuffer, uniformBufferMemory);
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(modelUniforms), 0, &mapping);
@@ -123,7 +123,7 @@ void model::bindDescriptors() {
 
 // Send vertices to GPU
 void model::bindVertices() {
-  verticesLoaded = engine::getInstance()->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  verticesLoaded = graphics::getInstance()->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
 }
 
 // Draws the model
@@ -140,7 +140,7 @@ void model::draw(modelUniforms uniforms) {
 
   // Activate shader
   shaderProgram* prog = (shaderProgram*)child_resources["shaderProgs"]["default"];
-  VkCommandBuffer activeBuffer = engine::getInstance()->getActiveCommandBuffer();
+  VkCommandBuffer activeBuffer = graphics::getInstance()->getActiveCommandBuffer();
   vkCmdBindPipeline(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
   vkCmdBindDescriptorSets(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
 

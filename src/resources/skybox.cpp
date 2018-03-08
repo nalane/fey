@@ -2,7 +2,7 @@
 #include "resourceHandler.hpp"
 #include "log.hpp"
 #include "scene.hpp"
-#include "engine.hpp"
+#include "graphics.hpp"
 #include "skyboxUniforms.hpp"
 
 using namespace std;
@@ -59,7 +59,7 @@ skybox::skybox(const string& name) : raw_resource(name), verticesLoaded(false), 
 
 // Remove data from GPU buffer
 skybox::~skybox() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   vkUnmapMemory(device, uniformBufferMemory);
   vkFreeMemory(device, uniformBufferMemory, nullptr);
@@ -73,15 +73,15 @@ skybox::~skybox() {
 
 // Bind the vertices
 void skybox::bindVertices() {
-  verticesLoaded = engine::getInstance()->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  verticesLoaded = graphics::getInstance()->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
 }
 
 // Bind the uniform descriptors
 void skybox::bindDescriptors() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   VkDeviceSize bufferSize = sizeof(skyboxUniforms);
-  engine::getInstance()->createVulkanBuffer(bufferSize,
+  graphics::getInstance()->createVulkanBuffer(bufferSize,
     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
     uniformBuffer, uniformBufferMemory);
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(skyboxUniforms), 0, &mapping);
@@ -135,7 +135,7 @@ void skybox::draw() {
 
 	// Use the skybox shader prog
   shaderProgram* prog = (shaderProgram*)(child_resources["shaderProgs"]["skybox"]);
-  VkCommandBuffer activeBuffer = engine::getInstance()->getActiveCommandBuffer();
+  VkCommandBuffer activeBuffer = graphics::getInstance()->getActiveCommandBuffer();
   vkCmdBindPipeline(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
   vkCmdBindDescriptorSets(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
   

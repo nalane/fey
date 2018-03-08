@@ -1,19 +1,11 @@
 #include "texture.hpp"
 #include "log.hpp"
-#include "engine.hpp"
+#include "graphics.hpp"
 
 using namespace std;
 
-/*
-texture::texture(const string& name) : raw_resource(name) {
-    texID = SOIL_load_OGL_texture(name.c_str(),
-        SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-}
-*/
-
 texture::~texture() {
-    VkDevice device = engine::getInstance()->getDevice();
+    VkDevice device = graphics::getInstance()->getDevice();
 
     vkDestroySampler(device, textureSampler, nullptr);
     vkDestroyImageView(device, textureImageView, nullptr);
@@ -23,7 +15,7 @@ texture::~texture() {
 }
 
 bool texture::loadTexture() {
-    VkDevice device = engine::getInstance()->getDevice();
+    VkDevice device = graphics::getInstance()->getDevice();
 
     int layer = 0;
     VkDeviceSize offset = 0;
@@ -65,7 +57,7 @@ bool texture::loadTexture() {
     // Load into staging buffer
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
-    engine::getInstance()->createVulkanBuffer(buffer.size(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+    graphics::getInstance()->createVulkanBuffer(buffer.size(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
     // Move data to buffer
     void* data;
@@ -75,10 +67,10 @@ bool texture::loadTexture() {
 
     // Move texture to GPU memory
     VkImageCreateFlags flags = files.size() == 6 ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
-    engine::getInstance()->createVulkanImage(widths[0], heights[0], files.size(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, flags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-    engine::getInstance()->transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    engine::getInstance()->copyBufferToImage(stagingBuffer, textureImage, copyRegions);
-    engine::getInstance()->transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    graphics::getInstance()->createVulkanImage(widths[0], heights[0], files.size(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, flags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    graphics::getInstance()->transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    graphics::getInstance()->copyBufferToImage(stagingBuffer, textureImage, copyRegions);
+    graphics::getInstance()->transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     // Clear staging buffers
     vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -86,7 +78,7 @@ bool texture::loadTexture() {
 
     // Create image view
     VkImageViewType viewType = files.size() == 6 ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D;
-    engine::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, files.size(), textureImageView);
+    graphics::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, files.size(), textureImageView);
 
     // Create sampler
     VkSamplerCreateInfo samplerInfo = {};

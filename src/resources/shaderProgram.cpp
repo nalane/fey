@@ -1,6 +1,6 @@
 #include "shaderProgram.hpp"
 #include "log.hpp"
-#include "engine.hpp"
+#include "graphics.hpp"
 #include "modelVertex.hpp"
 
 #include <fstream>
@@ -9,7 +9,7 @@ using namespace std;
 
 // Deletes shader program from GPU memory
 shaderProgram::~shaderProgram() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
   vkDestroyPipeline(device, graphicsPipeline, nullptr);
@@ -17,7 +17,7 @@ shaderProgram::~shaderProgram() {
 }
 
 bool shaderProgram::setDescriptorSetLayout() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   // Layout for uniforms
   VkDescriptorSetLayoutBinding uboLayoutBinding = {};
@@ -53,7 +53,7 @@ bool shaderProgram::setDescriptorSetLayout() {
 }
 
 bool shaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet) {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   VkDescriptorPoolSize poolSizes[2] = {};
   poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -91,10 +91,10 @@ bool shaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, 
 
 // Load all shaders into main memory
 bool shaderProgram::loadShaders() {
-  // Structs needed from the engine
-  VkDevice device = engine::getInstance()->getDevice();
-  VkExtent2D extent = engine::getInstance()->getExtent();
-  VkRenderPass renderPass = engine::getInstance()->getRenderPass();
+  // Structs needed from the graphics engine
+  VkDevice device = graphics::getInstance()->getDevice();
+  VkExtent2D extent = graphics::getInstance()->getExtent();
+  VkRenderPass renderPass = graphics::getInstance()->getRenderPass();
 
   // Create layout for uniforms
   bool res = setDescriptorSetLayout();
@@ -280,7 +280,7 @@ bool shaderProgram::loadShaders() {
 }
 
 void shaderProgram::unloadShaders() {
-  VkDevice device = engine::getInstance()->getDevice();
+  VkDevice device = graphics::getInstance()->getDevice();
 
   vkDestroyPipeline(device, graphicsPipeline, nullptr);
   vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
