@@ -49,6 +49,9 @@ private:
     VkCommandPool commandPool;
     VkSemaphore imageAvailable;
     VkSemaphore renderFinished;
+    VkImage depthImage;
+    VkDeviceMemory depthImageMemory;
+    VkImageView depthImageView;
 
     // Buffers
     int activeBufferIndex = -1;
@@ -85,6 +88,13 @@ private:
     bool findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output);
     bool copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
 
+    // Depth buffer helper functions
+    bool findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features, VkFormat& format);
+    bool findDepthFormat(VkFormat& format);
+    bool hasStencilComponent(VkFormat format) {
+        return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+    }
+
     void cleanupSwapChain();
 
 public:
@@ -117,12 +127,15 @@ public:
     void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
     // Create and manipulate images
-    bool createImageView(VkImage image, VkImageViewType viewType, VkFormat format, uint32_t numLayers, VkImageView& imageView);
+    bool createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t numLayers, VkImageView& imageView);
     bool createVulkanImage(uint32_t width, uint32_t height, uint32_t layers,
         VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags,
         VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
     void copyBufferToImage(VkBuffer buffer, VkImage image, std::vector<VkBufferImageCopy> bufferCopies);
     void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+
+    // Turn on and turn off depth buffering
+    bool enableDepthBuffer();
 
     void draw();
 };

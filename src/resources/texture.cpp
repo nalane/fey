@@ -78,7 +78,7 @@ bool texture::loadTexture() {
 
     // Create image view
     VkImageViewType viewType = files.size() == 6 ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D;
-    graphics::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, files.size(), textureImageView);
+    graphics::getInstance()->createImageView(textureImage, viewType, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, files.size(), textureImageView);
 
     // Create sampler
     VkSamplerCreateInfo samplerInfo = {};
