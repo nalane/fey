@@ -90,7 +90,7 @@ bool shaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, 
 }
 
 // Load all shaders into main memory
-bool shaderProgram::loadShaders() {
+bool shaderProgram::loadShaders(VkBool32 depthEnable, VkCullModeFlags cullMode) {
   // Structs needed from the graphics engine
   VkDevice device = graphics::getInstance()->getDevice();
   VkExtent2D extent = graphics::getInstance()->getExtent();
@@ -197,7 +197,7 @@ bool shaderProgram::loadShaders() {
   rasterizer.rasterizerDiscardEnable = VK_FALSE;
   rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+  rasterizer.cullMode = cullMode;
   rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
   rasterizer.depthBiasEnable = VK_FALSE;
   rasterizer.depthBiasConstantFactor = 0.0f;
@@ -249,7 +249,7 @@ bool shaderProgram::loadShaders() {
   VkPipelineDepthStencilStateCreateInfo depthStencil = {};
   depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   depthStencil.depthTestEnable = VK_TRUE;
-  depthStencil.depthWriteEnable = VK_TRUE;
+  depthStencil.depthWriteEnable = depthEnable;
   depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
   depthStencil.depthBoundsTestEnable = VK_FALSE;
   depthStencil.stencilTestEnable = VK_FALSE;

@@ -3,7 +3,7 @@
 #include "light.hpp"
 #include "material.hpp"
 
-#define MAX_LIGHTS 5
+#define MAX_LIGHTS 50
 #define ALIGNMENT 16
 
 struct alignas(ALIGNMENT) modelUniforms {

@@ -53,6 +53,7 @@ public:
 
   void draw(modelUniforms uniforms);
 
+  int getNumTextures() { return child_resources["textures"].size(); }
   std::vector<modelVertex> getVertices() const { return vertices; }
   std::vector<glm::vec3> getVertexPositions() const;
   material getMaterial() const { 

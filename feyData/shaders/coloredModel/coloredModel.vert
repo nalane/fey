@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 5
+#define MAX_LIGHTS 50
 
 // Color specs of a material
 struct material {

@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 5
+#define MAX_LIGHTS 50
 
 // Color specs of a material
 struct material {
@@ -38,22 +38,21 @@ layout (location = 0) out vec4 color;
 
 void main(void) {
   // Color of fragment without lighting
-  vec3 tex_color = clamp(texture(texSampler, fragUV).rgb + uniforms.mat.diffuse.rgb,
-						             vec3(0.0), vec3(1.0));
+  vec3 tex_color = clamp(texture(texSampler, fragUV).rgb + uniforms.mat.diffuse.rgb, vec3(0.0), vec3(1.0));
 
   // Total light color
   vec3 light_color = vec3(0.0);  
   for (int i = 0; i < uniforms.numLights; i++) {
 	  // Calculate vectors
     vec3 lightVector = normalize((uniforms.lights[i].position - fragView).xyz);
-    vec3 halfVector = normalize(normalize(uniforms.viewMatrix * vec4(lightVector, 1.0)).xyz
-	  							  - normalize((uniforms.viewMatrix * fragView).xyz));
+    vec3 halfVector = normalize(normalize(uniforms.viewMatrix * vec4(lightVector, 1.0)).xyz -
+      normalize((uniforms.viewMatrix * fragView).xyz));
 
 	  // Calculate diffuse and specular
-    vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0)
-						             * tex_color * uniforms.lights[i].color.rgb;
-    vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), uniforms.mat.specularIntensity)
-                          * uniforms.mat.specular.rgb * uniforms.lights[i].color.rgb;
+    vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0) *
+      tex_color * uniforms.lights[i].color.rgb;
+    vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), uniforms.mat.specularIntensity) *
+      uniforms.mat.specular.rgb * uniforms.lights[i].color.rgb;
 
     light_color += (diffuseResult);
   }

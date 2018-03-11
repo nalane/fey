@@ -33,7 +33,7 @@ public:
 
   bool createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet);
 
-  bool loadShaders();
+  bool loadShaders(VkBool32 depthEnable = VK_TRUE, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT);
   void unloadShaders();
 
   VkPipeline getPipeline() { return graphicsPipeline; }

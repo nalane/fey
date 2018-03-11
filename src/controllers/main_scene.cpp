@@ -81,7 +81,7 @@ UpdateResult main_scene::update() {
 void main_scene::draw() {
   drawObjects();
   
-  //sky.res->draw();
+  sky.res->draw();
 }
 
 scene* main_scene::nextScene() {

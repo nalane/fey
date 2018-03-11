@@ -190,10 +190,21 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
   if (resources.find(filepath) == resources.end()) {
     model* newModel = loadFeyModel(filepath);
 
-    // Add shader child
-    string shaderKey = getShaderKey(defaultVertexShader, defaultFragmentShader);
+    // Get paths to shader programs
+    string vertexShader = "";
+    string fragmentShader = "";
+    if (newModel->getNumTextures() == 0) {
+      vertexShader = getDataFolderPath("shaders/coloredModel/coloredModel.vert");
+      fragmentShader = getDataFolderPath("shaders/coloredModel/coloredModel.frag");
+    } else {
+      vertexShader = defaultVertexShader;
+      fragmentShader = defaultFragmentShader;
+    }
+
+    // Add child shader
+    string shaderKey = getShaderKey(vertexShader, fragmentShader);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader<modelVertex>(defaultVertexShader, defaultFragmentShader, shaderKey);
+      resources[shaderKey] = newShader<modelVertex>(vertexShader, fragmentShader, shaderKey);
     }   
     newModel->setShaderProgram((shaderProgram*)resources[shaderKey]);
 
@@ -213,7 +224,7 @@ string resourceHandler::getShaderKey(const string& vert, const string& frag) {
 
 // Create a new shader program
 template <typename T>
-shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key) {
+shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key, VkBool32 depthEnable, VkCullModeFlags cullMode) {
   recordLog("Loading shader " + key);
   map<string, string> shaderFiles;
   shaderFiles["vertex"] = vertexShader + ".spv";
@@ -221,7 +232,7 @@ shaderProgram* resourceHandler::newShader(const string& vertexShader, const stri
 
   shaderProgram* prog = new shaderProgram(key, shaderFiles);
   prog->setVertexAttributes<T>();
-  if (!prog->loadShaders()) {
+  if (!prog->loadShaders(depthEnable, cullMode)) {
     recordLog("ERROR: Could not read in shader " + key);
     return nullptr;
   }
@@ -308,7 +319,7 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     string fragShader = getDataFolderPath("shaders/skybox/skybox.frag");
     string shaderKey = getShaderKey(vertexShader, fragShader);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey);
+      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey, VK_FALSE, VK_CULL_MODE_FRONT_BIT);
     }
 
     skybox* newSkybox = new skybox(path);

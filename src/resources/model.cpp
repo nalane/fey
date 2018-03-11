@@ -84,8 +84,6 @@ void model::bindDescriptors() {
     uniformBuffer, uniformBufferMemory);
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(modelUniforms), 0, &mapping);
 
-  // One day we will likely allow multiple textures, but for now, just use one.
-  texture* tex = (texture*)(child_resources["textures"].begin()->second);
   shaderProgram* prog = (shaderProgram*)child_resources["shaderProgs"]["default"];
   descriptorsLoaded = prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
 
@@ -94,29 +92,35 @@ void model::bindDescriptors() {
   bufferInfo.offset = 0;
   bufferInfo.range = sizeof(modelUniforms);
 
-  VkDescriptorImageInfo imageInfo = {};
-  imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-  imageInfo.imageView = tex->getImageView();
-  imageInfo.sampler = tex->getSampler();
+  vector<VkWriteDescriptorSet> descriptorWrites;
+  descriptorWrites.push_back({});
+  descriptorWrites.back().sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites.back().dstSet = descriptorSet;
+  descriptorWrites.back().dstBinding = 0;
+  descriptorWrites.back().dstArrayElement = 0;
+  descriptorWrites.back().descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorWrites.back().descriptorCount = 1;
+  descriptorWrites.back().pBufferInfo = &bufferInfo;
+  descriptorWrites.back().pImageInfo = nullptr;
+  descriptorWrites.back().pTexelBufferView = nullptr;
 
-  vector<VkWriteDescriptorSet> descriptorWrites(2);
-  descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  descriptorWrites[0].dstSet = descriptorSet;
-  descriptorWrites[0].dstBinding = 0;
-  descriptorWrites[0].dstArrayElement = 0;
-  descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  descriptorWrites[0].descriptorCount = 1;
-  descriptorWrites[0].pBufferInfo = &bufferInfo;
-  descriptorWrites[0].pImageInfo = nullptr;
-  descriptorWrites[0].pTexelBufferView = nullptr;
+  // One day we will likely allow multiple textures, but for now, just use one.
+  if (child_resources["textures"].size() > 0) {
+    texture* tex = (texture*)(child_resources["textures"].begin()->second);
+    VkDescriptorImageInfo imageInfo = {};
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.imageView = tex->getImageView();
+    imageInfo.sampler = tex->getSampler();
 
-  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  descriptorWrites[1].dstSet = descriptorSet;
-  descriptorWrites[1].dstBinding = 1;
-  descriptorWrites[1].dstArrayElement = 0;
-  descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = 1;
-  descriptorWrites[1].pImageInfo = &imageInfo;
+    descriptorWrites.push_back({});
+    descriptorWrites.back().sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites.back().dstSet = descriptorSet;
+    descriptorWrites.back().dstBinding = 1;
+    descriptorWrites.back().dstArrayElement = 0;
+    descriptorWrites.back().descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrites.back().descriptorCount = 1;
+    descriptorWrites.back().pImageInfo = &imageInfo;
+  } 
 
   vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0 , nullptr);
 }
