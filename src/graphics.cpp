@@ -1075,40 +1075,44 @@ bool graphics::enableDepthBuffer() {
 void graphics::draw() {
   double currentTime = glfwGetTime();
   
-  for (int i = 0; i < commandBuffers.size(); i++) {
-    activeBufferIndex = i;
-    VkCommandBufferBeginInfo beginInfo = {};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-    beginInfo.pInheritanceInfo = nullptr;
+  VkCommandBufferBeginInfo beginInfo = {};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+  beginInfo.pInheritanceInfo = nullptr;
 
-    vkBeginCommandBuffer(commandBuffers[i], &beginInfo);
+  vkBeginCommandBuffer(getActiveCommandBuffer(), &beginInfo);
 
-    vector<VkClearValue> clearValues(2);
-    clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-    clearValues[1].depthStencil = {1.0f, 0};
-    VkRenderPassBeginInfo renderPassInfo = {};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = renderPass;
-    renderPassInfo.framebuffer = swapChainFramebuffers[i];
-    renderPassInfo.renderArea.offset = {0, 0};
-    renderPassInfo.renderArea.extent = swapChainExtent;
-    renderPassInfo.clearValueCount = clearValues.size();
-    renderPassInfo.pClearValues = clearValues.data();
+  // Render pass create info
+  vector<VkClearValue> clearValues(2);
+  clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+  clearValues[1].depthStencil = {1.0f, 0};
+  VkRenderPassBeginInfo renderPassInfo = {};
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderPassInfo.renderPass = renderPass;
+  renderPassInfo.framebuffer = swapChainFramebuffers[activeBufferIndex];
+  renderPassInfo.renderArea.offset = {0, 0};
+  renderPassInfo.renderArea.extent = swapChainExtent;
+  renderPassInfo.clearValueCount = clearValues.size();
+  renderPassInfo.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-    scene::getActiveScene()->draw();
-    vkCmdEndRenderPass(commandBuffers[i]);
+  // Execute render pass
+  vkCmdBeginRenderPass(getActiveCommandBuffer(), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+  scene::getActiveScene()->draw();
+  vkCmdEndRenderPass(getActiveCommandBuffer());
 
-    VkResult result = vkEndCommandBuffer(commandBuffers[i]);
-    if (result != VK_SUCCESS) {
-      recordLog("FATAL ERROR: Failed to record command buffer!");
-      return;
-    }
+  // End command buffer
+  VkResult result = vkEndCommandBuffer(getActiveCommandBuffer());
+  if (result != VK_SUCCESS) {
+    recordLog("FATAL ERROR: Failed to record command buffer!");
+    return;
   }
 
+  // Increment active buffer
+  activeBufferIndex = (activeBufferIndex + 1) % commandBuffers.size();
+
+  // Get next image to draw to
   uint32_t imageIndex;
-  VkResult result = vkAcquireNextImageKHR(device, swapChain, numeric_limits<uint64_t>::max(), imageAvailable, VK_NULL_HANDLE, &imageIndex);
+  result = vkAcquireNextImageKHR(device, swapChain, numeric_limits<uint64_t>::max(), imageAvailable, VK_NULL_HANDLE, &imageIndex);
   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapChain();
     return;
@@ -1117,6 +1121,7 @@ void graphics::draw() {
     return;
   }
 
+  // Queue submission info struct
   VkSemaphore waitSemaphores[] = {imageAvailable};
   VkSemaphore signalSemaphores[] = {renderFinished};
   VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
@@ -1130,12 +1135,14 @@ void graphics::draw() {
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
+  // Submit command buffer to draw
   result = vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
   if (result != VK_SUCCESS) {
     recordLog("FATAL ERROR: Could not draw command buffer");
     return;
   }
 
+  // Presentation info struct
   VkSwapchainKHR swapChains[] = {swapChain};
   VkPresentInfoKHR presentInfo = {};
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -1146,6 +1153,7 @@ void graphics::draw() {
   presentInfo.pImageIndices = &imageIndex;
   presentInfo.pResults = nullptr;
 
+  // Present frame
   result = vkQueuePresentKHR(presentQueue, &presentInfo);
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
     recreateSwapChain();

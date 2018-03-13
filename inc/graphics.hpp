@@ -54,7 +54,7 @@ private:
     VkImageView depthImageView;
 
     // Buffers
-    int activeBufferIndex = -1;
+    int activeBufferIndex = 0;
     std::vector<VkImage> swapChainImages;
     std::vector<VkImageView> swapChainImageViews;
     std::vector<VkFramebuffer> swapChainFramebuffers;
