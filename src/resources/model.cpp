@@ -9,6 +9,18 @@ model::model(const std::string& name) : raw_resource(name) {
   numVertices = 0;
   verticesLoaded = false;
   descriptorsLoaded = false;
+
+  // Generate secondary command buffer
+  VkCommandBufferAllocateInfo allocInfo = {};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.commandPool = graphics::getInstance()->getCommandPool();
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+  allocInfo.commandBufferCount = 1;
+
+  VkResult result = vkAllocateCommandBuffers(graphics::getInstance()->getDevice(), &allocInfo, &commandBuffer);
+  if (result != VK_SUCCESS) {
+    recordLog("ERROR: Could not create secondary command buffer for " + name);
+  }
 }
 
 // Removes all vbos and the vao
@@ -142,11 +154,25 @@ void model::draw(modelUniforms uniforms) {
     bindDescriptors();
   }
 
+  // Secondary buffer inheritance info
+  VkCommandBufferInheritanceInfo inheritanceInfo = {};
+  inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+  inheritanceInfo.pNext = nullptr;
+  inheritanceInfo.renderPass = graphics::getInstance()->getRenderPass();
+  inheritanceInfo.subpass = 0;
+  inheritanceInfo.framebuffer = graphics::getInstance()->getActiveFramebuffer();
+
+  // Begin command buffer
+  VkCommandBufferBeginInfo beginInfo = {};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+  beginInfo.pInheritanceInfo = &inheritanceInfo;
+  vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
   // Activate shader
   shaderProgram* prog = (shaderProgram*)child_resources["shaderProgs"]["default"];
-  VkCommandBuffer activeBuffer = graphics::getInstance()->getActiveCommandBuffer();
-  vkCmdBindPipeline(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
-  vkCmdBindDescriptorSets(activeBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
+  vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
+  vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
 
   // Send uniforms to GPU
   memcpy(mapping, &uniforms, sizeof(uniforms));
@@ -154,8 +180,15 @@ void model::draw(modelUniforms uniforms) {
   // Give draw commands
   VkBuffer vertexBuffers[] = {vertexBuffer};
   VkDeviceSize offsets[] = {0};
-  vkCmdBindVertexBuffers(activeBuffer, 0, 1, vertexBuffers, offsets);
-  vkCmdDraw(activeBuffer, vertices.size(), 1, 0, 0);
+  vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+  vkCmdDraw(commandBuffer, vertices.size(), 1, 0, 0);
+
+  // End command buffer
+  vkEndCommandBuffer(commandBuffer);
+
+  // Send secondary buffer to primary buffer
+  VkCommandBuffer activeBuffer = graphics::getInstance()->getActiveCommandBuffer();
+  vkCmdExecuteCommands(activeBuffer, 1, &commandBuffer);
 }
 
 vector<glm::vec3> model::getVertexPositions() const {

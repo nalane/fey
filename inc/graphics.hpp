@@ -108,11 +108,13 @@ public:
 
     bool recreateSwapChain();
 
-    VkDevice getDevice() {return device;}
-    VkExtent2D getExtent() {return swapChainExtent;}
-    VkRenderPass getRenderPass() {return renderPass;}
-    VkCommandBuffer getActiveCommandBuffer() {return commandBuffers[activeBufferIndex];}
-    std::vector<VkCommandBuffer> getCommandBuffers() {return commandBuffers;}
+    VkDevice getDevice() const { return device; }
+    VkExtent2D getExtent() const { return swapChainExtent; }
+    VkRenderPass getRenderPass() const { return renderPass; }
+    VkCommandPool getCommandPool() const { return commandPool; }
+    VkCommandBuffer getActiveCommandBuffer() const { return commandBuffers[activeBufferIndex]; }
+    VkFramebuffer getActiveFramebuffer() const { return swapChainFramebuffers[activeBufferIndex]; }
+    std::vector<VkCommandBuffer> getCommandBuffers() const { return commandBuffers; }
 
     bool programShouldRun() {return !glfwWindowShouldClose(window);}
     VkResult idle() {return vkDeviceWaitIdle(device);}

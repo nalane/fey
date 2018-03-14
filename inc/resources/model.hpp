@@ -30,6 +30,8 @@ private:
   VkBuffer uniformBuffer;
   VkDeviceMemory uniformBufferMemory;
 
+  VkCommandBuffer commandBuffer;
+
   bool verticesLoaded;
   bool descriptorsLoaded;
 

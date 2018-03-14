@@ -1096,7 +1096,7 @@ void graphics::draw() {
   renderPassInfo.pClearValues = clearValues.data();
 
   // Execute render pass
-  vkCmdBeginRenderPass(getActiveCommandBuffer(), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+  vkCmdBeginRenderPass(getActiveCommandBuffer(), &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
   scene::getActiveScene()->draw();
   vkCmdEndRenderPass(getActiveCommandBuffer());
 
