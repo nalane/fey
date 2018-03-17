@@ -474,7 +474,8 @@ VkExtent2D graphics::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabiliti
   int width, height;
   glfwGetWindowSize(window, &width, &height);
 
-  VkExtent2D actualExtent = {width, height};
+  VkExtent2D actualExtent = {static_cast<uint32_t>(width),
+    static_cast<uint32_t>(height)};
   return actualExtent;
 }
 
@@ -490,7 +491,8 @@ bool graphics::initVulkanSwapChain() {
   }
 
   // Struct to create swap chain
-  uint32_t indices[] = {queueIndices.graphicsFamily, queueIndices.presentFamily};
+  uint32_t indices[] = { static_cast<uint32_t>(queueIndices.graphicsFamily),
+    static_cast<uint32_t>(queueIndices.presentFamily) };
   VkSwapchainCreateInfoKHR createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   createInfo.surface = surface;
@@ -988,6 +990,8 @@ bool graphics::createVulkanImage(uint32_t width, uint32_t height, uint32_t layer
     return false;
   }
   vkBindImageMemory(device, image, imageMemory, 0);
+
+  return true;
 }
 
 void graphics::copyBufferToImage(VkBuffer buffer, VkImage image, vector<VkBufferImageCopy> bufferCopies) {
