@@ -19,6 +19,7 @@ include_directories(inc/resources)
 include_directories(inc/fixtures)
 include_directories(inc/physics)
 include_directories(inc/physics/colliders)
+include_directories(inc/graphicsEngines)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(fey ${SOURCES})

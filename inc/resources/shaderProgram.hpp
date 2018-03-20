@@ -1,47 +1,28 @@
 #pragma once
 
 /*
- * Class contains and loads the shader program
- *  TODO: Make this class an abstract one that model and skybox inherit from
+ * Base abstract classs for shader program
  */
 
-#include <map>
-#include <vector>
-
 #include "raw_resource.hpp"
-#include "glHeaders.hpp"
+
+#include <map>
+#include <string>
+#include <map>
 
 class shaderProgram : public raw_resource {
-private:
-  std::map<std::string, std::string> shaderPaths;
-
-  VkVertexInputBindingDescription bindingDescription;
-  std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-
-  VkDescriptorSetLayout descriptorSetLayout;
-
-  VkPipelineLayout pipelineLayout;
-  VkPipeline graphicsPipeline;
+protected:
+    std::map<std::string, std::string> shaderPaths;
 
 public:
-  shaderProgram(const std::string& name, const std::map<std::string, std::string>& shaderPaths) : raw_resource(name), shaderPaths(shaderPaths) { }
-  ~shaderProgram();
-  
-  template <typename T>
-  void setVertexAttributes();
-  bool setDescriptorSetLayout();
+    shaderProgram(const std::string& name, const std::map<std::string, std::string>& shaderPaths) :
+        raw_resource(name), shaderPaths(shaderPaths) { }
+    virtual ~shaderProgram() { }
 
-  bool createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet);
+    static shaderProgram* createShaderProgram(
+        const std::string& name,
+        const std::map<std::string, std::string>& shaderPaths);
 
-  bool loadShaders(VkBool32 depthEnable = VK_TRUE, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT);
-  void unloadShaders();
-
-  VkPipeline getPipeline() { return graphicsPipeline; }
-  VkPipelineLayout getPipelineLayout() { return pipelineLayout; }
+    virtual bool loadShaders(bool depthEnable = true, bool cullModeBackFaces = true) = 0;
+    virtual void unloadShaders() = 0;
 };
-
-template <typename T>
-void shaderProgram::setVertexAttributes() {
-  bindingDescription = T::getBindingDescription();
-  attributeDescriptions = T::getAttributeDescriptions();
-}

@@ -31,7 +31,7 @@ private:
 
   model* loadFeyModel(const std::string& filename);
   template <typename T>
-  shaderProgram* newShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& key, VkBool32 depthEnable = VK_TRUE, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT);
+  shaderProgram* newShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& key, bool depthEnable = true, bool cullModeBackFaces = true);
   std::string getShaderKey(const std::string& vert, const std::string& frag);
   
 public:

@@ -3,9 +3,9 @@
 #include <vector>
 #include <string>
 
-#include "glHeaders.hpp"
+#include "graphics.hpp"
 
-class graphics {
+class vulkan : public graphics {
 private:
     // Data structures for Vulkan initialization
     struct QueueFamilyIndices {
@@ -23,15 +23,11 @@ private:
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    // Singleton
-    static graphics* instance;
-
     // Static elements
     static const std::vector<const char*> requiredExtensions;
     static const std::vector<const char*> validationLayers;
 
     // Rendering
-    GLFWwindow* window;
     QueueFamilyIndices queueIndices;
     SwapChainSupportDetails details;
 
@@ -60,8 +56,6 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     std::vector<VkCommandBuffer> commandBuffers;
 
-    bool initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
-
     // Functions to init Vulkan
     bool checkVulkanValidationLayerSupport();
     bool initVulkanInstance();
@@ -84,6 +78,11 @@ private:
     bool initVulkanSemaphores();
     bool initVulkan();
 
+    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor) {
+        return initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor) && 
+            initVulkan();
+    }
+
     // Memory buffer interaction
     bool findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output);
     bool copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
@@ -98,13 +97,8 @@ private:
     void cleanupSwapChain();
 
 public:
-    graphics() { }
-    ~graphics();
-
-    // Interact with singleton
-    static void createInstance(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
-    static graphics* getInstance();
-    static void endInstance();
+    vulkan() : graphics(VULKAN) { }
+    ~vulkan();
 
     bool recreateSwapChain();
 
@@ -118,6 +112,13 @@ public:
 
     bool programShouldRun() {return !glfwWindowShouldClose(window);}
     VkResult idle() {return vkDeviceWaitIdle(device);}
+
+    // Virtual methods from graphics
+    virtual bool enableDepthBuffer();
+    virtual void draw();
+    virtual void resizeCallback() {
+        recreateSwapChain();
+    }
 
     // Create buffers for the shaders
     template <typename T>
@@ -135,16 +136,11 @@ public:
         VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
     void copyBufferToImage(VkBuffer buffer, VkImage image, std::vector<VkBufferImageCopy> bufferCopies);
     void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-
-    // Turn on and turn off depth buffering
-    bool enableDepthBuffer();
-
-    void draw();
 };
 
 // Send vertices to GPU
 template <typename T>
-bool graphics::bindVertices(std::vector<T> vertices, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory) {
+bool vulkan::bindVertices(std::vector<T> vertices, VkBuffer& vertexBuffer, VkDeviceMemory& vertexBufferMemory) {
     VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
     VkBuffer stagingBuffer;

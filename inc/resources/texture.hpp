@@ -1,33 +1,23 @@
 #pragma once
 
 /*
- * Contains code for storing a texture
+ * Base abstract class for texture resource
  */
 
-#include <string>
-#include <set>
-
 #include "raw_resource.hpp"
-#include "glHeaders.hpp"
+
+#include <set>
+#include <string>
 
 class texture : public raw_resource {
-private:
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
-
-    VkImageView textureImageView;
-    VkSampler textureSampler;
-
+protected:
     std::set<std::string> files;
 
 public:
-    texture(const std::string& name, std::set<std::string> files) : raw_resource(name), files(files) { }
-    ~texture();
+    texture(const std::string& name, const std::set<std::string>& files) : raw_resource(name), files(files) { }
+    virtual ~texture() { }
 
-    bool loadTexture();
+    static texture* createTexture(const std::string& name, const std::set<std::string>& files);
 
-    VkSampler getSampler() { return textureSampler; }
-    VkImageView getImageView() { return textureImageView; }
-
-    //void draw(GLuint index);
+    virtual bool loadTexture() = 0;
 };

@@ -10,6 +10,8 @@
 #include "paths.hpp"
 #include "log.hpp"
 #include "glHeaders.hpp"
+#include "graphics.hpp"
+#include "vkShaderProgram.hpp"
 
 using namespace std;
 
@@ -43,8 +45,7 @@ model* resourceHandler::loadFeyModel(const string& filename) {
 
   ifstream fin(fullPath.c_str());
   if (fin.is_open()) {
-    m = new model(filename);
-    
+    m = model::createModel(filename);
 
     // Get version number and number of materials
     string version = "";
@@ -118,7 +119,7 @@ model* resourceHandler::loadFeyModel(const string& filename) {
       if (it == resources.end()) {
         recordLog("Loading texture " + filename);
 
-        texture* newTexture = new texture(filename, {filename});
+        texture* newTexture = texture::createTexture(filename, {filename});
         if (newTexture->loadTexture()) {
           resources[filename] = newTexture;
           recordLog("Successfully read in texture " + filename);
@@ -224,15 +225,18 @@ string resourceHandler::getShaderKey(const string& vert, const string& frag) {
 
 // Create a new shader program
 template <typename T>
-shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key, VkBool32 depthEnable, VkCullModeFlags cullMode) {
+shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key, bool depthEnable, bool cullModeBackFaces) {
   recordLog("Loading shader " + key);
   map<string, string> shaderFiles;
   shaderFiles["vertex"] = vertexShader + ".spv";
   shaderFiles["fragment"] = fragmentShader + ".spv";
 
-  shaderProgram* prog = new shaderProgram(key, shaderFiles);
-  prog->setVertexAttributes<T>();
-  if (!prog->loadShaders(depthEnable, cullMode)) {
+  shaderProgram* prog = shaderProgram::createShaderProgram(key, shaderFiles);
+  if (graphics::getInstance()->getLibrary() == VULKAN) {
+    vkShaderProgram* vkprog = (vkShaderProgram*)prog;
+    vkprog->setVertexAttributes<T>();
+  }
+  if (!prog->loadShaders(depthEnable, cullModeBackFaces)) {
     recordLog("ERROR: Could not read in shader " + key);
     return nullptr;
   }
@@ -302,7 +306,7 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     if (resources.find(key) == resources.end()) {
       recordLog("Loading texture " + key);
     
-      texture* newTexture = new texture(key, skyboxTextures);
+      texture* newTexture = texture::createTexture(key, skyboxTextures);
       if (newTexture->loadTexture()) {
         resources[key] = newTexture;
         recordLog("Successfully read in texture " + key);
@@ -319,10 +323,10 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     string fragShader = getDataFolderPath("shaders/skybox/skybox.frag");
     string shaderKey = getShaderKey(vertexShader, fragShader);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey, VK_FALSE, VK_CULL_MODE_FRONT_BIT);
+      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey, false, false);
     }
 
-    skybox* newSkybox = new skybox(path);
+    skybox* newSkybox = skybox::createSkybox(path);
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures((texture*)resources[key]);
     newSkybox->bindVertices();
@@ -346,7 +350,7 @@ resource<texture> resourceHandler::loadTexture(const set<string>& filepaths) {
   if (it == resources.end()) {
     recordLog("Loading texture " + key);
     
-    texture* newTexture = new texture(key, filepaths);
+    texture* newTexture = texture::createTexture(key, filepaths);
     newTexture->loadTexture();
     resources[key] = newTexture;
   }

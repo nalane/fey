@@ -17,6 +17,7 @@ private:
   static engine* instance;
 
   // Values from config file
+  GraphicsLibrary graphicsEngine;
   unsigned int windowWidth;
   unsigned int windowHeight;
   int numAASamples;

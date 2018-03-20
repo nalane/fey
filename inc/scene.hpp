@@ -9,6 +9,7 @@
 #include "glHeaders.hpp"
 #include "physicsWorld.hpp"
 #include "light.hpp"
+#include "camera.hpp"
 
 #include <string>
 #include <vector>

@@ -22,7 +22,7 @@ engine* engine::instance;
 engine::engine(const string& configFile) {
   ifstream fin(configFile.c_str());
   if (fin.is_open()) {
-    string dataPath, libraryPath;
+    string gLibrary, dataPath, libraryPath;
 
     fin >> windowWidth;
     fin >> windowHeight;
@@ -35,6 +35,8 @@ engine::engine(const string& configFile) {
     getline(fin, libraryPath);
     getline(fin, vertexShader);
     getline(fin, fragmentShader);
+    fin >> gLibrary;
+    graphicsEngine = gLibrary == "g" ? GL : VULKAN;
 
     fin.close();
 
@@ -47,6 +49,7 @@ engine::engine(const string& configFile) {
     recordLog("Library Path: " + libraryPath);
     recordLog("Vertex Shader: " + vertexShader);
     recordLog("Fragment Shader: " + fragmentShader);
+    recordLog("Graphics Engine: " + string(graphicsEngine == GL ? "OpenGL" : "Vulkan"));
 
     setDataFolder(dataPath);
     setLibraryFolder(libraryPath);
@@ -84,7 +87,7 @@ void engine::endInstance() {
 
 // Start the graphics system
 bool engine::initGraphics() {
-  graphics::createInstance(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
+  graphics::createInstance(graphicsEngine, fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
   resourceHandler::createInstance();
 
   setDefaultAspectRatio((double) windowWidth / (double) windowHeight);
@@ -130,13 +133,6 @@ void engine::runGame() {
     }
       
     draw();
-    VkResult result = graphics::getInstance()->idle();
-    if (result == VK_ERROR_DEVICE_LOST) {
-      recordLog("FATAL ERROR: Device lost probably due to timeout");
-      return;
-    }
     glfwPollEvents();
   }
-
-  VkResult result = graphics::getInstance()->idle();
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <set>
 
-#include "graphics.hpp"
+#include "vulkan.hpp"
 #include "log.hpp"
 #include "engine.hpp"
 
@@ -13,29 +13,15 @@ const bool enableValidationLayers = false;
 #else
 const bool enableValidationLayers = true;
 #endif
-const vector<const char*> graphics::validationLayers = {
+
+const vector<const char*> vulkan::validationLayers = {
   "VK_LAYER_LUNARG_standard_validation"
 };
-const vector<const char*> graphics::requiredExtensions = {
+const vector<const char*> vulkan::requiredExtensions = {
   VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
-// Singleton
-graphics* graphics::instance;
-
-// Static graphics callbacks
-static void window_resize_callback(GLFWwindow* window, int width, int height) {
-    graphics::getInstance()->recreateSwapChain();
-}
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  scene::getActiveScene()->keyPress(key, action, mods);
-}
-
-static void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
-  scene::getActiveScene()->mousePosition(xpos, ypos);
-}
-
+// Validation layer callback
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugReportFlagsEXT flags,
         VkDebugReportObjectTypeEXT objType,
@@ -51,7 +37,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   return VK_FALSE;
 }
 
-graphics::~graphics() {
+vulkan::~vulkan() {
   cleanupSwapChain();
 
   vkDestroySemaphore(device, renderFinished, nullptr);
@@ -66,67 +52,10 @@ graphics::~graphics() {
   }
   vkDestroySurfaceKHR(vulkanInstance, surface, nullptr);
   vkDestroyInstance(vulkanInstance, nullptr);
-  
-  glfwDestroyWindow(window);
-  glfwTerminate();
-}
-
-// Functions for interacting with singleton
-void graphics::createInstance(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
-  instance = new graphics();
-  instance->initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
-  instance->initVulkan();
-}
-
-graphics* graphics::getInstance() {
-    return instance;
-}
-
-void graphics::endInstance() {
-    delete instance;
-}
-
-// GLFW Initialization
-bool graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
-  if (!glfwInit()) {
-    recordLog("FATAL ERROR: Could not initialize GLFW!");
-    return false;
-  }
-
-  // Force use of OpenGL core
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-  // Determine if we should do it fullscreen
-  GLFWmonitor* monitor = nullptr;
-  if (fullscreen) {
-    monitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-    windowWidth = videoMode->width;
-    windowHeight = videoMode->height;
-  }
-
-  // Create the window
-  window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), monitor, nullptr);
-  if (!window) {
-    recordLog("FATAL ERROR: Could not create a GLFW window!");
-    glfwTerminate();
-    return false;
-  }
-
-  // Set GLFW variables
-  glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
-  glfwSetKeyCallback(window, key_callback);
-  glfwSetCursorPosCallback(window, cursor_callback);
-  glfwSetWindowSizeCallback(window, window_resize_callback);
-  if (hideCursor)
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-  return true;
 }
 
 // Make sure needed validation layers are supported
-bool graphics::checkVulkanValidationLayerSupport() {
+bool vulkan::checkVulkanValidationLayerSupport() {
   // Identify validation layers
   uint32_t layerCount;
   vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -150,7 +79,7 @@ bool graphics::checkVulkanValidationLayerSupport() {
 }
 
 // Begin Vulkan
-bool graphics::initVulkanInstance() {
+bool vulkan::initVulkanInstance() {
   // Enable validation layers, if needed
   if (enableValidationLayers && !checkVulkanValidationLayerSupport()) {
     recordLog("FATAL ERROR: Validation layers were requested but could not be generated");
@@ -218,7 +147,7 @@ bool graphics::initVulkanInstance() {
   return true;
 }
 
-bool graphics::initVulkanDebug() {
+bool vulkan::initVulkanDebug() {
   if (!enableValidationLayers)
     return true;
 
@@ -243,7 +172,7 @@ bool graphics::initVulkanDebug() {
   return true;
 }
 
-bool graphics::initVulkanSurface() {
+bool vulkan::initVulkanSurface() {
   VkResult result = glfwCreateWindowSurface(vulkanInstance, window, nullptr, &surface);
   if (result != VK_SUCCESS) {
     recordLog("FATAL ERROR: Could not create window surface!");
@@ -253,7 +182,7 @@ bool graphics::initVulkanSurface() {
   return true;
 }
 
-graphics::QueueFamilyIndices graphics::findQueueFamilies(const VkPhysicalDevice& pDevice) {
+vulkan::QueueFamilyIndices vulkan::findQueueFamilies(const VkPhysicalDevice& pDevice) {
   // Get number of queue families
   uint32_t numQueueFamilies = 0;
   vkGetPhysicalDeviceQueueFamilyProperties(pDevice, &numQueueFamilies, nullptr);
@@ -291,7 +220,7 @@ graphics::QueueFamilyIndices graphics::findQueueFamilies(const VkPhysicalDevice&
   return indices;
 }
 
-graphics::SwapChainSupportDetails graphics::querySwapChainSupport(const VkPhysicalDevice& pDevice) {
+vulkan::SwapChainSupportDetails vulkan::querySwapChainSupport(const VkPhysicalDevice& pDevice) {
   SwapChainSupportDetails supportDetails;
 
   // Check for the device's capabilities
@@ -316,7 +245,7 @@ graphics::SwapChainSupportDetails graphics::querySwapChainSupport(const VkPhysic
   return supportDetails;
 }
 
-bool graphics::isDeviceSuitable(const VkPhysicalDevice& pDevice) {
+bool vulkan::isDeviceSuitable(const VkPhysicalDevice& pDevice) {
   // Make sure device has the right queues
   QueueFamilyIndices indices = findQueueFamilies(pDevice);
   if (!indices.isComplete()) {
@@ -365,7 +294,7 @@ bool graphics::isDeviceSuitable(const VkPhysicalDevice& pDevice) {
   return false;
 }
 
-bool graphics::initVulkanDevice() {
+bool vulkan::initVulkanDevice() {
   // Get the number of graphics cards available
   uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(vulkanInstance, &deviceCount, nullptr);
@@ -431,14 +360,14 @@ bool graphics::initVulkanDevice() {
   return true;
 }
 
-bool graphics::initVulkanQueues() {
+bool vulkan::initVulkanQueues() {
   vkGetDeviceQueue(device, queueIndices.graphicsFamily, 0, &graphicsQueue);
   vkGetDeviceQueue(device, queueIndices.presentFamily, 0, &presentQueue);
 
   return true;
 }
 
-VkSurfaceFormatKHR graphics::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats) {
+VkSurfaceFormatKHR vulkan::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats) {
   if (formats.size() == 1 && formats[0].format == VK_FORMAT_UNDEFINED) {
     return {VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR};
   }
@@ -452,7 +381,7 @@ VkSurfaceFormatKHR graphics::chooseSwapSurfaceFormat(const std::vector<VkSurface
   return formats[0];
 }
 
-VkPresentModeKHR graphics::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
+VkPresentModeKHR vulkan::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes) {
   VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 
   for (const auto& mode : presentModes) {
@@ -466,7 +395,7 @@ VkPresentModeKHR graphics::chooseSwapPresentMode(const std::vector<VkPresentMode
   return bestMode;
 }
 
-VkExtent2D graphics::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+VkExtent2D vulkan::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
   if (capabilities.currentExtent.width != numeric_limits<uint32_t>::max()) {
     return capabilities.currentExtent;
   }
@@ -479,7 +408,7 @@ VkExtent2D graphics::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabiliti
   return actualExtent;
 }
 
-bool graphics::initVulkanSwapChain() {
+bool vulkan::initVulkanSwapChain() {
   VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(details.formats);
   VkPresentModeKHR presentMode = chooseSwapPresentMode(details.presentModes);
   VkExtent2D extent = chooseSwapExtent(details.capabilities);
@@ -536,7 +465,7 @@ bool graphics::initVulkanSwapChain() {
   return true;
 }
 
-bool graphics::initVulkanImageViews() {
+bool vulkan::initVulkanImageViews() {
   swapChainImageViews.resize(swapChainImages.size());
 
   for (int i = 0; i < swapChainImages.size(); i++) {
@@ -548,7 +477,7 @@ bool graphics::initVulkanImageViews() {
   return true;
 }
 
-bool graphics::initVulkanRenderPass() {
+bool vulkan::initVulkanRenderPass() {
   // Describes our color attachment
   VkAttachmentDescription colorAttachment = {};
   colorAttachment.format = swapChainImageFormat;
@@ -617,7 +546,7 @@ bool graphics::initVulkanRenderPass() {
   return true;
 }
 
-bool graphics::initVulkanFramebuffers() {
+bool vulkan::initVulkanFramebuffers() {
   swapChainFramebuffers.resize(swapChainImageViews.size());
 
   for (int i = 0; i < swapChainImageViews.size(); i++) {
@@ -643,7 +572,7 @@ bool graphics::initVulkanFramebuffers() {
   return true;
 }
 
-bool graphics::initVulkanCommandPool() {
+bool vulkan::initVulkanCommandPool() {
   VkCommandPoolCreateInfo poolInfo = {};
   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   poolInfo.queueFamilyIndex = queueIndices.graphicsFamily;
@@ -658,7 +587,7 @@ bool graphics::initVulkanCommandPool() {
   return true;
 }
 
-bool graphics::initVulkanCommandBuffers() {
+bool vulkan::initVulkanCommandBuffers() {
   commandBuffers.resize(swapChainFramebuffers.size());
 
   VkCommandBufferAllocateInfo allocInfo = {};
@@ -676,7 +605,7 @@ bool graphics::initVulkanCommandBuffers() {
   return true;
 }
 
-bool graphics::initVulkanSemaphores() {
+bool vulkan::initVulkanSemaphores() {
   VkSemaphoreCreateInfo semaphoreInfo = {};
   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -691,7 +620,7 @@ bool graphics::initVulkanSemaphores() {
   return true;
 }
 
-bool graphics::initVulkan() {
+bool vulkan::initVulkan() {
   if (!initVulkanInstance())
     return false;
 
@@ -734,7 +663,7 @@ bool graphics::initVulkan() {
   return true;
 }
 
-bool graphics::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output) {
+bool vulkan::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output) {
   VkPhysicalDeviceMemoryProperties memProperties;
   vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
@@ -749,7 +678,7 @@ bool graphics::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags propert
   return false;
 }
 
-bool graphics::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
+bool vulkan::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
   VkBufferCopy copyRegion = {};
@@ -763,7 +692,7 @@ bool graphics::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
   return true;
 }
 
-bool graphics::findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features, VkFormat& format) {
+bool vulkan::findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features, VkFormat& format) {
   for (VkFormat candidate : candidates) {
     VkFormatProperties props;
     vkGetPhysicalDeviceFormatProperties(physicalDevice, candidate, &props);
@@ -781,7 +710,7 @@ bool graphics::findSupportedFormat(const vector<VkFormat>& candidates, VkImageTi
   return false;
 }
 
-bool graphics::findDepthFormat(VkFormat& format) {
+bool vulkan::findDepthFormat(VkFormat& format) {
   bool result = findSupportedFormat(
     {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
     VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT, format);
@@ -794,7 +723,7 @@ bool graphics::findDepthFormat(VkFormat& format) {
   return true;
 }
 
-void graphics::cleanupSwapChain() {
+void vulkan::cleanupSwapChain() {
   for (auto buffer : swapChainFramebuffers) {
     vkDestroyFramebuffer(device, buffer, nullptr);
   }
@@ -816,7 +745,7 @@ void graphics::cleanupSwapChain() {
 }
 
 // Recreate swap chain if needed
-bool graphics::recreateSwapChain() {
+bool vulkan::recreateSwapChain() {
   // Consider the situation where the window is minimized
   int width, height;
   glfwGetWindowSize(window, &width, &height);
@@ -849,7 +778,7 @@ bool graphics::recreateSwapChain() {
   return true;
 }
 
-bool graphics::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+bool vulkan::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
   VkBufferCreateInfo bufferInfo = {};
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferInfo.size = size;
@@ -883,7 +812,7 @@ bool graphics::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, V
   return true;
 }
 
-VkCommandBuffer graphics::beginSingleTimeCommands() {
+VkCommandBuffer vulkan::beginSingleTimeCommands() {
   VkCommandBufferAllocateInfo allocInfo = {};
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -902,7 +831,7 @@ VkCommandBuffer graphics::beginSingleTimeCommands() {
   return commandBuffer;
 }
 
-void graphics::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
+void vulkan::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkEndCommandBuffer(commandBuffer);
 
   VkSubmitInfo submitInfo = {};
@@ -916,7 +845,7 @@ void graphics::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-bool graphics::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t numLayers, VkImageView& imageView) {
+bool vulkan::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t numLayers, VkImageView& imageView) {
   VkImageViewCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   createInfo.image = image;
@@ -937,7 +866,7 @@ bool graphics::createImageView(VkImage image, VkImageViewType viewType, VkFormat
   return true;
 }
 
-bool graphics::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+bool vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
   VkFormatProperties props;
   vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
@@ -994,13 +923,13 @@ bool graphics::createVulkanImage(uint32_t width, uint32_t height, uint32_t layer
   return true;
 }
 
-void graphics::copyBufferToImage(VkBuffer buffer, VkImage image, vector<VkBufferImageCopy> bufferCopies) {
+void vulkan::copyBufferToImage(VkBuffer buffer, VkImage image, vector<VkBufferImageCopy> bufferCopies) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
   vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, bufferCopies.data());
   endSingleTimeCommands(commandBuffer);
 }
 
-void graphics::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
+void vulkan::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
   VkPipelineStageFlags sourceStage;
@@ -1063,7 +992,7 @@ void graphics::transitionImageLayout(VkImage image, VkFormat format, VkImageLayo
   endSingleTimeCommands(commandBuffer);
 }
 
-bool graphics::enableDepthBuffer() {
+bool vulkan::enableDepthBuffer() {
   VkFormat format;
   if (!findDepthFormat(format)) {
     recordLog("FATAL ERROR: Depth buffering could not be initialized");
@@ -1076,7 +1005,7 @@ bool graphics::enableDepthBuffer() {
   return true;
 }
 
-void graphics::draw() {
+void vulkan::draw() {
   double currentTime = glfwGetTime();
   
   VkCommandBufferBeginInfo beginInfo = {};
@@ -1163,6 +1092,13 @@ void graphics::draw() {
     recreateSwapChain();
   } else if (result != VK_SUCCESS) {
     recordLog("FATAL ERROR: Failed to present swap chain image!");
+    return;
+  }
+
+  // Idle until frame is drawn
+  result = idle();
+  if (result == VK_ERROR_DEVICE_LOST) {
+    recordLog("FATAL ERROR: Device lost probably due to timeout");
     return;
   }
 }
