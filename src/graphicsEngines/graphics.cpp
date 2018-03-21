@@ -2,6 +2,8 @@
 #include "scene.hpp"
 #include "vulkan.hpp"
 
+#include <exception>
+
 using namespace std;
 
 // Singleton
@@ -26,11 +28,21 @@ graphics::~graphics() {
 }
 
 // Functions for interacting with singleton
-void graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
+bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
   if (library == VULKAN) {
     instance = new vulkan();
-    instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
+    try {
+      instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
+      return true;
+    } catch (exception& e) {
+      delete instance;
+      instance = nullptr;
+      recordLog("WARNING: Could not initialize Vulkan: " + string(e.what()));
+      recordLog("Attempting to initialize OpenGL engine instead...");
+    }
   }
+
+  return false;
 }
 
 graphics* graphics::getInstance() {
@@ -38,6 +50,7 @@ graphics* graphics::getInstance() {
 }
 
 void graphics::endInstance() {
+  if(instance != nullptr)
     delete instance;
 }
 

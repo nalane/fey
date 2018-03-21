@@ -40,18 +40,27 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 vulkan::~vulkan() {
   cleanupSwapChain();
 
-  vkDestroySemaphore(device, renderFinished, nullptr);
-  vkDestroySemaphore(device, imageAvailable, nullptr);  
+  if (renderFinished != VK_NULL_HANDLE)
+    vkDestroySemaphore(device, renderFinished, nullptr);
+  if (imageAvailable != VK_NULL_HANDLE)
+    vkDestroySemaphore(device, imageAvailable, nullptr);  
 
-  vkDestroyCommandPool(device, commandPool, nullptr);
-  vkDestroyDevice(device, nullptr);
+  if (commandPool != VK_NULL_HANDLE)
+    vkDestroyCommandPool(device, commandPool, nullptr);
+  if (device != VK_NULL_HANDLE)
+    vkDestroyDevice(device, nullptr);
 
-  auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(vulkanInstance, "vkDestroyDebugReportCallbackEXT");
-  if (vkDestroyDebugReportCallbackEXT != nullptr) {
+  if (callback != VK_NULL_HANDLE && vulkanInstance != VK_NULL_HANDLE) {
+    auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(vulkanInstance, "vkDestroyDebugReportCallbackEXT");
+    if (vkDestroyDebugReportCallbackEXT != nullptr) {
       vkDestroyDebugReportCallbackEXT(vulkanInstance, callback, nullptr);
+    }
   }
-  vkDestroySurfaceKHR(vulkanInstance, surface, nullptr);
-  vkDestroyInstance(vulkanInstance, nullptr);
+
+  if (surface != VK_NULL_HANDLE && vulkanInstance != VK_NULL_HANDLE)
+    vkDestroySurfaceKHR(vulkanInstance, surface, nullptr);
+  if (vulkanInstance != VK_NULL_HANDLE)
+    vkDestroyInstance(vulkanInstance, nullptr);
 }
 
 // Make sure needed validation layers are supported
@@ -725,23 +734,32 @@ bool vulkan::findDepthFormat(VkFormat& format) {
 
 void vulkan::cleanupSwapChain() {
   for (auto buffer : swapChainFramebuffers) {
-    vkDestroyFramebuffer(device, buffer, nullptr);
+    if (buffer != VK_NULL_HANDLE)
+      vkDestroyFramebuffer(device, buffer, nullptr);
   }
 
-  vkFreeCommandBuffers(device, commandPool, commandBuffers.size(), commandBuffers.data());
+  if (commandBuffers.size() > 0)
+    vkFreeCommandBuffers(device, commandPool, commandBuffers.size(), commandBuffers.data());
 
   resourceHandler::getInstance()->unloadShaders();
-  vkDestroyRenderPass(device, renderPass, nullptr);
 
-  vkDestroyImageView(device, depthImageView, nullptr);
-  vkDestroyImage(device, depthImage, nullptr);
-  vkFreeMemory(device, depthImageMemory, nullptr);
+  if (renderPass != VK_NULL_HANDLE)
+    vkDestroyRenderPass(device, renderPass, nullptr);
+
+  if (depthImageView != VK_NULL_HANDLE)
+    vkDestroyImageView(device, depthImageView, nullptr);
+  if (depthImage != VK_NULL_HANDLE)
+    vkDestroyImage(device, depthImage, nullptr);
+  if (depthImageMemory != VK_NULL_HANDLE)
+    vkFreeMemory(device, depthImageMemory, nullptr);
 
   for (auto view : swapChainImageViews) {
-    vkDestroyImageView(device, view, nullptr);
+    if (view != VK_NULL_HANDLE)
+      vkDestroyImageView(device, view, nullptr);
   }
 
-  vkDestroySwapchainKHR(device, swapChain, nullptr);
+  if (swapChain != VK_NULL_HANDLE)
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
 
 // Recreate swap chain if needed

@@ -31,23 +31,23 @@ private:
     QueueFamilyIndices queueIndices;
     SwapChainSupportDetails details;
 
-    VkInstance vulkanInstance;
-    VkDebugReportCallbackEXT callback;
-    VkPhysicalDevice physicalDevice;
+    VkInstance vulkanInstance = VK_NULL_HANDLE;
+    VkDebugReportCallbackEXT callback = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device = VK_NULL_HANDLE;
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
-    VkSurfaceKHR surface;
-    VkSwapchainKHR swapChain;
+    VkQueue graphicsQueue = VK_NULL_HANDLE;
+    VkQueue presentQueue = VK_NULL_HANDLE;
+    VkSurfaceKHR surface = VK_NULL_HANDLE;
+    VkSwapchainKHR swapChain = VK_NULL_HANDLE;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
-    VkRenderPass renderPass;
-    VkCommandPool commandPool;
-    VkSemaphore imageAvailable;
-    VkSemaphore renderFinished;
-    VkImage depthImage;
-    VkDeviceMemory depthImageMemory;
-    VkImageView depthImageView;
+    VkRenderPass renderPass = VK_NULL_HANDLE;
+    VkCommandPool commandPool = VK_NULL_HANDLE;
+    VkSemaphore imageAvailable = VK_NULL_HANDLE;
+    VkSemaphore renderFinished = VK_NULL_HANDLE;
+    VkImage depthImage = VK_NULL_HANDLE;
+    VkDeviceMemory depthImageMemory = VK_NULL_HANDLE;
+    VkImageView depthImageView = VK_NULL_HANDLE;
 
     // Buffers
     int activeBufferIndex = 0;
