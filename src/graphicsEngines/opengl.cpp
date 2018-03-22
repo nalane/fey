@@ -1,4 +1,5 @@
 #include "opengl.hpp"
+#include "scene.hpp"
 
 opengl::~opengl() {
 
@@ -13,14 +14,34 @@ void opengl::glfwHints() {
     glfwWindowHint(GLFW_SAMPLES, numAASamples);
 }
 
-bool opengl::enableDepthBuffer() {
+bool opengl::initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) {
+    this->numAASamples = numAASamples;
+
+    if (!initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor))
+        return false;
+
+    // Enable certain GL features
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+
     return true;
 }
 
 void opengl::draw() {
+    // Clear the screen
+    GLfloat color[] = {0.0, 0.0, 0.0, 1.0};
+    glClearBufferfv(GL_COLOR, 0, color);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
+    // Draw the scene
+    scene::getActiveScene()->draw();
+
+    // Swap buffers
+    glfwSwapBuffers(window);
 }
 
-void opengl::resizeCallback() {
-    
+void opengl::resizeCallback(int width, int height) {
+    setDefaultAspectRatio((double) width / (double) height);
 }

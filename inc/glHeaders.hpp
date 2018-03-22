@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glad/glad.h>
 #define GLFW_NO_GLU 1
 #define GLFW_INCLUDE_COREARB 1
 #define GLFW_INCLUDE_VULKAN

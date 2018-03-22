@@ -11,7 +11,7 @@ graphics* graphics::instance;
 
 // Static graphics callbacks
 static void window_resize_callback(GLFWwindow* window, int width, int height) {
-    graphics::getInstance()->resizeCallback();
+    graphics::getInstance()->resizeCallback(width, height);
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {

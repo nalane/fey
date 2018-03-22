@@ -110,6 +110,7 @@ public:
     ~vulkan();
 
     bool recreateSwapChain();
+    bool enableDepthBuffer();
 
     VkDevice getDevice() const { return device; }
     VkExtent2D getExtent() const { return swapChainExtent; }
@@ -123,9 +124,8 @@ public:
     VkResult idle() {return vkDeviceWaitIdle(device);}
 
     // Virtual methods from graphics
-    virtual bool enableDepthBuffer();
     virtual void draw();
-    virtual void resizeCallback() {
+    virtual void resizeCallback(int width, int height) {
         recreateSwapChain();
     }
 

@@ -37,12 +37,9 @@ public:
 
     GraphicsLibrary getLibrary() { return library; }
 
-    // Turn on and turn off depth buffering
-    virtual bool enableDepthBuffer() = 0;
-
     // Drawing method
     virtual void draw() = 0;
 
     // Commands to execute on window resize
-    virtual void resizeCallback() = 0;
+    virtual void resizeCallback(int width, int height) = 0;
 };
