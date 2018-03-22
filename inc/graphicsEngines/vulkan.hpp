@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * Rendering engine for Vulkan
+ */
+
 #include <vector>
 #include <string>
 
@@ -78,7 +82,12 @@ private:
     bool initVulkanSemaphores();
     bool initVulkan();
 
-    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor) {
+    virtual void glfwHints() {
+        // Force use of Vulkan
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    }
+
+    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) {
         return initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor) && 
             initVulkan();
     }

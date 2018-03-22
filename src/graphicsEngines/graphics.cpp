@@ -28,15 +28,16 @@ graphics::~graphics() {
 }
 
 // Functions for interacting with singleton
-bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
+bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor, int numAASamples) {
   if (library == VULKAN) {
     instance = new vulkan();
     try {
-      instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
+      instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples);
       return true;
     } catch (exception& e) {
       delete instance;
       instance = nullptr;
+
       recordLog("WARNING: Could not initialize Vulkan: " + string(e.what()));
       recordLog("Attempting to initialize OpenGL engine instead...");
     }
@@ -61,8 +62,8 @@ bool graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int 
     return false;
   }
 
-  // Force use of OpenGL core
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  // Hints to see how to initialize GLFW context
+  glfwHints();
 
   // Determine if we should do it fullscreen
   GLFWmonitor* monitor = nullptr;

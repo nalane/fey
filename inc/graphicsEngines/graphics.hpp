@@ -17,19 +17,19 @@ protected:
     // Singleton
     static graphics* instance;
 
+    GraphicsLibrary library;
+
     GLFWwindow* window;
     bool initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
-
-    GraphicsLibrary library;
+    virtual void glfwHints() = 0;
+    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) = 0;
 
 public:
     graphics(GraphicsLibrary library) : library(library) { }
     virtual ~graphics();
 
-    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor) = 0;
-
     // Interact with singleton
-    static bool createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
+    static bool createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples);
     static graphics* getInstance();
     static void endInstance();
 
@@ -40,7 +40,9 @@ public:
     // Turn on and turn off depth buffering
     virtual bool enableDepthBuffer() = 0;
 
+    // Drawing method
     virtual void draw() = 0;
 
+    // Commands to execute on window resize
     virtual void resizeCallback() = 0;
 };
