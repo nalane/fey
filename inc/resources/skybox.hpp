@@ -22,7 +22,7 @@
 
 class skybox : public raw_resource {
 protected:
-    std::vector<skyboxVertex> vertices;
+    const static std::vector<skyboxVertex> vertices;
 
 public:
     skybox(const std::string& name) : raw_resource(name) { }
@@ -30,15 +30,12 @@ public:
 
     static skybox* createSkybox(const std::string& name);
 
+    virtual void setTextures(texture* tex, std::string texturePaths[NUM_SKYBOX_TEXTURES]) = 0;
     void setShaderProgram(shaderProgram* shaderProg) {
         child_resources["shaderProgs"]["skybox"] = shaderProg;
     }
-    void setTextures(texture* tex) {
-        child_resources["textures"]["skybox"] = tex;
-    }
 
-    virtual void bindVertices() = 0;
-    virtual void bindDescriptors() = 0;
+    virtual void bindData() = 0;
 
     virtual void draw() = 0;
 };

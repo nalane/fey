@@ -10,11 +10,10 @@
 #include <string>
 
 class texture : public raw_resource {
-protected:
-    std::set<std::string> files;
+protected:  
 
 public:
-    texture(const std::string& name, const std::set<std::string>& files) : raw_resource(name), files(files) { }
+    texture(const std::string& name) : raw_resource(name) { }
     virtual ~texture() { }
 
     static texture* createTexture(const std::string& name, const std::set<std::string>& files);

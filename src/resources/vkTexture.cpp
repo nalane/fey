@@ -4,7 +4,7 @@
 
 using namespace std;
 
-vkTexture::vkTexture(const string& name, const set<string>& files) : texture(name, files) {
+vkTexture::vkTexture(const string& name, const set<string>& files) : texture(name), files(files) {
     // Set graphics engine for easy access
     graphicsEngine = (vulkan*)graphics::getInstance();
 }

@@ -8,6 +8,13 @@
 struct alignas(ALIGNMENT) skyboxVertex {
     glm::vec4 position;
 
+    static void bindLayout() {
+        // Position 
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
+            sizeof(skyboxVertex), (GLvoid*)(offsetof(skyboxVertex, position)));
+    }
+
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription = {};
         bindingDescription.binding = 0;

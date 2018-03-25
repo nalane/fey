@@ -15,6 +15,8 @@ class vkTexture : public texture {
 private:
     vulkan* graphicsEngine;
 
+    std::set<std::string> files;
+
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
 

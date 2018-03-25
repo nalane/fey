@@ -40,8 +40,7 @@ public:
   vkModel(const std::string& name);
   ~vkModel();
 
-  virtual void bindDescriptors();
-  virtual void bindVertices();
+  virtual void bindData();
 
   virtual void draw(modelUniforms uniforms);
 };

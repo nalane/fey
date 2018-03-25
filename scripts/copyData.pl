@@ -47,17 +47,13 @@ sub copyDir() {
             $input = File::Spec->rel2abs($input);
             $output = File::Spec->rel2abs($output);
 
-            # File is a shader file; translate it to SPIR-V
+            # File is a shader file; copy it and translate it to SPIR-V
+            copy($input, $output);
             if ($input =~ m/\.(conf|vert|tesc|tese|geom|frag|comp)$/) {
                 $output .= '.spv';
                 my $command = "glslangvalidator -V \"${input}\" -o \"${output}\"";
                 say $command;
                 system($command);
-            }
-
-            # Otherwise just copy it
-            else {
-                copy($input, $output);
             }
         }
 

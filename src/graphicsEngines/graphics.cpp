@@ -1,6 +1,7 @@
 #include "graphics.hpp"
 #include "scene.hpp"
 #include "vulkan.hpp"
+#include "opengl.hpp"
 
 #include <exception>
 
@@ -40,6 +41,21 @@ bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned
 
       recordLog("WARNING: Could not initialize Vulkan: " + string(e.what()));
       recordLog("Attempting to initialize OpenGL engine instead...");
+      library = GL;
+    }
+  }
+
+  if (library == GL) {
+    instance = new opengl();
+    try {
+      instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples);
+      return true;
+    } catch (exception& e) {
+      delete instance;
+      instance = nullptr;
+
+      recordLog("FATAL ERROR: Could not initialize OpenGL: " + string(e.what()));
+      recordLog("No other graphics engines exist to test. Ending program.");
     }
   }
 

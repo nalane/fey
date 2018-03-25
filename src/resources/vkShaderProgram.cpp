@@ -111,8 +111,8 @@ bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
   map<string, VkShaderModule> shaderModules;
   for (auto mapPair : shaderPaths) {
     // Open shader file
-    string shaderPath = mapPair.second;
-    ifstream file(shaderPath, ios::ate | ios::binary);
+    string shaderPath = mapPair.second + ".spv";
+    ifstream file(shaderPath.c_str(), ios::ate | ios::binary);
     if (!file.is_open()) {
       recordLog("ERROR: Could not open shader file " + shaderPath);
       return false;

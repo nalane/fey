@@ -210,8 +210,7 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
     newModel->setShaderProgram((shaderProgram*)resources[shaderKey]);
 
     // Bind model data to GPU
-    newModel->bindVertices();
-    newModel->bindDescriptors();
+    newModel->bindData();
 
     resources[filepath] = newModel;
   }
@@ -228,8 +227,8 @@ template <typename T>
 shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key, bool depthEnable, bool cullModeBackFaces) {
   recordLog("Loading shader " + key);
   map<string, string> shaderFiles;
-  shaderFiles["vertex"] = vertexShader + ".spv";
-  shaderFiles["fragment"] = fragmentShader + ".spv";
+  shaderFiles["vertex"] = vertexShader;
+  shaderFiles["fragment"] = fragmentShader;
 
   shaderProgram* prog = shaderProgram::createShaderProgram(key, shaderFiles);
   if (graphics::getInstance()->getLibrary() == VULKAN) {
@@ -288,13 +287,13 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     recordLog("Loading skybox " + path);
     
     // Get the textures
-    set<string> skyboxTextures;
-    skyboxTextures.insert(path + "/right." + extension);
-    skyboxTextures.insert(path + "/left." + extension);
-    skyboxTextures.insert(path + "/top." + extension);
-    skyboxTextures.insert(path + "/bottom." + extension);
-    skyboxTextures.insert(path + "/back." + extension);
-    skyboxTextures.insert(path + "/front." + extension);
+    string skyboxTextures[NUM_SKYBOX_TEXTURES];
+    skyboxTextures[SKYBOX_RIGHT]   =  path + "/right."  + extension;
+    skyboxTextures[SKYBOX_LEFT]    =  path + "/left."   + extension;
+    skyboxTextures[SKYBOX_TOP]     =  path + "/top."    + extension;
+    skyboxTextures[SKYBOX_BOTTOM]  =  path + "/bottom." + extension;
+    skyboxTextures[SKYBOX_FRONT]   =  path + "/front."  + extension;
+    skyboxTextures[SKYBOX_BACK]    =  path + "/back."   + extension;
 
     // Create textures key from filepath list
     string key = "";
@@ -303,19 +302,22 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     }
 
     // Find or create texture
-    if (resources.find(key) == resources.end()) {
+    GraphicsLibrary lib = graphics::getInstance()->getLibrary();
+    texture* tex = nullptr;
+    if (lib == VULKAN && resources.find(key) == resources.end()) {
       recordLog("Loading texture " + key);
     
-      texture* newTexture = texture::createTexture(key, skyboxTextures);
-      if (newTexture->loadTexture()) {
-        resources[key] = newTexture;
+      tex = texture::createTexture(key, 
+        set<string>(skyboxTextures, skyboxTextures + NUM_SKYBOX_TEXTURES));
+      if (tex->loadTexture()) {
+        resources[key] = tex;
         recordLog("Successfully read in texture " + key);
       }
       else {
         recordLog("ERROR: Could not read in texture " + key);
       }
 
-      resources[key] = newTexture; 
+      resources[key] = tex; 
     }
 
     // Get shader
@@ -328,9 +330,8 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
 
     skybox* newSkybox = skybox::createSkybox(path);
     newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
-    newSkybox->setTextures((texture*)resources[key]);
-    newSkybox->bindVertices();
-    newSkybox->bindDescriptors();
+    newSkybox->setTextures(tex, skyboxTextures);
+    newSkybox->bindData();
     resources[path] = newSkybox;
 
     recordLog("Successfully read in skybox " + path);

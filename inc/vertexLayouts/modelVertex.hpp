@@ -10,6 +10,23 @@ struct alignas(ALIGNMENT) modelVertex {
     glm::vec2 vertexUV;
     glm::vec4 normal;
 
+    static void bindLayout() {
+        // Position 
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
+            sizeof(modelVertex), (GLvoid*)(offsetof(modelVertex, position)));
+
+        // UV coordinates
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+            sizeof(modelVertex), (GLvoid*)(offsetof(modelVertex, vertexUV)));
+
+        // Normals
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE,
+            sizeof(modelVertex), (GLvoid*)(offsetof(modelVertex, normal)));
+    }
+
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription = {};
         bindingDescription.binding = 0;

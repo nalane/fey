@@ -1,16 +1,21 @@
 #include "model.hpp"
 #include "vkModel.hpp"
+#include "glModel.hpp"
 #include "log.hpp"
 
 using namespace std;
 
 // Helper function to create model based on what engine is in use
 model* model::createModel(const std::string& name) {
-    if (graphics::getInstance()->getLibrary() == VULKAN) {
-        return new vkModel(name);
-    }
+  GraphicsLibrary lib = graphics::getInstance()->getLibrary();
+  if (lib == VULKAN) {
+    return new vkModel(name);
+  }
+  else if (lib == GL) {
+    return new glModel(name);
+  }
 
-    return nullptr;
+  return nullptr;
 }
 
 // Adds a material

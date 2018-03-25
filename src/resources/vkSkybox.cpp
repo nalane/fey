@@ -9,57 +9,9 @@
 
 using namespace std;
 
-#define SIZE 333.3f
-
 vkSkybox::vkSkybox(const string& name) : skybox(name) {
   // Get graphics engine for easy access
   graphicsEngine = (vulkan*)graphics::getInstance();
-
-  // Generate vertices
-  vertices = {
-    // Positions
-	  {{-SIZE,  SIZE, -SIZE, 1.0f}},
-    {{-SIZE, -SIZE, -SIZE, 1.0f}},
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-    {{SIZE,  SIZE, -SIZE, 1.0f}},
-    {{-SIZE,  SIZE, -SIZE, 1.0f}},
-  
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-    {{-SIZE, -SIZE, -SIZE, 1.0f}},
-    {{-SIZE,  SIZE, -SIZE, 1.0f}},
-    {{-SIZE,  SIZE, -SIZE, 1.0f}},
-    {{-SIZE,  SIZE,  SIZE, 1.0f}},
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-  
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-    {{SIZE, -SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE, -SIZE, 1.0f}},
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-   
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-    {{-SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE, -SIZE,  SIZE, 1.0f}},
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-  
-    {{-SIZE,  SIZE, -SIZE, 1.0f}},
-    {{SIZE,  SIZE, -SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{SIZE,  SIZE,  SIZE, 1.0f}},
-    {{-SIZE,  SIZE,  SIZE, 1.0f}},
-    {{-SIZE,  SIZE, -SIZE, 1.0f}},
-  
-    {{-SIZE, -SIZE, -SIZE, 1.0f}},
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-    {{SIZE, -SIZE, -SIZE, 1.0f}},
-    {{-SIZE, -SIZE,  SIZE, 1.0f}},
-    {{SIZE, -SIZE,  SIZE, 1.0f}},
-  };
 
   // Generate secondary command buffer
   VkCommandBufferAllocateInfo allocInfo = {};
@@ -87,14 +39,12 @@ vkSkybox::~vkSkybox() {
   vkDestroyBuffer(device, vertexBuffer, nullptr);
 }
 
-// Bind the vertices
-void vkSkybox::bindVertices() {
-  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
-}
-
 // Bind the uniform descriptors
-void vkSkybox::bindDescriptors() {
+void vkSkybox::bindData() {
   VkDevice device = graphicsEngine->getDevice();
+
+  // Bind vertices
+  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
 
   VkDeviceSize bufferSize = sizeof(skyboxUniforms);
   graphicsEngine->createVulkanBuffer(bufferSize,
@@ -140,16 +90,11 @@ void vkSkybox::bindDescriptors() {
 
 void vkSkybox::draw() {
   // Make sure that model vertices were sent to GPU
-  if (!verticesLoaded) {
-    bindVertices();
+  if (!verticesLoaded || !descriptorsLoaded) {
+    bindData();
   }
-
-  // Make sure that the uniform descriptors have been sent to the GPU
-  if (!descriptorsLoaded) {
-    bindDescriptors();
-  }
-
-    // Secondary buffer inheritance info
+  
+  // Secondary buffer inheritance info
   VkCommandBufferInheritanceInfo inheritanceInfo = {};
   inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
   inheritanceInfo.pNext = nullptr;

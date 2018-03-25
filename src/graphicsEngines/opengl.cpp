@@ -20,6 +20,12 @@ bool opengl::initialize(bool fullscreen, unsigned int windowWidth, unsigned int 
     if (!initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor))
         return false;
 
+    // Activate OpenGL functions with GLAD
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        recordLog("GLAD couldn't load extensions");
+        return false;
+    }
+
     // Enable certain GL features
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

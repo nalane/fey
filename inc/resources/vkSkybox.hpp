@@ -37,8 +37,11 @@ public:
   vkSkybox(const std::string& name);
   virtual ~vkSkybox();
 
-  virtual void bindVertices();
-  virtual void bindDescriptors();
+  virtual void setTextures(texture* tex, std::string texturePaths[NUM_SKYBOX_TEXTURES]) {
+    child_resources["textures"]["skybox"] = tex;
+  }
+
+  virtual void bindData();
 
   virtual void draw();
 };

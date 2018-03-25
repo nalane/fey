@@ -36,8 +36,7 @@ public:
         child_resources["shaderProgs"]["default"] = shaderProg;
     }
 
-    virtual void bindDescriptors() = 0;
-    virtual void bindVertices() = 0;
+    virtual void bindData() = 0;
 
     virtual void draw(modelUniforms uniforms) = 0;
 

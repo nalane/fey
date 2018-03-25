@@ -37,10 +37,13 @@ vkModel::~vkModel() {
   vkDestroyBuffer(device, vertexBuffer, nullptr);
 }
 
-// Bind the uniform descriptors
-void vkModel::bindDescriptors() {
+void vkModel::bindData() {
   VkDevice device = graphicsEngine->getDevice();
 
+  // Bind the vertices
+  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+
+  // Bind the descriptors
   VkDeviceSize bufferSize = sizeof(modelUniforms);
   graphicsEngine->createVulkanBuffer(bufferSize,
     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -88,21 +91,11 @@ void vkModel::bindDescriptors() {
   vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0 , nullptr);
 }
 
-// Send vertices to GPU
-void vkModel::bindVertices() {
-  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
-}
-
 // Draws the model
 void vkModel::draw(modelUniforms uniforms) { 
   // Make sure that model vertices were sent to GPU
-  if (!verticesLoaded) {
-    bindVertices();
-  }
-
-  // Make sure that the uniform descriptors have been sent to the GPU
-  if (!descriptorsLoaded) {
-    bindDescriptors();
+  if (!verticesLoaded && !descriptorsLoaded) {
+    bindData();
   }
 
   // Secondary buffer inheritance info
