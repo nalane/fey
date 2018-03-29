@@ -39,6 +39,9 @@ void physicsWorld::collisionForces(rigidBody* a, rigidBody* b, double duration) 
 
 // Update the physics of all objects in the world
 void physicsWorld::update(const vector<rigidBody*>& rigidBodies) {
+  if (rigidBodies.size() == 0)
+    return;
+
   // Update the time
   double newTime = glfwGetTime();
   double duration = newTime - time;

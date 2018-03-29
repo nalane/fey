@@ -13,6 +13,7 @@ private:
     GLuint vao;
     GLuint vbo;
     GLuint ubo;
+    GLuint bindingPoint;
 
 public:
     glModel(const std::string& name);

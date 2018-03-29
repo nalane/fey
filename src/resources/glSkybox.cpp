@@ -8,18 +8,12 @@
 using namespace std;
 
 glSkybox::glSkybox(const string& name) : skybox(name) {
-    // Generate the vao
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    // Bind uniforms to shader
-    glGenBuffers(1, &ubo);
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(skyboxUniforms), nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+    bindingPoint = uniformBindingPoint++;
 }
 
 glSkybox::~glSkybox() {
+    uniformBindingPoint--;
+
     glDeleteTextures(1, &texID);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ubo);
@@ -27,13 +21,17 @@ glSkybox::~glSkybox() {
 }
 
 void glSkybox::setTextures(texture* tex, string texturePaths[NUM_SKYBOX_TEXTURES]) {
-    // Generate and fill the vbo
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["skybox"];
+    prog->useProgram();
+
+    // Generate the vao
+    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
+
+    // Generate and fill the vbo
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBufferData(GL_ARRAY_BUFFER, 4 * vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
   
     // Generate texture
     glActiveTexture(GL_TEXTURE0);
@@ -69,7 +67,20 @@ void glSkybox::setTextures(texture* tex, string texturePaths[NUM_SKYBOX_TEXTURES
 }
 
 void glSkybox::bindData() {
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["skybox"];
+    prog->useProgram();
 
+    glBindVertexArray(vao);
+
+    skyboxVertex::bindLayout();
+
+    // Bind uniforms to shader
+    GLuint bindingPoint = 1;
+    glGenBuffers(1, &ubo);
+    GLuint uniformIndex = glGetUniformBlockIndex(prog->getProgID(), "SkyboxUniforms");
+    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, ubo);
+    glUniformBlockBinding(prog->getProgID(), uniformIndex, bindingPoint);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(skyboxUniforms), nullptr, GL_DYNAMIC_DRAW);
 }
 
 void glSkybox::draw() {
@@ -85,10 +96,15 @@ void glSkybox::draw() {
     uniforms.vpMatrix = activeCamera->getProjectionMatrix() * viewMatrix;
     glBindBuffer(GL_UNIFORM_BUFFER, ubo);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(uniforms), &uniforms);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
   
     // Draw the skybox
     glDepthMask(GL_FALSE);
     glEnableVertexAttribArray(0);
+    GLuint texHandle = glGetUniformLocation(prog->getProgID(), "skybox");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texHandle);
+    glUniform1i(texHandle, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
     glDrawArrays(GL_TRIANGLES, 0, 36);

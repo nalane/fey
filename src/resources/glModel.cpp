@@ -5,12 +5,13 @@
 using namespace std;
 
 glModel::glModel(const string& name) : model(name) {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    bindingPoint = uniformBindingPoint++;
 }
 
 // Removes all vbos and the vao
 glModel::~glModel() {
+    uniformBindingPoint--;
+
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ubo);
     glDeleteVertexArrays(1, &vao);
@@ -20,6 +21,7 @@ void glModel::bindData() {
     glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["default"];
     prog->useProgram();
 
+    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
     glGenBuffers(1, &vbo);
@@ -30,10 +32,9 @@ void glModel::bindData() {
 
     // Bind uniforms to shader
     glGenBuffers(1, &ubo);
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
     GLuint uniformIndex = glGetUniformBlockIndex(prog->getProgID(), "DefaultUniforms");
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
-    glUniformBlockBinding(prog->getProgID(), uniformIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, ubo);
+    glUniformBlockBinding(prog->getProgID(), uniformIndex, bindingPoint);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(modelUniforms), nullptr, GL_DYNAMIC_DRAW);
 }
 
@@ -44,6 +45,7 @@ void glModel::draw(modelUniforms uniforms) {
     glBindVertexArray(vao);
     glBindBuffer(GL_UNIFORM_BUFFER, ubo);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(uniforms), &uniforms);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Bind texture to uniform
     int index = 0;

@@ -67,7 +67,7 @@ void object::draw() {
   uniforms.mat = mesh.res->getMaterial();
   uniforms.numLights = lights.size();
   for (int i = 0; i < lights.size(); i++) {
-    uniforms.lights[i] = *lights[0];
+    uniforms.lights[i] = *lights[i];
   }
   
   // Draw model

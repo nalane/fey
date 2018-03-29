@@ -45,7 +45,7 @@ void main_scene::load() {
   lights["staticLight"]->setColor(glm::vec3(0.7, 0.7, 0.7));
   
   // Set up sky box
-  //sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
+  sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
   
   // Set up default shader
   defaultShader = resourceHandler::getInstance()->loadShaderProg();
@@ -80,8 +80,8 @@ UpdateResult main_scene::update() {
 
 void main_scene::draw() {
   drawObjects();
-  
-  //sky.res->draw();
+
+  sky.res->draw();
 }
 
 scene* main_scene::nextScene() {

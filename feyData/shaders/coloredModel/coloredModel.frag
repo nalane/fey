@@ -35,8 +35,11 @@ layout (binding = 0) uniform DefaultUniforms {
 layout (location = 0) out vec4 color;
 
 void main(void) {
+  // Color of fragment without lighting
+  vec3 tex_color = clamp(uniforms.mat.diffuse.rgb, vec3(0.0), vec3(1.0));
+
   // Total light color
-  vec3 light_color = vec3(0.0);  
+  vec3 light_color = vec3(0.0);
   for (int i = 0; i < uniforms.numLights; i++) {
 	  // Calculate vectors
     vec3 lightVector = normalize((uniforms.lights[i].position - fragView).xyz);
@@ -44,7 +47,8 @@ void main(void) {
       normalize((uniforms.viewMatrix * fragView).xyz));
 
 	  // Calculate diffuse and specular
-    vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0) * uniforms.lights[i].color.rgb;
+    vec3 diffuseResult = max(dot(fragNormal.xyz, lightVector), 0.0) *
+      tex_color * uniforms.lights[i].color.rgb;
     vec3 specularResult = pow(max(dot(fragNormal.xyz, halfVector), 0.0), uniforms.mat.specularIntensity) *
       uniforms.mat.specular.rgb * uniforms.lights[i].color.rgb;
 

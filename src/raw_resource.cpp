@@ -3,6 +3,8 @@
 
 using namespace std;
 
+GLuint raw_resource::uniformBindingPoint = 0;
+
 raw_resource::~raw_resource() {
 
 }

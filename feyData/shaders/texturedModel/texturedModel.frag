@@ -20,7 +20,7 @@ layout (location = 0) in vec2 fragUV;
 layout (location = 1) in vec4 fragNormal;
 layout (location = 2) in vec4 fragView; // Vertex position
 
-layout (binding = 0) uniform DefaultUniforms {
+layout (binding = 0, std140) uniform DefaultUniforms {
   // Vertex shader uniforms
   mat4 modelMatrix;
   mat4 viewMatrix;

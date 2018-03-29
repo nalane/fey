@@ -12,6 +12,7 @@ private:
     GLuint vao;
     GLuint vbo;
     GLuint ubo;
+    GLuint bindingPoint;
 
 public:
     glSkybox(const std::string& name);
