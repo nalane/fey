@@ -21,10 +21,6 @@ private:
   // Singleton
   static resourceHandler* instance;
 
-  // Default shaders
-  std::string defaultVertexShader;
-  std::string defaultFragmentShader;
-
   // Resource map
   std::map<std::string, raw_resource*> resources;
   std::map<std::string, shaderProgram*> shaders;
@@ -49,8 +45,6 @@ public:
   // Shader interaction
   template <typename T>
   resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
-  resource<shaderProgram> loadShaderProg();
-  void setDefaultShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
   void unloadShaders();
   void reloadShaders();
 

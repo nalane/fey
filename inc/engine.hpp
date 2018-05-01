@@ -24,8 +24,6 @@ private:
   bool hideCursor;
   bool fullscreen;
   std::string windowTitle;
-  std::string vertexShader;
-  std::string fragmentShader;
 
   bool initGraphics();
   bool initGame();

@@ -21,10 +21,6 @@ void object::removeChildren() {
   }
 }
 
-void object::setShaderProg() {
-  shaderProg = resourceHandler::getInstance()->loadShaderProg();
-}
-
 glm::mat4 object::getModelMatrix() const {
   if (parent == nullptr)
     return modelMatrix;
@@ -32,9 +28,7 @@ glm::mat4 object::getModelMatrix() const {
     return parent->getModelMatrix() * modelMatrix;
 }
 
-void object::load() {
-  this->setShaderProg();
-  
+void object::load() { 
   for (object* o : children)
     o->load();
 }

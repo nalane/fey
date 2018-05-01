@@ -24,10 +24,6 @@ protected:
   glm::mat4 modelMatrix;
   resource<model> mesh;
 
-  // Shader program for object
-  resource<shaderProgram> shaderProg;
-  virtual void setShaderProg();
-
 public:
   object() : parent(nullptr), rigidBody() { }
   virtual ~object();

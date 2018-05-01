@@ -198,8 +198,8 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
       vertexShader = getDataFolderPath("shaders/coloredModel/coloredModel.vert");
       fragmentShader = getDataFolderPath("shaders/coloredModel/coloredModel.frag");
     } else {
-      vertexShader = defaultVertexShader;
-      fragmentShader = defaultFragmentShader;
+      vertexShader = getDataFolderPath("shaders/texturedModel/texturedModel.vert");
+      fragmentShader = getDataFolderPath("shaders/texturedModel/texturedModel.frag");
     }
 
     // Add child shader
@@ -255,16 +255,6 @@ resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShad
   }
 
   return resource<shaderProgram>((shaderProgram*) resources[key]);
-}
-
-// Find the default shader program, if it is set
-resource<shaderProgram> resourceHandler::loadShaderProg() {
-  return loadShaderProg<modelVertex>(defaultVertexShader, defaultFragmentShader);
-}
-
-void resourceHandler::setDefaultShaderProg(const string& vertexShader, const string& fragmentShader) {
-  defaultVertexShader = vertexShader;
-  defaultFragmentShader = fragmentShader;
 }
 
 // Unload shaders when recreating swapchain

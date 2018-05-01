@@ -33,8 +33,6 @@ engine::engine(const string& configFile) {
     getline(fin, windowTitle);
     getline(fin, dataPath);
     getline(fin, libraryPath);
-    getline(fin, vertexShader);
-    getline(fin, fragmentShader);
     fin >> gLibrary;
     graphicsEngine = gLibrary == "g" ? GL : VULKAN;
 
@@ -47,15 +45,10 @@ engine::engine(const string& configFile) {
     recordLog("Window Title: " + windowTitle);
     recordLog("Data Path: " + dataPath);
     recordLog("Library Path: " + libraryPath);
-    recordLog("Vertex Shader: " + vertexShader);
-    recordLog("Fragment Shader: " + fragmentShader);
     recordLog("Graphics Engine: " + string(graphicsEngine == GL ? "OpenGL" : "Vulkan"));
 
     setDataFolder(dataPath);
     setLibraryFolder(libraryPath);
-	
-    vertexShader = getDataFolderPath(vertexShader);
-    fragmentShader = getDataFolderPath(fragmentShader);
   }
 
   else {
@@ -100,8 +93,6 @@ bool engine::initGame() {
   srand(time(nullptr));
   if (!initGraphics())
     return false;
-
-  resourceHandler::getInstance()->setDefaultShaderProg(vertexShader, fragmentShader);
 
   scene::setActiveScene(new main_scene());
   scene::getActiveScene()->load();

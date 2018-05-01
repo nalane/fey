@@ -46,9 +46,6 @@ void main_scene::load() {
   
   // Set up sky box
   sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
-  
-  // Set up default shader
-  defaultShader = resourceHandler::getInstance()->loadShaderProg();
 }
 
 UpdateResult main_scene::update() {

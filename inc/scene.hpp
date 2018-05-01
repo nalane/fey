@@ -25,7 +25,6 @@ private:
   static scene* activeScene;
 
 protected:
-  resource<shaderProgram> defaultShader;
   std::vector<bool> pressedKeys;
   std::map<std::string, object*> objects;
   std::map<std::string, light*> lights;
@@ -38,7 +37,6 @@ protected:
   
 public:
   scene() : pressedKeys(std::vector<bool>(GLFW_KEY_LAST + 1, false)) {
-    defaultShader = resourceHandler::getInstance()->loadShaderProg();
   }
   
   virtual ~scene();
