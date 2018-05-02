@@ -47,13 +47,19 @@ sub copyDir() {
             $input = File::Spec->rel2abs($input);
             $output = File::Spec->rel2abs($output);
 
-            # File is a shader file; copy it and translate it to SPIR-V
-            copy($input, $output);
+            # File is a shader file; translate it to SPIR-V then downgrade it to GL 4.1
             if ($input =~ m/\.(conf|vert|tesc|tese|geom|frag|comp)$/) {
-                $output .= '.spv';
-                my $command = "glslangvalidator -V \"${input}\" -o \"${output}\"";
+                my $SPVoutput = $output . '.spv';
+                my $command = "glslangvalidator -V \"${input}\" -o \"${SPVoutput}\"";
                 say $command;
                 system($command);
+
+                $command = "spirv-cross --version 410 \"${SPVoutput}\" --output \"${output}\"";
+                say $command;
+                system($command);
+            }
+            else {
+                copy($input, $output);
             }
         }
 

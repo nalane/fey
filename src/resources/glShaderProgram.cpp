@@ -2,8 +2,6 @@
 #include "log.hpp"
 
 #include <fstream>
-#include <regex>
-#include <string>
 
 using namespace std;
 
@@ -35,14 +33,8 @@ bool glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
         fin.read(buffer.data(), fileSize);
         fin.close();
 
-        // Try to make shader GL 4.1 compliant
-        regex version("#version \\d{3}");
-        string replaced = regex_replace(buffer.data(), version, "#version 410");
-        regex bindings("layout\\s*\\\(\\s*binding\\s+=\\s+\\d+\\s*\\)");
-        replaced = regex_replace(replaced.data(), bindings, " ");
-
         // Compile shader
-        const char* data[] = {replaced.c_str()};
+        const char* data[] = {buffer.data()};
         GLuint shaderID = glCreateShader(type);
         glShaderSource(shaderID, 1, data, nullptr);
         glCompileShader(shaderID);
