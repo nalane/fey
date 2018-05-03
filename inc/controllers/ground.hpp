@@ -4,12 +4,12 @@
 
 #include <string>
 
-class @name@ : public object {
+class ground : public object {
 private:
   
 public:
-  @name@();
-  ~@name@();
+  ground();
+  ~ground();
   
   void load();
   void init();

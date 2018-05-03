@@ -44,7 +44,7 @@ void main_scene::load() {
   lights["staticLight"]->setPosition(glm::vec4(2.0, 2.0, 2.0, 1.0));
   lights["staticLight"]->setColor(glm::vec3(0.7, 0.7, 0.7));
   
-  // Set up sky box
+  // Set up resources
   sky = resourceHandler::getInstance()->loadSkybox(getLibraryFolderPath("skybox_2/"), "tga");
 }
 

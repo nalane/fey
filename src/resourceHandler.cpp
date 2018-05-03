@@ -360,9 +360,10 @@ resource<texture> resourceHandler::loadTexture(const set<string>& filepaths) {
 }
 
 resource<terrain> resourceHandler::loadTerrain(const string& path) {
-  map<string, raw_resource*>::iterator it = resources.find(path);
+  string fullPath = getLibraryFolderPath(path);
+  map<string, raw_resource*>::iterator it = resources.find(fullPath);
   if (it == resources.end()) {
-    recordLog("Loading terrain: " + path);
+    recordLog("Loading terrain: " + fullPath);
 
     // Get shader
     const map<string, string> shaders = {
@@ -376,13 +377,13 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
       resources[shaderKey] = newShader<skyboxVertex>(shaders);
     }
 
-    terrain* newTerrain = terrain::createTerrain(path);
+    terrain* newTerrain = terrain::createTerrain(fullPath);
     newTerrain->loadTerrain();
     newTerrain->setShaderProg((shaderProgram*)resources[shaderKey]);
-    resources[path] = newTerrain;
+    resources[fullPath] = newTerrain;
   }
 
-  return resource<terrain>((terrain*) resources[path]);
+  return resource<terrain>((terrain*) resources[fullPath]);
 }
 
 // Unload the named resource

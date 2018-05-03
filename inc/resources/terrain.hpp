@@ -10,6 +10,7 @@
 #include "shaderProgram.hpp"
 #include "modelUniforms.hpp"
 #include "terrainVertex.hpp"
+#include "material.hpp"
 
 #include <vector>
 #include <string>
@@ -18,6 +19,7 @@ class terrain : public raw_resource {
 protected:
     // Control points will be stored in row major order
     std::vector<terrainVertex> controlPoints;
+    material mat;
 
     const static int PATCH_SIZE = 16;
 
@@ -38,4 +40,6 @@ public:
 
     virtual void bindData() = 0;
     virtual void draw(modelUniforms uniforms) = 0;
+
+    material getMaterial() const { return mat; }
 };

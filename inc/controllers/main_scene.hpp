@@ -8,6 +8,7 @@
 #include "scene.hpp"
 #include "monkey.hpp"
 #include "skybox.hpp"
+#include "ground.hpp"
 
 class main_scene : public scene {
 private:
@@ -27,6 +28,7 @@ public:
   main_scene() : scene(), rad(0.0),
                  loggedMouseLocation(false), mouseX(-1), mouseY(-1) {
     objects["suz"] = new monkey();
+    objects["terra"] = new ground();
   }
   ~main_scene();
 

@@ -14,6 +14,10 @@ void physicsWorld::clearForces(const vector<rigidBody*>& rigidBodies) {
 
 // Add collision force to two objects that are colliding
 void physicsWorld::collisionForces(rigidBody* a, rigidBody* b, double duration) {
+  // Ghosts don't need to be considered
+  if (a->getCollider() == nullptr || b->getCollider() ==nullptr)
+    return;
+
   if (a->isColliding(b)) {
     // Figure out which items have finite mass
     rigidBody* actors[2];

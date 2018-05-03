@@ -9,6 +9,7 @@
 #include "collisionShape.hpp"
 #include "resource.hpp"
 #include "rigidBody.hpp"
+#include "terrain.hpp"
 
 #include <vector>
 
@@ -23,6 +24,7 @@ protected:
   // Data required for drawing
   glm::mat4 modelMatrix;
   resource<model> mesh;
+  resource<terrain> terrain;
 
 public:
   object() : parent(nullptr), rigidBody() { }

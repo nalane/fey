@@ -36,7 +36,7 @@ void terrain::loadTerrain() {
     }
 
     // Load control points
-    vector<vector<terrainVertex>> vertices;
+    vector<vector<terrainVertex>> vertices(height);
     for (vector<terrainVertex>& v : vertices) {
         v.resize(width);
         for (terrainVertex& point : v)

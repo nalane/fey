@@ -3,7 +3,7 @@
 
 using namespace std;
 
-@name@::@name@(resourceHandler* rHandler) : object(rHandler) {
+@name@::@name@() : object() {
 }
 
 @name@::~@name@() {
@@ -24,6 +24,4 @@ void @name@::update() {
 
 void @name@::draw() {
   object::draw();
-  m.res->bindTextureToUniform(texHandle);
-  m.res->draw();
 }

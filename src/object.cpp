@@ -45,6 +45,10 @@ void object::update() {
 
 // Tells GPU to render "object"
 void object::draw() {
+  // If there's nothing to draw, just skip
+  if (mesh.res == nullptr && terrain.res == nullptr)
+    return;
+
   // Get matrices
   glm::mat4 modelMatrix = getModelMatrix();
   glm::mat4 viewMatrix = scene::getActiveScene()->getActiveCamera()->getViewMatrix();
@@ -58,14 +62,20 @@ void object::draw() {
   uniforms.modelMatrix = modelMatrix;
   uniforms.viewMatrix = viewMatrix;
   uniforms.mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
-  uniforms.mat = mesh.res->getMaterial();
+  if (mesh.res != nullptr)
+    uniforms.mat = mesh.res->getMaterial();
+  else
+    uniforms.mat = terrain.res->getMaterial();
   uniforms.numLights = lights.size();
   for (int i = 0; i < lights.size(); i++) {
     uniforms.lights[i] = *lights[i];
   }
   
   // Draw model
-  mesh.res->draw(uniforms);
+  if (mesh.res != nullptr)
+    mesh.res->draw(uniforms);
+  if (terrain.res != nullptr)
+    terrain.res->draw(uniforms);
   
   // Draw children
   for (object* o : children)
