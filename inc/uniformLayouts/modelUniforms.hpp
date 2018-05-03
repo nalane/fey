@@ -12,7 +12,7 @@ struct alignas(ALIGNMENT) modelUniforms {
   glm::mat4 viewMatrix;
   glm::mat4 mvpMatrix;
 
-  // Fragmaent shader uniforms
+  // Fragment shader uniforms
   material mat;
   int numLights;
   light lights[MAX_LIGHTS];

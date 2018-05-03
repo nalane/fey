@@ -203,9 +203,13 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
     }
 
     // Add child shader
-    string shaderKey = getShaderKey(vertexShader, fragmentShader);
+    map<string, string> shaders = {
+      {"vertex", vertexShader},
+      {"fragment", fragmentShader}
+    };
+    string shaderKey = getShaderKey(shaders);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader<modelVertex>(vertexShader, fragmentShader, shaderKey);
+      resources[shaderKey] = newShader<modelVertex>(shaders);
     }   
     newModel->setShaderProgram((shaderProgram*)resources[shaderKey]);
 
@@ -218,19 +222,23 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
   return resource<model>((model*) resources[filepath]);
 }
 
-string resourceHandler::getShaderKey(const string& vert, const string& frag) {
-  return "v" + vert + "f" + frag;
+string resourceHandler::getShaderKey(const std::map<std::string, std::string>& shaders) const {
+  string key = "";
+  for (auto p : shaders) {
+    key += p.first;
+    key += p.second;
+  }
+
+  return key;
 }
 
 // Create a new shader program
 template <typename T>
-shaderProgram* resourceHandler::newShader(const string& vertexShader, const string& fragmentShader, const string& key, bool depthEnable, bool cullModeBackFaces) {
+shaderProgram* resourceHandler::newShader(const map<string, string>& shaders, bool depthEnable, bool cullModeBackFaces) {
+  string key = getShaderKey(shaders);
   recordLog("Loading shader " + key);
-  map<string, string> shaderFiles;
-  shaderFiles["vertex"] = vertexShader;
-  shaderFiles["fragment"] = fragmentShader;
 
-  shaderProgram* prog = shaderProgram::createShaderProgram(key, shaderFiles);
+  shaderProgram* prog = shaderProgram::createShaderProgram(key, shaders);
   if (graphics::getInstance()->getLibrary() == VULKAN) {
     vkShaderProgram* vkprog = (vkShaderProgram*)prog;
     vkprog->setVertexAttributes<T>();
@@ -246,10 +254,10 @@ shaderProgram* resourceHandler::newShader(const string& vertexShader, const stri
 
 // Get a shader program
 template <typename T>
-resource<shaderProgram> resourceHandler::loadShaderProg(const string& vertexShader, const string& fragmentShader) {
-  string key = getShaderKey(vertexShader, fragmentShader);
+resource<shaderProgram> resourceHandler::loadShaderProg(const map<string, string>& shaders) {
+  string key = getShaderKey(shaders);
   if (resources.find(key) == resources.end()) {
-    shaderProgram* shader = newShader<T>(vertexShader, fragmentShader, key);
+    shaderProgram* shader = newShader<T>(shaders);
     resources[key] = shader;
     shaders[key] = shader;
   }
@@ -311,11 +319,13 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     }
 
     // Get shader
-    string vertexShader = getDataFolderPath("shaders/skybox/skybox.vert");
-    string fragShader = getDataFolderPath("shaders/skybox/skybox.frag");
-    string shaderKey = getShaderKey(vertexShader, fragShader);
+    const map<string, string> shaders = {
+      {"vertex", getDataFolderPath("shaders/skybox/skybox.vert")},
+      {"fragment", getDataFolderPath("shaders/skybox/skybox.frag")}
+    };
+    string shaderKey = getShaderKey(shaders);
     if (resources.find(shaderKey) == resources.end()) {
-      resources[shaderKey] = newShader<skyboxVertex>(vertexShader, fragShader, shaderKey, false, false);
+      resources[shaderKey] = newShader<skyboxVertex>(shaders, false, false);
     }
 
     skybox* newSkybox = skybox::createSkybox(path);
@@ -347,6 +357,32 @@ resource<texture> resourceHandler::loadTexture(const set<string>& filepaths) {
   }
 
   return resource<texture>((texture*) resources[key]);
+}
+
+resource<terrain> resourceHandler::loadTerrain(const string& path) {
+  map<string, raw_resource*>::iterator it = resources.find(path);
+  if (it == resources.end()) {
+    recordLog("Loading terrain: " + path);
+
+    // Get shader
+    const map<string, string> shaders = {
+      {"vertex", getDataFolderPath("shaders/terrain/terrain.vert")},
+      {"fragment", getDataFolderPath("shaders/terrain/terrain.frag")},
+      {"tess_control", getDataFolderPath("shaders/terrain/terrain.tesc")},
+      {"tess_eval", getDataFolderPath("shaders/terrain/terrain.tese")}
+    };
+    string shaderKey = getShaderKey(shaders);
+    if (resources.find(shaderKey) == resources.end()) {
+      resources[shaderKey] = newShader<skyboxVertex>(shaders);
+    }
+
+    terrain* newTerrain = terrain::createTerrain(path);
+    newTerrain->loadTerrain();
+    newTerrain->setShaderProg((shaderProgram*)resources[shaderKey]);
+    resources[path] = newTerrain;
+  }
+
+  return resource<terrain>((terrain*) resources[path]);
 }
 
 // Unload the named resource

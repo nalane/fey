@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #define NO_RESOURCE_TEMPLATE // Prevent inclusion of template that requires full rh definition
 #include "resource.hpp"
@@ -15,6 +16,7 @@
 #include "model.hpp"
 #include "skybox.hpp"
 #include "texture.hpp"
+#include "terrain.hpp"
 
 class resourceHandler {
 private:
@@ -27,8 +29,8 @@ private:
 
   model* loadFeyModel(const std::string& filename);
   template <typename T>
-  shaderProgram* newShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& key, bool depthEnable = true, bool cullModeBackFaces = true);
-  std::string getShaderKey(const std::string& vert, const std::string& frag);
+  shaderProgram* newShader(const std::map<std::string, std::string>& shaders, bool depthEnable = true, bool cullModeBackFaces = true);
+  std::string getShaderKey(const std::map<std::string, std::string>& shaders) const;
   
 public:
   ~resourceHandler();
@@ -44,7 +46,7 @@ public:
 
   // Shader interaction
   template <typename T>
-  resource<shaderProgram> loadShaderProg(const std::string& vertexShader, const std::string& fragmentShader);
+  resource<shaderProgram> loadShaderProg(const std::map<std::string, std::string>& shaders);
   void unloadShaders();
   void reloadShaders();
 
@@ -52,6 +54,7 @@ public:
   resource<model> loadModel(const std::string& filepath);
   resource<texture> loadTexture(const std::set<std::string>& filepaths);
   resource<skybox> loadSkybox(const std::string& path, const std::string& extension);
+  resource<terrain> loadTerrain(const std::string& path);
 };
 
 #include "resource.tpp"

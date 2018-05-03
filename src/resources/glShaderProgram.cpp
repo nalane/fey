@@ -7,7 +7,9 @@ using namespace std;
 
 map<string, GLenum> shaderTypes = {
     {"vertex", GL_VERTEX_SHADER},
-    {"fragment", GL_FRAGMENT_SHADER}
+    {"fragment", GL_FRAGMENT_SHADER},
+    {"tess_control", GL_TESS_CONTROL_SHADER},
+    {"tess_eval", GL_TESS_EVALUATION_SHADER}
 };
 
 glShaderProgram::~glShaderProgram() {
