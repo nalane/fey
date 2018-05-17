@@ -30,8 +30,12 @@ layout (binding = 0, std140) uniform TerrainUniforms {
 
 layout(quads, equal_spacing, ccw) in;
 layout (location = 0) out vec3 teNormal;
+layout (location = 1) out vec2 fragUV;
 
 void main(void) {
+    // Set the UV coordinates
+    fragUV = gl_TessCoord.xy;
+
     // Get the control points
     vec4 controlPoints[4][4];
 	controlPoints[0][0] = gl_in[0].gl_Position;

@@ -28,8 +28,13 @@ layout (binding = 0, std140) uniform TerrainUniforms {
   light lights[MAX_LIGHTS];
 } uniforms;
 
+layout (binding = 1) uniform sampler2D texSampler;
+
+layout (location = 0) in vec3 teNormal;
+layout (location = 1) in vec2 fragUV;
+
 layout (location = 0) out vec4 color;
 
 void main(void) {	
-	color = uniforms.mat.diffuse;
+	color = texture(texSampler, fragUV);
 }

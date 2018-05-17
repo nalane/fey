@@ -378,7 +378,73 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
     }
 
     terrain* newTerrain = terrain::createTerrain(fullPath);
-    newTerrain->loadTerrain();
+
+    // Open and load file
+    ifstream fin(fullPath.c_str());
+    if (!fin) {
+        recordLog("ERROR: Could not open file " + fullPath);
+        delete newTerrain;
+        return resource<terrain>(nullptr);
+    }
+
+    // Each patch is a square; get the number of vertices on each side
+    int patchSideLength = round(sqrt(terrain::PATCH_SIZE));
+
+    // Get the width and height of the terrain
+    int width, height;
+    fin >> width >> height;
+    if (width % patchSideLength != 0 || height % patchSideLength != 0) {
+        recordLog("ERROR: Could not find a correct number of vertices in " + fullPath);
+    }
+
+    // Load control points
+    vector<vector<terrainVertex>> vertices(height);
+    for (vector<terrainVertex>& v : vertices) {
+        v.resize(width);
+        for (terrainVertex& point : v)
+            fin >> point.position.x >> point.position.y >> point.position.z;
+    }
+
+    // Divide vertices into patches
+    vector<terrainVertex> controlPoints;
+    for (int i = 0; i < height; i += patchSideLength) {
+        for (int j = 0; j < width; j += patchSideLength) {
+            for (int k = 0; k < terrain::PATCH_SIZE; k++) {
+                int rowNum = i + k / patchSideLength;
+                int colNum = j + k % patchSideLength;
+                controlPoints.push_back(vertices[rowNum][colNum]);
+            }
+        }
+    }
+    newTerrain->setControlPoints(controlPoints);
+
+    // Get texture path
+    bool hasTexture;
+    fin >> hasTexture;
+
+    // Load texture without wrapping in resource
+    if (hasTexture) {
+      string texturePath;
+      fin >> texturePath;
+
+      texturePath = getLibraryFolderPath(texturePath);
+      map<string, raw_resource*>::iterator it = resources.find(texturePath);
+      if (it == resources.end()) {
+        recordLog("Loading texture " + texturePath);
+
+        texture* newTexture = texture::createTexture(texturePath, {texturePath});
+        if (newTexture->loadTexture()) {
+          resources[texturePath] = newTexture;
+          recordLog("Successfully read in texture " + texturePath);
+        }
+        else {
+          recordLog("ERROR: Could not read in texture " + texturePath);
+        }
+      }
+      newTerrain->setTexture((texture*)resources[texturePath]);
+    }
+    fin.close();
+
     newTerrain->setShaderProg((shaderProgram*)resources[shaderKey]);
     newTerrain->bindData();
     resources[fullPath] = newTerrain;

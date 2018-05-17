@@ -72,23 +72,5 @@ void glTerrain::draw(modelUniforms uniforms) {
     const int numQuads = patchSideLength * patchSideLength;
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glPatchParameteri(GL_PATCH_VERTICES, PATCH_SIZE);
-    /*
-    for (int i = 0; i < controlPoints.size(); i += PATCH_SIZE) {
-        // Get winding order
-        vector<GLuint> windingOrder;
-        for (int j = 0; j < PATCH_SIZE; j++) {
-            if (j % (patchSideLength + 1) == patchSideLength)
-                continue;
-
-            windingOrder.push_back(i + j);
-            windingOrder.push_back(i + j + 4);
-            windingOrder.push_back(i + j + 5);
-            windingOrder.push_back(i + j + 1);
-        }
-
-        glDrawElements(GL_PATCHES, numQuads * (patchSideLength + 1), GL_UNSIGNED_INT, windingOrder.data());
-    }
-    */
-   //recordLog(to_string(controlPoints.size()));
-   glDrawArrays(GL_PATCHES, 0, controlPoints.size());
+    glDrawArrays(GL_PATCHES, 0, controlPoints.size());
 }
