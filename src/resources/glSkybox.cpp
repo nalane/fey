@@ -75,7 +75,6 @@ void glSkybox::bindData() {
     skyboxVertex::bindLayout();
 
     // Bind uniforms to shader
-    GLuint bindingPoint = 1;
     glGenBuffers(1, &ubo);
     GLuint uniformIndex = glGetUniformBlockIndex(prog->getProgID(), "SkyboxUniforms");
     glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, ubo);

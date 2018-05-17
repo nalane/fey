@@ -380,6 +380,7 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
     terrain* newTerrain = terrain::createTerrain(fullPath);
     newTerrain->loadTerrain();
     newTerrain->setShaderProg((shaderProgram*)resources[shaderKey]);
+    newTerrain->bindData();
     resources[fullPath] = newTerrain;
   }
 

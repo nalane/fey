@@ -8,6 +8,7 @@
 #include "scene.hpp"
 #include "cube.hpp"
 #include "plane.hpp"
+#include "ground.hpp"
 
 class second_scene : public scene {
 private:
@@ -23,7 +24,7 @@ public:
   // Default constructor creates objects in scene
   second_scene() : scene(), loggedMouseLocation(false) {
     objects["c"] = new cube();
-    objects["p"] = new plane();
+    objects["terra"] = new ground();
   }
   ~second_scene();
 

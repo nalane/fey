@@ -5,27 +5,27 @@
 
 // Color specs of a material
 struct material {
-  vec4 ambient;
-  vec4 diffuse;
-  vec4 specular;
-  float specularIntensity;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	float specularIntensity;
 };
 
 struct light {
-  vec4 position;
-  vec3 color;
+	vec4 position;
+	vec3 color;
 };
 
 layout (binding = 0, std140) uniform TerrainUniforms {
-  // Vertex shader uniforms
-  mat4 modelMatrix;
-  mat4 viewMatrix;
-  mat4 mvpMatrix;
+	// Vertex shader uniforms
+	mat4 modelMatrix;
+	mat4 viewMatrix;
+	mat4 mvpMatrix;
 
-  // Fragmaent shader uniforms
-  material mat;
-  int numLights;
-  light lights[MAX_LIGHTS];
+	// Fragmaent shader uniforms
+	material mat;
+	int numLights;
+	light lights[MAX_LIGHTS];
 } uniforms;
 
 layout(quads, equal_spacing, ccw) in;
@@ -77,7 +77,7 @@ void main(void) {
         position += (sCoefficients[i] * partialPosition);
     }
 
-    gl_Position = uniforms.mvpMatrix * position;
+    gl_Position = uniforms.mvpMatrix * vec4((position).xyz, 1.0);
 
     // To get the normal vector, take the derivative with respect to s and t
     float dsCoefficients[4];
@@ -109,6 +109,9 @@ void main(void) {
         }
         dtPosition += (sCoefficients[i] * partialPosition);
     }
+
+    dsPosition = uniforms.mvpMatrix * dsPosition;
+    dtPosition = uniforms.mvpMatrix * dtPosition;
 
     teNormal = normalize(cross(dsPosition.xyz, dtPosition.xyz));
 }

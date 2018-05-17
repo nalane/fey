@@ -6,7 +6,7 @@
 using namespace std;
 
 cube::cube() : object() {
-  inverseMass = 0.01f;
+  //inverseMass = 0.01f;
 }
 
 cube::~cube() {
@@ -15,7 +15,7 @@ cube::~cube() {
 void cube::load() {
   object::load();
   mesh = resourceHandler::getInstance()->loadModel("cube.fey.model");
-  collider = new collisionAABB(mesh.res->getVertexPositions());
+  //collider = new collisionAABB(mesh.res->getVertexPositions());
 }
 
 void cube::init() {
