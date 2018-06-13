@@ -1,13 +1,13 @@
 #pragma once
 
 /*
- * Contains vaos and vbos for a model
+ * Vulkan implementation of terrain
  */
 
-#include "model.hpp"
+#include "terrain.hpp"
 #include "vulkan.hpp"
 
-class vkModel : public model {
+class vkTerrain : public terrain {
 private:
   vulkan* graphicsEngine;
 
@@ -27,8 +27,8 @@ private:
   void* mapping = nullptr;
 
 public:
-  vkModel(const std::string& name);
-  ~vkModel();
+  vkTerrain(const std::string& name);
+  ~vkTerrain();
 
   virtual void bindData();
   virtual void draw(modelUniforms uniforms);
