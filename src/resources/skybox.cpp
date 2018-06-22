@@ -6,7 +6,7 @@ using namespace std;
 
 #define SIZE 333.3f
 
-const vector<skyboxVertex> skybox::vertices = {
+const vector<skyboxVertex> skybox::skyVertices = {
     // Positions
 	{{-SIZE,  SIZE, -SIZE, 1.0f}},
     {{-SIZE, -SIZE, -SIZE, 1.0f}},

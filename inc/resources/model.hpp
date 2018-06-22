@@ -4,39 +4,27 @@
  * Model resource base abstract class
  */
 
-#include "glHeaders.hpp"
-#include "raw_resource.hpp"
+#include "vertexBasedResource.hpp"
 #include "material.hpp"
 #include "modelVertex.hpp"
-#include "texture.hpp"
-#include "shaderProgram.hpp"
 #include "modelUniforms.hpp"
+#include "texture.hpp"
 
 #include <string>
 #include <vector>
 
-class model : public raw_resource {
+class model : public vertexBasedResource<modelVertex> {
 protected:
     std::vector<material> materials;
-    std::vector<modelVertex> vertices;
 
 public:
-    model(const std::string& name) : raw_resource(name) { }
+    model(const std::string& name) : vertexBasedResource(name) { }
     virtual ~model() { }
 
     static model* createModel(const std::string& name);
 
     void addMaterial(const material& mat);
     void setTexture(texture* tex);
-    void setVertices(const std::vector<glm::vec3>& vertexList);
-    void setUVMapping(const std::vector<glm::vec2>& uvList);
-    void setNormals(const std::vector<glm::vec3>& normalList);
-    void setShaderProgram(shaderProgram* shaderProg) {
-        child_resources["shaderProgs"]["default"] = shaderProg;
-    }
-
-    virtual void bindData() = 0;
-    virtual void draw(modelUniforms uniforms) = 0;
 
     int getNumTextures() { return child_resources["textures"].size(); }
     std::vector<modelVertex> getVertices() const { return vertices; }
@@ -47,4 +35,6 @@ public:
             return materials[0];
         return material(); 
     }
+
+    virtual void draw(modelUniforms uniforms) = 0;
 };

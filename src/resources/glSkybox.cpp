@@ -21,7 +21,7 @@ glSkybox::~glSkybox() {
 }
 
 void glSkybox::setTextures(texture* tex, string texturePaths[NUM_SKYBOX_TEXTURES]) {
-    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["skybox"];
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["default"];
     prog->useProgram();
 
     // Generate the vao
@@ -67,7 +67,7 @@ void glSkybox::setTextures(texture* tex, string texturePaths[NUM_SKYBOX_TEXTURES
 }
 
 void glSkybox::bindData() {
-    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["skybox"];
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["default"];
     prog->useProgram();
 
     glBindVertexArray(vao);
@@ -84,7 +84,7 @@ void glSkybox::bindData() {
 
 void glSkybox::draw() {
     // Use the skybox shader prog
-    glShaderProgram* prog = (glShaderProgram*)(child_resources["shaderProgs"]["skybox"]);
+    glShaderProgram* prog = (glShaderProgram*)(child_resources["shaderProgs"]["default"]);
     prog->useProgram();
     glBindVertexArray(vao);
   
@@ -100,12 +100,14 @@ void glSkybox::draw() {
     // Draw the skybox
     glDepthMask(GL_FALSE);
     glEnableVertexAttribArray(0);
+
     GLuint texHandle = glGetUniformLocation(prog->getProgID(), "skybox");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texHandle);
     glUniform1i(texHandle, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+    
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask(GL_TRUE);
 }

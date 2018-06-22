@@ -12,6 +12,7 @@
 #include "glHeaders.hpp"
 #include "graphics.hpp"
 #include "vkShaderProgram.hpp"
+#include "modelVertex.hpp"
 
 using namespace std;
 
@@ -138,43 +139,42 @@ model* resourceHandler::loadFeyModel(const string& filename) {
     numVerts /= factor;
 		
     // Get the UV map
-    vector<glm::vec2> uvMapping;
-    vector<glm::vec3> finalVerts;
-    vector<glm::vec3> normals;
+    vector<modelVertex> finalVerts;
     glm::vec3 face[3];
     for(int i = 0; i < numVerts; i++) {
       int index, uvIndex;
+
+      finalVerts.push_back(modelVertex());
 			
       fin >> index;
-      finalVerts.push_back(vertexList[index]);
+      finalVerts[i].position = glm::vec4(vertexList[index], 1.0);
 
       fin >> uvIndex;
       if (uvCoords.size() > 0) {
-        uvMapping.push_back(uvCoords[uvIndex]);
+        finalVerts[i].vertexUV = uvCoords[uvIndex];
       }
 
+      // For early versions of the model spec, set normal based on last three positions.
       if (version.substr(0, 1) != "v") {
         face[i % 3] = vertexList[index];
+        // Set the normal after collecting three vertices
         if (i % 3 == 2) {
           glm::vec3 normal = glm::cross(face[1] - face[0], face[2] - face[0]);
-          normals.push_back(normal);
-          normals.push_back(normal);
-          normals.push_back(normal);
+          finalVerts[i].normal = glm::vec4(normal, 0.0);
+          finalVerts[i - 1].normal = glm::vec4(normal, 0.0);
+          finalVerts[i - 2].normal = glm::vec4(normal, 0.0);
         }
       }
 
       else {
-        glm::vec3 normal;
-        fin >> normal.x >> normal.y >> normal.z;
-        normals.push_back(normal);
+        fin >> finalVerts[i].normal.x;
+        fin >> finalVerts[i].normal.y;
+        fin >> finalVerts[i].normal.z;
       }
     }
 
     // Push data into the model
     m->setVertices(finalVerts);
-    m->setNormals(normals);
-    if (uvMapping.size() > 0)
-      m->setUVMapping(uvMapping);
     
     recordLog("Successfully read in fey model file " + filename + "!");
   }
@@ -211,7 +211,7 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
     if (resources.find(shaderKey) == resources.end()) {
       resources[shaderKey] = newShader<modelVertex>(shaders);
     }   
-    newModel->setShaderProgram((shaderProgram*)resources[shaderKey]);
+    newModel->setShaderProg((shaderProgram*)resources[shaderKey]);
 
     // Bind model data to GPU
     newModel->bindData();
@@ -329,7 +329,7 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     }
 
     skybox* newSkybox = skybox::createSkybox(path);
-    newSkybox->setShaderProgram((shaderProgram*)resources[shaderKey]);
+    newSkybox->setShaderProg((shaderProgram*)resources[shaderKey]);
     newSkybox->setTextures(tex, skyboxTextures);
     newSkybox->bindData();
     resources[path] = newSkybox;
@@ -416,7 +416,7 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
             }
         }
     }
-    newTerrain->setControlPoints(controlPoints);
+    newTerrain->setVertices(controlPoints);
 
     // Get texture path
     bool hasTexture;

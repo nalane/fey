@@ -4,9 +4,9 @@
  * Base abstract class for skybox resource
  */
 
-#include "raw_resource.hpp"
+#include "vertexBasedResource.hpp"
 #include "skyboxVertex.hpp"
-#include "shaderProgram.hpp"
+#include "skyboxUniforms.hpp"
 #include "texture.hpp"
 
 #include <string>
@@ -20,21 +20,18 @@
 #define SKYBOX_FRONT        5
 #define NUM_SKYBOX_TEXTURES 6
 
-class skybox : public raw_resource {
+class skybox : public vertexBasedResource<skyboxVertex> {
 protected:
-    const static std::vector<skyboxVertex> vertices;
+    const static std::vector<skyboxVertex> skyVertices;
 
 public:
-    skybox(const std::string& name) : raw_resource(name) { }
+    skybox(const std::string& name) : vertexBasedResource(name) { vertices = skyVertices; }
     virtual ~skybox() { }
 
     static skybox* createSkybox(const std::string& name);
 
+    virtual void setVertices(const std::vector<skyboxVertex>& vertices) { }
     virtual void setTextures(texture* tex, std::string texturePaths[NUM_SKYBOX_TEXTURES]) = 0;
-    void setShaderProgram(shaderProgram* shaderProg) {
-        child_resources["shaderProgs"]["skybox"] = shaderProg;
-    }
 
-    virtual void bindData() = 0;
     virtual void draw() = 0;
 };

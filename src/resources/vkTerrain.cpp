@@ -41,7 +41,7 @@ void vkTerrain::bindData() {
   VkDevice device = graphicsEngine->getDevice();
 
   // Bind the vertices
-  verticesLoaded = graphicsEngine->bindVertices(controlPoints, vertexBuffer, vertexBufferMemory);
+  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
 
   // Bind the descriptors
   VkDeviceSize bufferSize = sizeof(modelUniforms);
@@ -125,7 +125,7 @@ void vkTerrain::draw(modelUniforms uniforms) {
   VkBuffer vertexBuffers[] = {vertexBuffer};
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-  vkCmdDraw(commandBuffer, controlPoints.size(), 1, 0, 0);
+  vkCmdDraw(commandBuffer, vertices.size(), 1, 0, 0);
 
   // End command buffer
   vkEndCommandBuffer(commandBuffer);

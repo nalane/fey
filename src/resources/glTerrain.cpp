@@ -20,16 +20,16 @@ glTerrain::~glTerrain() {
 }
 
 void glTerrain::bindData() {
-    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["terrain"];
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["default"];
     prog->useProgram();
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    size_t dataSize = controlPoints.size() * sizeof(terrainVertex);
+    size_t dataSize = vertices.size() * sizeof(terrainVertex);
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, dataSize, controlPoints.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, dataSize, vertices.data(), GL_STATIC_DRAW);
 
     terrainVertex::bindLayout();
 
@@ -43,7 +43,7 @@ void glTerrain::bindData() {
 }
 
 void glTerrain::draw(modelUniforms uniforms) {
-    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["terrain"];
+    glShaderProgram* prog = (glShaderProgram*)child_resources["shaderProgs"]["default"];
     prog->useProgram();
 
     glBindVertexArray(vao);
@@ -72,5 +72,5 @@ void glTerrain::draw(modelUniforms uniforms) {
     const int numQuads = patchSideLength * patchSideLength;
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glPatchParameteri(GL_PATCH_VERTICES, PATCH_SIZE);
-    glDrawArrays(GL_PATCHES, 0, controlPoints.size());
+    glDrawArrays(GL_PATCHES, 0, vertices.size());
 }
