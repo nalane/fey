@@ -19,7 +19,6 @@ class model : public raw_resource {
 protected:
     std::vector<material> materials;
     std::vector<modelVertex> vertices;
-    int numVertices = 0;
 
 public:
     model(const std::string& name) : raw_resource(name) { }
@@ -37,7 +36,6 @@ public:
     }
 
     virtual void bindData() = 0;
-
     virtual void draw(modelUniforms uniforms) = 0;
 
     int getNumTextures() { return child_resources["textures"].size(); }

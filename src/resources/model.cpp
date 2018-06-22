@@ -37,13 +37,12 @@ void model::setVertices(const vector<glm::vec3>& vertexList) {
     vertices[i].position.z = vertexList[i].z;
     vertices[i].position.w = 1.0f;;
   }
-  numVertices = vertexList.size();
 }
 
 // Finalize mapping of vertices to UV coordinates
 void model::setUVMapping(const vector<glm::vec2>& uvList) {
   if (uvList.size() > 0) {
-    if (numVertices != uvList.size()) {
+    if (vertices.size() != uvList.size()) {
       recordLog("ERROR: Number of vertices does not equal number of uv coordinates");
     }
 
@@ -55,7 +54,7 @@ void model::setUVMapping(const vector<glm::vec2>& uvList) {
 
 // Gather normals
 void model::setNormals(const vector<glm::vec3>& normalList) {
-  if (numVertices != normalList.size()) {
+  if (vertices.size() != normalList.size()) {
     recordLog("ERROR: Number of vertices does not equal number of normal vectors");
   }
 

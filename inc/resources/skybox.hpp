@@ -36,6 +36,5 @@ public:
     }
 
     virtual void bindData() = 0;
-
     virtual void draw() = 0;
 };
