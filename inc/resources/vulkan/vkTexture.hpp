@@ -27,7 +27,7 @@ public:
     vkTexture(const std::string& name, const std::set<std::string>& files);
     ~vkTexture();
 
-    virtual bool loadTexture();
+    virtual void loadTexture();
 
     VkSampler getSampler() { return textureSampler; }
     VkImageView getImageView() { return textureImageView; }

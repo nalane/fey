@@ -15,6 +15,6 @@ public:
     glTexture(const std::string& name) : texture(name) { }
     ~glTexture();
 
-    virtual bool loadTexture();
+    virtual void loadTexture();
     void draw(GLuint index);
 };

@@ -44,7 +44,8 @@ void vkSkybox::bindData() {
   VkDevice device = graphicsEngine->getDevice();
 
   // Bind vertices
-  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  verticesLoaded = true;
 
   VkDeviceSize bufferSize = sizeof(skyboxUniforms);
   graphicsEngine->createVulkanBuffer(bufferSize,
@@ -53,8 +54,9 @@ void vkSkybox::bindData() {
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(skyboxUniforms), 0, &mapping);
 
   vkTexture* tex = (vkTexture*)child_resources["textures"]["skybox"];
-  vkShaderProgram* prog = (vkShaderProgram*)child_resources["shaderProgs"]["skybox"];
-  descriptorsLoaded = prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
+  vkShaderProgram* prog = (vkShaderProgram*)child_resources["shaderProgs"]["default"];
+  prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
+  descriptorsLoaded = true;
 
   VkDescriptorBufferInfo bufferInfo = {};
   bufferInfo.buffer = uniformBuffer;
@@ -110,7 +112,7 @@ void vkSkybox::draw() {
   vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
 	// Activate Shader
-  vkShaderProgram* prog = (vkShaderProgram*)(child_resources["shaderProgs"]["skybox"]);
+  vkShaderProgram* prog = (vkShaderProgram*)(child_resources["shaderProgs"]["default"]);
   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipeline());
   vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, prog->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
   

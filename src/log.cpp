@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <exception>
 
 using namespace std;
 
@@ -41,6 +42,12 @@ bool recordLog(const string& message) {
     cerr << message << endl << endl;
     return false;
   }
+}
+
+// Record message to log and throw error
+void error(const string& msg) {
+  recordLog(msg);
+  throw runtime_error(msg);
 }
 
 // Close log file

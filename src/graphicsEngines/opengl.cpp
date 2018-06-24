@@ -14,16 +14,14 @@ void opengl::glfwHints() {
     glfwWindowHint(GLFW_SAMPLES, numAASamples);
 }
 
-bool opengl::initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) {
+void opengl::initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) {
     this->numAASamples = numAASamples;
 
-    if (!initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor))
-        return false;
+    initGLFW(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor);
 
     // Activate OpenGL functions with GLAD
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-        recordLog("GLAD couldn't load extensions");
-        return false;
+        error("GLAD couldn't load extensions");
     }
 
     // Enable certain GL features
@@ -31,8 +29,6 @@ bool opengl::initialize(bool fullscreen, unsigned int windowWidth, unsigned int 
     glEnable(GL_DEPTH_TEST);
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
-
-    return true;
 }
 
 void opengl::draw() {

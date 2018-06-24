@@ -21,7 +21,7 @@ vkShaderProgram::~vkShaderProgram() {
   vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 }
 
-bool vkShaderProgram::setDescriptorSetLayout() {
+void vkShaderProgram::setDescriptorSetLayout() {
   VkDevice device = graphicsEngine->getDevice();
 
   // Layout for uniforms
@@ -50,14 +50,11 @@ bool vkShaderProgram::setDescriptorSetLayout() {
   // Create descriptor set
   VkResult result = vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to create descriptor set layout in " + name);
-    return false;
+    error("ERROR: Failed to create descriptor set layout in " + name);
   }
-
-  return true;
 }
 
-bool vkShaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet) {
+void vkShaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet) {
   VkDevice device = graphicsEngine->getDevice();
 
   VkDescriptorPoolSize poolSizes[2] = {};
@@ -74,8 +71,7 @@ bool vkShaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool
 
   VkResult result = vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to create descriptor pool in " + name);
-    return false;
+    error("ERROR: Failed to create descriptor pool in " + name);
   }
 
   VkDescriptorSetLayout layouts[] = {descriptorSetLayout};
@@ -87,25 +83,19 @@ bool vkShaderProgram::createVulkanDescriptorSet(VkDescriptorPool& descriptorPool
 
   result  = vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to load descriptor set in " + name);
-    return false;
+    error("ERROR: Failed to load descriptor set in " + name);
   }
-
-  return true;
 }
 
 // Load all shaders into main memory
-bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
+void vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
   // Structs needed from the graphics engine
   VkDevice device = graphicsEngine->getDevice();
   VkExtent2D extent = graphicsEngine->getExtent();
   VkRenderPass renderPass = graphicsEngine->getRenderPass();
 
   // Create layout for uniforms
-  bool res = setDescriptorSetLayout();
-  if (!res) {
-    return false;
-  }
+  setDescriptorSetLayout();
 
   // Create each shader module
   map<string, VkShaderModule> shaderModules;
@@ -114,8 +104,7 @@ bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
     string shaderPath = mapPair.second + ".spv";
     ifstream file(shaderPath.c_str(), ios::ate | ios::binary);
     if (!file.is_open()) {
-      recordLog("ERROR: Could not open shader file " + shaderPath);
-      return false;
+      error("ERROR: Could not open shader file " + shaderPath);
     }
 
     // Get size of file
@@ -137,8 +126,7 @@ bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
     VkShaderModule shaderModule;
     VkResult result = vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule);
     if (result != VK_SUCCESS) {
-      recordLog("ERROR: Could not create shader module for " + shaderPath);
-      return false;
+      error("ERROR: Could not create shader module for " + shaderPath);
     }
     shaderModules[mapPair.first] = shaderModule;
   }
@@ -246,8 +234,7 @@ bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
   // Create the pipeline layout
   VkResult result = vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to create pipeline layout");
-    return false;
+    error("ERROR: Failed to create pipeline layout");
   }
 
   // Set up depth buffering
@@ -281,16 +268,13 @@ bool vkShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
   // Create the graphics pipeline
   result = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to create graphics pipeline");
-    return false;
+    error("ERROR: Failed to create graphics pipeline");
   }
 
   // Destroy unneeded shader modules
   for (auto m : shaderModules) {
     vkDestroyShaderModule(device, m.second, nullptr);
   }
-
-  return true;
 }
 
 void vkShaderProgram::unloadShaders() {

@@ -19,7 +19,7 @@ vkTexture::~vkTexture() {
     vkDestroyImage(device, textureImage, nullptr);
 }
 
-bool vkTexture::loadTexture() {
+void vkTexture::loadTexture() {
     VkDevice device = graphicsEngine->getDevice();
 
     int layer = 0;
@@ -35,8 +35,7 @@ bool vkTexture::loadTexture() {
 
         // Make sure image is loaded
         if (!pixels) {
-            recordLog("ERROR: Failed to load texture image " + file);
-            return false;
+            error("ERROR: Failed to load texture image " + file);
         }
 
         widths.push_back(width);
@@ -106,9 +105,6 @@ bool vkTexture::loadTexture() {
 
     VkResult result = vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler);
     if (result != VK_SUCCESS) {
-        recordLog("ERROR: Could not create texture sampler");
-        return false;
+        error("ERROR: Could not create texture sampler");
     }
-
-    return true;
 }

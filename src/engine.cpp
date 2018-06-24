@@ -81,8 +81,7 @@ void engine::endInstance() {
 // Start the graphics system
 bool engine::initGraphics() {
   resourceHandler::createInstance();
-  if (!graphics::createInstance(graphicsEngine, fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples))
-    return false;
+  graphics::createInstance(graphicsEngine, fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples);
 
   setDefaultAspectRatio((double) windowWidth / (double) windowHeight);
   return true;

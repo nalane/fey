@@ -12,7 +12,7 @@ private:
     int numAASamples;
 
     virtual void glfwHints();
-    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples);
+    virtual void initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples);
 
 public:
     opengl() : graphics(GL) { }

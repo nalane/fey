@@ -121,13 +121,8 @@ model* resourceHandler::loadFeyModel(const string& filename) {
         recordLog("Loading texture " + filename);
 
         texture* newTexture = texture::createTexture(filename, {filename});
-        if (newTexture->loadTexture()) {
-          resources[filename] = newTexture;
-          recordLog("Successfully read in texture " + filename);
-        }
-        else {
-          recordLog("ERROR: Could not read in texture " + filename);
-        }
+        newTexture->loadTexture();
+        resources[filename] = newTexture;
       }
       m->setTexture((texture*)resources[filename]);
     }
@@ -180,7 +175,7 @@ model* resourceHandler::loadFeyModel(const string& filename) {
   }
 
   else {
-    recordLog("Could not read file: " + filename);
+    error("ERROR: Could not open file: " + filename);
   }
 
   return m;
@@ -243,10 +238,7 @@ shaderProgram* resourceHandler::newShader(const map<string, string>& shaders, bo
     vkShaderProgram* vkprog = (vkShaderProgram*)prog;
     vkprog->setVertexAttributes<T>();
   }
-  if (!prog->loadShaders(depthEnable, cullModeBackFaces)) {
-    recordLog("ERROR: Could not read in shader " + key);
-    return nullptr;
-  }
+  prog->loadShaders(depthEnable, cullModeBackFaces);
 
   recordLog("Successfully read in shader " + key);
   return prog;
@@ -307,13 +299,7 @@ resource<skybox> resourceHandler::loadSkybox(const string& path, const string& e
     
       tex = texture::createTexture(key, 
         set<string>(skyboxTextures, skyboxTextures + NUM_SKYBOX_TEXTURES));
-      if (tex->loadTexture()) {
-        resources[key] = tex;
-        recordLog("Successfully read in texture " + key);
-      }
-      else {
-        recordLog("ERROR: Could not read in texture " + key);
-      }
+      tex->loadTexture();
 
       resources[key] = tex; 
     }
@@ -382,9 +368,8 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
     // Open and load file
     ifstream fin(fullPath.c_str());
     if (!fin) {
-        recordLog("ERROR: Could not open file " + fullPath);
-        delete newTerrain;
-        return resource<terrain>(nullptr);
+      delete newTerrain;
+      error("ERROR: Could not open file " + fullPath);
     }
 
     // Each patch is a square; get the number of vertices on each side
@@ -394,7 +379,7 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
     int width, height;
     fin >> width >> height;
     if (width % patchSideLength != 0 || height % patchSideLength != 0) {
-        recordLog("ERROR: Could not find a correct number of vertices in " + fullPath);
+        error("ERROR: Could not find a correct number of vertices in " + fullPath);
     }
 
     // Load control points
@@ -433,13 +418,8 @@ resource<terrain> resourceHandler::loadTerrain(const string& path) {
         recordLog("Loading texture " + texturePath);
 
         texture* newTexture = texture::createTexture(texturePath, {texturePath});
-        if (newTexture->loadTexture()) {
-          resources[texturePath] = newTexture;
-          recordLog("Successfully read in texture " + texturePath);
-        }
-        else {
-          recordLog("ERROR: Could not read in texture " + texturePath);
-        }
+        newTexture->loadTexture();
+        resources[texturePath] = newTexture;
       }
       newTerrain->setTexture((texture*)resources[texturePath]);
     }

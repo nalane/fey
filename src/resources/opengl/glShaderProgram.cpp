@@ -2,6 +2,7 @@
 #include "log.hpp"
 
 #include <fstream>
+#include <exception>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ glShaderProgram::~glShaderProgram() {
     unloadShaders();
 }
 
-bool glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
+void glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
     for (auto p : shaderPaths) {
         GLenum type = shaderTypes[p.first];
         string filename = p.second;
@@ -24,8 +25,7 @@ bool glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
         // Open shader file
         ifstream fin(filename.c_str(), ios::ate);
         if (!fin.is_open()) {
-            recordLog("ERROR: Could not open shader file " + p.second);
-            return false;
+            error("ERROR: Could not open shader file " + p.second);
         }
         size_t fileSize = fin.tellg();
         vector<char> buffer(fileSize);
@@ -51,10 +51,10 @@ bool glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
             char* message = new char[maxLength];
             glGetShaderInfoLog(shaderID, maxLength, &maxLength, message);
     
-            recordLog("Compiling " + p.first + " shader failed with the following message:\n" + message);
+            string msg = "Compiling " + p.first + " shader failed with the following message:\n" + message;
             delete[] message;
 
-            return false;
+            error(msg);
         }
         else {
             recordLog("Successfully compiled " + p.first + " shader!");
@@ -80,14 +80,13 @@ bool glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
         char* message = new char[maxLength];
         glGetProgramInfoLog(progID, maxLength, &maxLength, message);
     
-        recordLog("Linking shader program failed with the following message:\n" + string(message));
+        string msg = "Linking shader program failed with the following message:\n" + string(message);
         delete[] message;
 
-        return false;
+        error(msg);
     }
     else {
         recordLog("Successfully linked all shaders!");
-        return true;
     }
 }
 

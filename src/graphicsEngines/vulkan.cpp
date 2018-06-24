@@ -64,7 +64,7 @@ vulkan::~vulkan() {
 }
 
 // Make sure needed validation layers are supported
-bool vulkan::checkVulkanValidationLayerSupport() {
+void vulkan::checkVulkanValidationLayerSupport() {
   // Identify validation layers
   uint32_t layerCount;
   vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -80,19 +80,15 @@ bool vulkan::checkVulkanValidationLayerSupport() {
     }
   }
   if (!requiredLayers.empty()) {
-    recordLog("ERROR: Not all required validation layers are available");
-    return false;
+    error("ERROR: Not all required validation layers are available");
   }
-
-  return true;
 }
 
 // Begin Vulkan
-bool vulkan::initVulkanInstance() {
+void vulkan::initVulkanInstance() {
   // Enable validation layers, if needed
-  if (enableValidationLayers && !checkVulkanValidationLayerSupport()) {
-    recordLog("FATAL ERROR: Validation layers were requested but could not be generated");
-    return false;
+  if (enableValidationLayers) {
+    checkVulkanValidationLayerSupport();
   }
 
   // Optional struct, but may help Vulkan optimize
@@ -128,8 +124,7 @@ bool vulkan::initVulkanInstance() {
   // Make sure all required extensions are available
   for (const char* ext : rExtensions) {
     if (availableExtensionsSet.find(ext) == availableExtensionsSet.end()) {
-      recordLog("FATAL ERROR: Not all required extensions are available");
-      return false;
+      error("FATAL ERROR: Not all required extensions are available");
     }
   }
 
@@ -149,22 +144,18 @@ bool vulkan::initVulkanInstance() {
   // Create instance
   VkResult result = vkCreateInstance(&createInfo, nullptr, &vulkanInstance);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Unable to create Vulkan instance!");
-    return false;
+    error("FATAL ERROR: Unable to create Vulkan instance!");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanDebug() {
+void vulkan::initVulkanDebug() {
   if (!enableValidationLayers)
-    return true;
+    return;
 
   // Load debug report callback function
   auto vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(vulkanInstance, "vkCreateDebugReportCallbackEXT");
   if (vkCreateDebugReportCallbackEXT == nullptr) {
-    recordLog("FATAL ERROR: Debugging requested, but no debug support is provided on this system.");
-    return false;
+    error("FATAL ERROR: Debugging requested, but no debug support is provided on this system.");
   }
 
   VkDebugReportCallbackCreateInfoEXT createInfo = {};
@@ -174,21 +165,15 @@ bool vulkan::initVulkanDebug() {
 
   VkResult result = vkCreateDebugReportCallbackEXT(vulkanInstance, &createInfo, nullptr, &callback);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Debugging was requested, but the callback could not be initiated");
-    return false;
+    error("FATAL ERROR: Debugging was requested, but the callback could not be initiated");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanSurface() {
+void vulkan::initVulkanSurface() {
   VkResult result = glfwCreateWindowSurface(vulkanInstance, window, nullptr, &surface);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create window surface!");
-    return false;
+    error("FATAL ERROR: Could not create window surface!");
   }
-
-  return true;
 }
 
 vulkan::QueueFamilyIndices vulkan::findQueueFamilies(const VkPhysicalDevice& pDevice) {
@@ -303,12 +288,12 @@ bool vulkan::isDeviceSuitable(const VkPhysicalDevice& pDevice) {
   return false;
 }
 
-bool vulkan::initVulkanDevice() {
+void vulkan::initVulkanDevice() {
   // Get the number of graphics cards available
   uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(vulkanInstance, &deviceCount, nullptr);
   if (deviceCount == 0) {
-    recordLog("FATAL ERROR: No GPUs with Vulkan support");
+    error("FATAL ERROR: No GPUs with Vulkan support");
   }
 
   // Get the graphics card to use
@@ -321,8 +306,7 @@ bool vulkan::initVulkanDevice() {
     }
   }
   if (physicalDevice == VK_NULL_HANDLE) {
-    recordLog("FATAL ERROR: No suitable GPU found");
-    return false;
+    error("FATAL ERROR: No suitable GPU found");
   }
 
   // Create queue creation info for all needed queues
@@ -362,18 +346,13 @@ bool vulkan::initVulkanDevice() {
 
   VkResult result = vkCreateDevice(physicalDevice, &createInfo, nullptr, &device);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create logical device");
-    return false;
+    error("FATAL ERROR: Could not create logical device");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanQueues() {
+void vulkan::initVulkanQueues() {
   vkGetDeviceQueue(device, queueIndices.graphicsFamily, 0, &graphicsQueue);
   vkGetDeviceQueue(device, queueIndices.presentFamily, 0, &presentQueue);
-
-  return true;
 }
 
 VkSurfaceFormatKHR vulkan::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats) {
@@ -417,7 +396,7 @@ VkExtent2D vulkan::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities
   return actualExtent;
 }
 
-bool vulkan::initVulkanSwapChain() {
+void vulkan::initVulkanSwapChain() {
   VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(details.formats);
   VkPresentModeKHR presentMode = chooseSwapPresentMode(details.presentModes);
   VkExtent2D extent = chooseSwapExtent(details.capabilities);
@@ -458,8 +437,7 @@ bool vulkan::initVulkanSwapChain() {
   // Create the actual swap chain
   VkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create swap chain");
-    return false;
+    error("FATAL ERROR: Could not create swap chain");
   }
 
   // Get swapchain images
@@ -470,11 +448,9 @@ bool vulkan::initVulkanSwapChain() {
   // Store image format and extents for future use
   swapChainImageFormat = surfaceFormat.format;
   swapChainExtent = extent;
-
-  return true;
 }
 
-bool vulkan::initVulkanImageViews() {
+void vulkan::initVulkanImageViews() {
   swapChainImageViews.resize(swapChainImages.size());
 
   for (int i = 0; i < swapChainImages.size(); i++) {
@@ -482,11 +458,9 @@ bool vulkan::initVulkanImageViews() {
     createImageView(swapChainImages[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1, imageView);
     swapChainImageViews[i] = imageView;
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanRenderPass() {
+void vulkan::initVulkanRenderPass() {
   // Describes our color attachment
   VkAttachmentDescription colorAttachment = {};
   colorAttachment.format = swapChainImageFormat;
@@ -548,14 +522,11 @@ bool vulkan::initVulkanRenderPass() {
   // Create Render pass
   VkResult result = vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create render pass");
-    return false;
+    error("FATAL ERROR: Could not create render pass");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanFramebuffers() {
+void vulkan::initVulkanFramebuffers() {
   swapChainFramebuffers.resize(swapChainImageViews.size());
 
   for (int i = 0; i < swapChainImageViews.size(); i++) {
@@ -573,15 +544,12 @@ bool vulkan::initVulkanFramebuffers() {
 
     VkResult result = vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]);
     if (result != VK_SUCCESS) {
-      recordLog("FATAL ERROR: Could not create framebuffer");
-      return false;
+      error("FATAL ERROR: Could not create framebuffer");
     }
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanCommandPool() {
+void vulkan::initVulkanCommandPool() {
   VkCommandPoolCreateInfo poolInfo = {};
   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   poolInfo.queueFamilyIndex = queueIndices.graphicsFamily;
@@ -589,14 +557,11 @@ bool vulkan::initVulkanCommandPool() {
 
   VkResult result = vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create Vulkan command pool");
-    return false;
+    error("FATAL ERROR: Could not create Vulkan command pool");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanCommandBuffers() {
+void vulkan::initVulkanCommandBuffers() {
   commandBuffers.resize(swapChainFramebuffers.size());
 
   VkCommandBufferAllocateInfo allocInfo = {};
@@ -607,14 +572,11 @@ bool vulkan::initVulkanCommandBuffers() {
 
   VkResult result = vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data());
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not allocate command buffers!");
-    return false;
+    error("FATAL ERROR: Could not allocate command buffers!");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkanSemaphores() {
+void vulkan::initVulkanSemaphores() {
   VkSemaphoreCreateInfo semaphoreInfo = {};
   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -622,72 +584,41 @@ bool vulkan::initVulkanSemaphores() {
   VkResult renderResult = vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinished);
 
   if (imageResult != VK_SUCCESS || renderResult != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create semaphores");
-    return false;
+    error("FATAL ERROR: Could not create semaphores");
   }
-
-  return true;
 }
 
-bool vulkan::initVulkan() {
-  if (!initVulkanInstance())
-    return false;
-
-  if (!initVulkanDebug())
-    return false;
-
-  if (!initVulkanSurface())
-    return false;
-
-  if (!initVulkanDevice())
-    return false;
-
-  if (!initVulkanQueues())
-    return false;
-
-  if (!initVulkanSwapChain())
-    return false;
-
-  if (!initVulkanImageViews())
-    return false;
-
-  if (!initVulkanRenderPass())
-    return false;
-
-  if (!initVulkanCommandPool())
-    return false;
-
-  if (!enableDepthBuffer())
-    return false;
-
-  if (!initVulkanFramebuffers())
-    return false;
-
-  if (!initVulkanCommandBuffers()) 
-    return false;
-
-  if (!initVulkanSemaphores())
-    return false;
-
-  return true;
+void vulkan::initVulkan() {
+  initVulkanInstance();
+  initVulkanDebug();
+  initVulkanSurface();
+  initVulkanDevice();
+  initVulkanQueues();
+  initVulkanSwapChain();
+  initVulkanImageViews();
+  initVulkanRenderPass();
+  initVulkanCommandPool();
+  enableDepthBuffer();
+  initVulkanFramebuffers();
+  initVulkanCommandBuffers();
+  initVulkanSemaphores();
 }
 
-bool vulkan::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output) {
+void vulkan::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t* output) {
   VkPhysicalDeviceMemoryProperties memProperties;
   vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
   for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
     if (typeFilter & (1 << i) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
       *output =  i;
-      return true;
+      return;
     }
   }
 
-  recordLog("ERROR: Could not find suitable memory type!");
-  return false;
+  error("ERROR: Could not find suitable memory type!");
 }
 
-bool vulkan::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
+void vulkan::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
   VkBufferCopy copyRegion = {};
@@ -697,39 +628,29 @@ bool vulkan::copyVulkanBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
   vkCmdCopyBuffer(commandBuffer, src, dst, 1, &copyRegion);
 
   endSingleTimeCommands(commandBuffer);
-
-  return true;
 }
 
-bool vulkan::findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features, VkFormat& format) {
+void vulkan::findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features, VkFormat& format) {
   for (VkFormat candidate : candidates) {
     VkFormatProperties props;
     vkGetPhysicalDeviceFormatProperties(physicalDevice, candidate, &props);
 
     if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
       format = candidate;
-      return true;
+      return;
     } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
       format = candidate;
-      return true;
+      return;
     }
   }
 
-  recordLog("ERROR: Could not find supported format!");
-  return false;
+  error("ERROR: Could not find supported format!");
 }
 
-bool vulkan::findDepthFormat(VkFormat& format) {
-  bool result = findSupportedFormat(
+void vulkan::findDepthFormat(VkFormat& format) {
+  findSupportedFormat(
     {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
     VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT, format);
-
-  if (!result) {
-    recordLog("FATAL ERROR: Could not find supported depth buffer format!");
-    return false;
-  }
-
-  return true;
 }
 
 void vulkan::cleanupSwapChain() {
@@ -763,40 +684,28 @@ void vulkan::cleanupSwapChain() {
 }
 
 // Recreate swap chain if needed
-bool vulkan::recreateSwapChain() {
+void vulkan::recreateSwapChain() {
   // Consider the situation where the window is minimized
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   if (width == 0 || height == 0)
-    return true;
+    return;
 
   vkDeviceWaitIdle(device);
 
   cleanupSwapChain();
-  if (!initVulkanSwapChain())
-    return false;
-
-  if (!initVulkanImageViews())
-    return false;
-
-  if (!enableDepthBuffer())
-    return false;
-  
-  if (!initVulkanRenderPass())
-    return false;
+  initVulkanSwapChain();
+  initVulkanImageViews();
+  enableDepthBuffer();
+  initVulkanRenderPass();
 
   resourceHandler::getInstance()->reloadShaders();
 
-  if (!initVulkanFramebuffers())
-    return false;
-
-  if (!initVulkanCommandBuffers())
-    return false;
-
-  return true;
+  initVulkanFramebuffers();
+  initVulkanCommandBuffers();
 }
 
-bool vulkan::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+void vulkan::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
   VkBufferCreateInfo bufferInfo = {};
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferInfo.size = size;
@@ -805,8 +714,7 @@ bool vulkan::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 
   VkResult result = vkCreateBuffer(device, &bufferInfo, nullptr, &buffer);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Could not create buffer");
-    return false;
+    error("ERROR: Could not create buffer");
   }
 
   VkMemoryRequirements memRequirements;
@@ -822,12 +730,9 @@ bool vulkan::createVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 
   result = vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to allocate buffer memory");
-    return false;
+    error("ERROR: Failed to allocate buffer memory");
   }
   vkBindBufferMemory(device, buffer, bufferMemory, 0);  
-
-  return true;
 }
 
 VkCommandBuffer vulkan::beginSingleTimeCommands() {
@@ -863,7 +768,7 @@ void vulkan::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-bool vulkan::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t numLayers, VkImageView& imageView) {
+void vulkan::createImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t numLayers, VkImageView& imageView) {
   VkImageViewCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   createInfo.image = image;
@@ -877,14 +782,11 @@ bool vulkan::createImageView(VkImage image, VkImageViewType viewType, VkFormat f
 
   VkResult result = vkCreateImageView(device, &createInfo, nullptr, &imageView);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not create image views");
-    return false;
+    error("FATAL ERROR: Could not create image views");
   }
-
-  return true;
 }
 
-bool vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+void vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
   VkFormatProperties props;
   vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
@@ -908,8 +810,7 @@ bool vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers,
   // Create image
   VkResult result = vkCreateImage(device, &imageInfo, nullptr, &image);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to create image");
-    return false;
+    error("ERROR: Failed to create image");
   }
 
   // Get memory requirements for image
@@ -918,11 +819,7 @@ bool vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers,
 
   // Get index of memory location to use
   uint32_t memoryIndex;
-  bool memoryResult = findMemoryType(memRequirements.memoryTypeBits, properties, &memoryIndex);
-  if (!memoryResult) {
-    recordLog("ERROR: Couldn't find location to place texture");
-    return false;
-  }
+  findMemoryType(memRequirements.memoryTypeBits, properties, &memoryIndex);
 
   // Memory allocation info
   VkMemoryAllocateInfo allocInfo = {};
@@ -933,12 +830,9 @@ bool vulkan::createVulkanImage(uint32_t width, uint32_t height, uint32_t layers,
   // Allocate and bind memory
   result = vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory);
   if (result != VK_SUCCESS) {
-    recordLog("ERROR: Failed to allocate memory");
-    return false;
+    error("ERROR: Failed to allocate memory");
   }
   vkBindImageMemory(device, image, imageMemory, 0);
-
-  return true;
 }
 
 void vulkan::copyBufferToImage(VkBuffer buffer, VkImage image, vector<VkBufferImageCopy> bufferCopies) {
@@ -991,8 +885,7 @@ void vulkan::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout
   }
 
   else {
-    recordLog("ERROR: Unsupported layout transition");
-    return;
+    error("ERROR: Unsupported layout transition");
   }
 
   if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
@@ -1010,17 +903,13 @@ void vulkan::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout
   endSingleTimeCommands(commandBuffer);
 }
 
-bool vulkan::enableDepthBuffer() {
+void vulkan::enableDepthBuffer() {
   VkFormat format;
-  if (!findDepthFormat(format)) {
-    recordLog("FATAL ERROR: Depth buffering could not be initialized");
-    return false;
-  }
+  findDepthFormat(format);
 
   createVulkanImage(swapChainExtent.width, swapChainExtent.height, 1, format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 0, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
   createImageView(depthImage, VK_IMAGE_VIEW_TYPE_2D, format, VK_IMAGE_ASPECT_DEPTH_BIT, 1, depthImageView);
   transitionImageLayout(depthImage, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-  return true;
 }
 
 void vulkan::draw() {
@@ -1054,8 +943,7 @@ void vulkan::draw() {
   // End command buffer
   VkResult result = vkEndCommandBuffer(getActiveCommandBuffer());
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Failed to record command buffer!");
-    return;
+    error("FATAL ERROR: Failed to record command buffer!");
   }
 
   // Increment active buffer
@@ -1068,8 +956,7 @@ void vulkan::draw() {
     recreateSwapChain();
     return;
   } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-    recordLog("FATAL ERROR: Failed to acquire swap chain image");
-    return;
+    error("FATAL ERROR: Failed to acquire swap chain image");
   }
 
   // Queue submission info struct
@@ -1089,8 +976,7 @@ void vulkan::draw() {
   // Submit command buffer to draw
   result = vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
   if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Could not draw command buffer");
-    return;
+    error("FATAL ERROR: Could not draw command buffer");
   }
 
   // Presentation info struct
@@ -1109,14 +995,12 @@ void vulkan::draw() {
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
     recreateSwapChain();
   } else if (result != VK_SUCCESS) {
-    recordLog("FATAL ERROR: Failed to present swap chain image!");
-    return;
+    error("FATAL ERROR: Failed to present swap chain image!");
   }
 
   // Idle until frame is drawn
   result = idle();
   if (result == VK_ERROR_DEVICE_LOST) {
-    recordLog("FATAL ERROR: Device lost probably due to timeout");
-    return;
+    error("FATAL ERROR: Device lost probably due to timeout");
   }
 }

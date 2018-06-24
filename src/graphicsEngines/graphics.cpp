@@ -29,12 +29,11 @@ graphics::~graphics() {
 }
 
 // Functions for interacting with singleton
-bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor, int numAASamples) {
+void graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor, int numAASamples) {
   if (library == VULKAN) {
     instance = new vulkan();
     try {
       instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples);
-      return true;
     } catch (exception& e) {
       delete instance;
       instance = nullptr;
@@ -49,17 +48,14 @@ bool graphics::createInstance(GraphicsLibrary library, bool fullscreen, unsigned
     instance = new opengl();
     try {
       instance->initialize(fullscreen, windowWidth, windowHeight, windowTitle, hideCursor, numAASamples);
-      return true;
     } catch (exception& e) {
       delete instance;
       instance = nullptr;
 
-      recordLog("FATAL ERROR: Could not initialize OpenGL: " + string(e.what()));
-      recordLog("No other graphics engines exist to test. Ending program.");
+      error("FATAL ERROR: Could not initialize OpenGL: " + string(e.what()) +
+        "\nNo other graphics engines exist to test. Ending program.");
     }
   }
-
-  return false;
 }
 
 graphics* graphics::getInstance() {
@@ -72,10 +68,9 @@ void graphics::endInstance() {
 }
 
 // GLFW Initialization
-bool graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
+void graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const string& windowTitle, bool hideCursor) {
   if (!glfwInit()) {
-    recordLog("FATAL ERROR: Could not initialize GLFW!");
-    return false;
+    error("FATAL ERROR: Could not initialize GLFW!");
   }
 
   // Hints to see how to initialize GLFW context
@@ -93,9 +88,8 @@ bool graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int 
   // Create the window
   window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), monitor, nullptr);
   if (!window) {
-    recordLog("FATAL ERROR: Could not create a GLFW window!");
     glfwTerminate();
-    return false;
+    error("FATAL ERROR: Could not create a GLFW window!");
   }
 
   // Set GLFW variables
@@ -106,6 +100,4 @@ bool graphics::initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int 
   glfwSetWindowSizeCallback(window, window_resize_callback);
   if (hideCursor)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-  return true;
 }

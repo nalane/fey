@@ -30,11 +30,11 @@ public:
   
   template <typename T>
   void setVertexAttributes();
-  bool setDescriptorSetLayout();
+  void setDescriptorSetLayout();
 
-  bool createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet);
+  void createVulkanDescriptorSet(VkDescriptorPool& descriptorPool, VkDescriptorSet& descriptorSet);
 
-  virtual bool loadShaders(bool depthEnable = true, bool cullModeBackFaces = true);
+  virtual void loadShaders(bool depthEnable = true, bool cullModeBackFaces = true);
   virtual void unloadShaders();
 
   VkPipeline getPipeline() { return graphicsPipeline; }

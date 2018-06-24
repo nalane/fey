@@ -20,16 +20,16 @@ protected:
     GraphicsLibrary library;
 
     GLFWwindow* window;
-    bool initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
+    void initGLFW(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor);
     virtual void glfwHints() = 0;
-    virtual bool initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) = 0;
+    virtual void initialize(bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples) = 0;
 
 public:
     graphics(GraphicsLibrary library) : library(library) { }
     virtual ~graphics();
 
     // Interact with singleton
-    static bool createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples);
+    static void createInstance(GraphicsLibrary library, bool fullscreen, unsigned int windowWidth, unsigned int windowHeight, const std::string& windowTitle, bool hideCursor, int numAASamples);
     static graphics* getInstance();
     static void endInstance();
 

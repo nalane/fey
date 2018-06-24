@@ -18,5 +18,5 @@ public:
 
     static texture* createTexture(const std::string& name, const std::set<std::string>& files);
 
-    virtual bool loadTexture() = 0;
+    virtual void loadTexture() = 0;
 };

@@ -19,7 +19,7 @@ public:
         shaderProgram(name, shaderPaths) { }
     ~glShaderProgram();
 
-    virtual bool loadShaders(bool depthEnable = true, bool cullModeBackFaces = true);
+    virtual void loadShaders(bool depthEnable = true, bool cullModeBackFaces = true);
     virtual void unloadShaders();
 
     void useProgram() { glUseProgram(progID); }

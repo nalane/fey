@@ -41,7 +41,8 @@ void vkModel::bindData() {
   VkDevice device = graphicsEngine->getDevice();
 
   // Bind the vertices
-  verticesLoaded = graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  graphicsEngine->bindVertices(vertices, vertexBuffer, vertexBufferMemory);
+  verticesLoaded = true;
 
   // Bind the descriptors
   VkDeviceSize bufferSize = sizeof(modelUniforms);
@@ -51,7 +52,8 @@ void vkModel::bindData() {
   vkMapMemory(device, uniformBufferMemory, 0, sizeof(modelUniforms), 0, &mapping);
 
   vkShaderProgram* prog = (vkShaderProgram*)child_resources["shaderProgs"]["default"];
-  descriptorsLoaded = prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
+  prog->createVulkanDescriptorSet(descriptorPool, descriptorSet);
+  descriptorsLoaded = true;
 
   VkDescriptorBufferInfo bufferInfo = {};
   bufferInfo.buffer = uniformBuffer;
