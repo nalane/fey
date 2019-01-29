@@ -50,7 +50,7 @@ sub copyDir() {
             # File is a shader file; translate it to SPIR-V then downgrade it to GL 4.1
             if ($input =~ m/\.(conf|vert|tesc|tese|geom|frag|comp)$/) {
                 my $SPVoutput = $output . '.spv';
-                my $command = "glslangvalidator -V \"${input}\" -o \"${SPVoutput}\"";
+                my $command = "glslangValidator -V \"${input}\" -o \"${SPVoutput}\"";
                 say $command;
                 system($command);
 

@@ -46,7 +46,7 @@ void object::update() {
 // Tells GPU to render "object"
 void object::draw() {
   // If there's nothing to draw, just skip
-  if (mesh.res == nullptr && terrain.res == nullptr)
+  if (mesh.res == nullptr && terra.res == nullptr)
     return;
 
   // Get matrices
@@ -65,7 +65,7 @@ void object::draw() {
   if (mesh.res != nullptr)
     uniforms.mat = mesh.res->getMaterial();
   else
-    uniforms.mat = terrain.res->getMaterial();
+    uniforms.mat = terra.res->getMaterial();
   uniforms.numLights = lights.size();
   for (int i = 0; i < lights.size(); i++) {
     uniforms.lights[i] = *lights[i];
@@ -74,8 +74,8 @@ void object::draw() {
   // Draw model
   if (mesh.res != nullptr)
     mesh.res->draw(uniforms);
-  if (terrain.res != nullptr)
-    terrain.res->draw(uniforms);
+  if (terra.res != nullptr)
+    terra.res->draw(uniforms);
   
   // Draw children
   for (object* o : children)

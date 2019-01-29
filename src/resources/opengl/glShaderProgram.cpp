@@ -28,12 +28,13 @@ void glShaderProgram::loadShaders(bool depthEnable, bool cullModeBackFaces) {
             error("ERROR: Could not open shader file " + p.second);
         }
         size_t fileSize = fin.tellg();
-        vector<char> buffer(fileSize);
+        vector<char> buffer(fileSize + 1);
 
         // Read in data from the file
         fin.seekg(0);
         fin.read(buffer.data(), fileSize);
         fin.close();
+	buffer[fileSize] = '\0';
 
         // Compile shader
         const char* data[] = {buffer.data()};

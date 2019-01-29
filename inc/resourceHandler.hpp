@@ -29,8 +29,8 @@ private:
 
   model* loadFeyModel(const std::string& filename);
   template <typename T>
-  shaderProgram* newShader(const std::map<std::string, std::string>& shaders, bool depthEnable = true, bool cullModeBackFaces = true);
-  std::string getShaderKey(const std::map<std::string, std::string>& shaders) const;
+  shaderProgram* newShader(const std::map<std::string, std::string>& shaderList, bool depthEnable = true, bool cullModeBackFaces = true);
+  std::string getShaderKey(const std::map<std::string, std::string>& shaderList) const;
   
 public:
   ~resourceHandler();
@@ -46,7 +46,7 @@ public:
 
   // Shader interaction
   template <typename T>
-  resource<shaderProgram> loadShaderProg(const std::map<std::string, std::string>& shaders);
+  resource<shaderProgram> loadShaderProg(const std::map<std::string, std::string>& shaderList);
   void unloadShaders();
   void reloadShaders();
 

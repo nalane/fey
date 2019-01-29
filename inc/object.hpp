@@ -24,7 +24,7 @@ protected:
   // Data required for drawing
   glm::mat4 modelMatrix;
   resource<model> mesh;
-  resource<terrain> terrain;
+  resource<terrain> terra;
 
 public:
   object() : parent(nullptr), rigidBody() { }
@@ -40,8 +40,7 @@ public:
   virtual void translate(float x, float y, float z);
   virtual void rotate(float degrees, float xAxis, float yAxis, float zAxis) {
     modelMatrix = glm::rotate(glm::radians(degrees),
-			                        glm::vec3(xAxis, yAxis, zAxis))
-                              * modelMatrix;
+			      glm::vec3(xAxis, yAxis, zAxis)) * modelMatrix;
   }
   virtual void scale(float x, float y, float z) {
     modelMatrix = glm::scale(glm::vec3(x, y, z)) * modelMatrix;

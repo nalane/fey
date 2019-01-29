@@ -104,13 +104,13 @@ model* resourceHandler::loadFeyModel(const string& filename) {
       fin >> numUVCoords;
 			
       for (int j = 0; j < numUVCoords; j++) {
-	      int uvIdx;
-	      float u, v;
-				
-	      fin >> uvIdx;
-	      fin >> u;
+	int uvIdx;
+	float u, v;
+	
+	fin >> uvIdx;
+	fin >> u;
         fin >> v;
-
+	
         uvCoords.push_back(glm::vec2(u, v));
       }
 		
@@ -217,9 +217,9 @@ resource<model> resourceHandler::loadModel(const string& filepath) {
   return resource<model>((model*) resources[filepath]);
 }
 
-string resourceHandler::getShaderKey(const std::map<std::string, std::string>& shaders) const {
+string resourceHandler::getShaderKey(const std::map<std::string, std::string>& shaderList) const {
   string key = "";
-  for (auto p : shaders) {
+  for (auto p : shaderList) {
     key += p.first;
     key += p.second;
   }
@@ -229,11 +229,11 @@ string resourceHandler::getShaderKey(const std::map<std::string, std::string>& s
 
 // Create a new shader program
 template <typename T>
-shaderProgram* resourceHandler::newShader(const map<string, string>& shaders, bool depthEnable, bool cullModeBackFaces) {
-  string key = getShaderKey(shaders);
+shaderProgram* resourceHandler::newShader(const map<string, string>& shaderList, bool depthEnable, bool cullModeBackFaces) {
+  string key = getShaderKey(shaderList);
   recordLog("Loading shader " + key);
 
-  shaderProgram* prog = shaderProgram::createShaderProgram(key, shaders);
+  shaderProgram* prog = shaderProgram::createShaderProgram(key, shaderList);
   if (graphics::getInstance()->getLibrary() == VULKAN) {
     vkShaderProgram* vkprog = (vkShaderProgram*)prog;
     vkprog->setVertexAttributes<T>();
@@ -246,10 +246,10 @@ shaderProgram* resourceHandler::newShader(const map<string, string>& shaders, bo
 
 // Get a shader program
 template <typename T>
-resource<shaderProgram> resourceHandler::loadShaderProg(const map<string, string>& shaders) {
-  string key = getShaderKey(shaders);
+resource<shaderProgram> resourceHandler::loadShaderProg(const map<string, string>& shaderList) {
+  string key = getShaderKey(shaderList);
   if (resources.find(key) == resources.end()) {
-    shaderProgram* shader = newShader<T>(shaders);
+    shaderProgram* shader = newShader<T>(shaderList);
     resources[key] = shader;
     shaders[key] = shader;
   }
